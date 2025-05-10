@@ -64,26 +64,35 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 bg-white shadow-xl z-50 transition-all">
-        <div className="container mx-auto flex items-center justify-between h-16 px-4">
+      <header className="sticky top-0 bg-gray-100 shadow-xl z-50 transition-all">
+        <div className="container mx-auto flex items-center justify-between h-16 px-4 ">
           <Link href="/" className="flex items-center gap-2 font-semibold">
             <Car className="w-6 h-6 text-emerald-500" />
             <span className="text-xl text-gray-500">CarBuddy</span>
           </Link>
-          <nav className="hidden md:flex gap-6 text-gray-600">
-            <Link href="#features" className="text-sm hover:text-emerald-500">
+          <nav className="hidden md:flex gap-6 text-gray-600 font-semibold">
+            <Link
+              href="#features"
+              className="text-sm hover:text-emerald-500 transition-all"
+            >
               Funkcje
             </Link>
             <Link
               href="#how-it-works"
-              className="text-sm hover:text-emerald-500"
+              className="text-sm hover:text-emerald-500 transition-all"
             >
               Jak to działa
             </Link>
-            <Link href="#pricing" className="text-sm hover:text-emerald-500">
+            <Link
+              href="#pricing"
+              className="text-sm hover:text-emerald-500 transition-all"
+            >
               Cennik
             </Link>
-            <Link href="#faq" className="text-sm hover:text-emerald-500">
+            <Link
+              href="#faq"
+              className="text-sm hover:text-emerald-500 transition-all"
+            >
               FAQ
             </Link>
           </nav>
@@ -153,9 +162,9 @@ export default function HomePage() {
       {/* Main */}
       <main className="flex-1">
         {/* Hero */}
-        <section className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-40 px-8">
+        <section className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-40 px-8 pb-32 text-gray-700">
           <div className="space-y-6">
-            <h1 className="text-4xl font-bold">
+            <h1 className="text-3xl font-bold">
               Twój cyfrowy asystent do zarządzania autem
             </h1>
             <p className="text-lg text-gray-600">
@@ -187,7 +196,7 @@ export default function HomePage() {
         {/* Features */}
         <section id="features" className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center">
+            <h2 className="text-3xl font-bold text-center text-gray-700">
               Wszystko, czego potrzebujesz
             </h2>
             <div className="mt-10 grid md:grid-cols-4 gap-6">
@@ -214,7 +223,11 @@ export default function HomePage() {
                 },
               ].map((f, i) => (
                 <Card key={i} className="text-center p-6">
-                  <CardHeader className="mb-4">{f.icon}</CardHeader>
+                  <CardHeader className="mb-4 flex justify-center">
+                    <div className="bg-emerald-100 p-3 rounded-full flex items-center justify-center">
+                      {f.icon}
+                    </div>
+                  </CardHeader>
                   <CardTitle>{f.title}</CardTitle>
                   <CardDescription>{f.text}</CardDescription>
                 </Card>
@@ -246,7 +259,7 @@ export default function HomePage() {
                 },
               ].map((s, i) => (
                 <div key={i} className="flex-1">
-                  <div className="mx-auto w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center">
+                  <div className="mx-auto w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold">
                     {s.num}
                   </div>
                   <h3 className="mt-4 font-semibold">{s.title}</h3>
@@ -273,6 +286,7 @@ export default function HomePage() {
                     <li>1 pojazd</li>
                     <li>Przypomnienia</li>
                     <li>Historia napraw</li>
+                    <li>ELo</li>
                   </ul>
                 </CardContent>
                 <CardFooter>
