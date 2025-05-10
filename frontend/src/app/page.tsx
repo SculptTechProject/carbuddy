@@ -162,7 +162,7 @@ export default function HomePage() {
       {/* Main */}
       <main className="flex-1">
         {/* Hero */}
-        <section className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-40 px-8 pb-32 text-gray-700">
+        <section className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-40 px-8 pb-32 text-gray-700" data-aos="fade-in">
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">
               Twój cyfrowy asystent do zarządzania autem
