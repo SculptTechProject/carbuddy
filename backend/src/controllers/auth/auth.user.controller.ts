@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
 /*
  * POST /api/v1/user/login
- * Login the user and return a JWT token
+ * Login the user and return a JWT token (with optional "remember me" expiry)
  */
 export const userLogin = async (
   req: Request,
@@ -17,21 +17,37 @@ export const userLogin = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { phoneNumber, password } = req.body;
-    const user = await prisma.user.findUnique({ where: { phoneNumber } });
+    // odczytujemy remember (domyślnie false)
+    const {
+      email,
+      password,
+      remember = false,
+    } = req.body as {
+      email: string;
+      password: string;
+      remember?: boolean;
+    };
+
+    // 1) znajdź usera po emailu
+    const user = await prisma.user.findFirst({ where: { email } });
     if (!user) {
       res.status(401).json({ error: "Invalid credentials" });
       return;
     }
 
+    // 2) sprawdź hasło
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       res.status(401).json({ error: "Invalid credentials" });
       return;
     }
 
-    const { token, expiresAt } = generateToken(user.id);
+    // 3) wygeneruj token z dłuższym lub domyślnym expiresIn
+    //    np. "30d" gdy remember=true, inaczej użyj ustawienia z env (np. "1h")
+    const customExpiry = remember ? "30d" : undefined;
+    const { token, expiresAt } = generateToken(Number(user.id), customExpiry);
 
+    // 4) zapisz token w bazie (przyda się do revoke / listowania aktywnych sesji)
     await prisma.userToken.create({
       data: {
         token,
@@ -40,7 +56,8 @@ export const userLogin = async (
       },
     });
 
-    res.json({ token });
+    // 5) zwróć token i datę wygaśnięcia
+    res.json({ token, expiresAt });
   } catch (error) {
     next(error);
   }
@@ -83,8 +100,8 @@ export const userRegister = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { email, password, firstName, lastName, phoneNumber } = req.body;
-  if (!email || !password || !firstName || !lastName || !phoneNumber) {
+  const { email, password, firstName, lastName } = req.body;
+  if (!email || !password || !firstName || !lastName) {
     res.status(400).json({
       error: "You need to pass all requirements!",
     });
@@ -92,8 +109,8 @@ export const userRegister = async (
   }
 
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { phoneNumber },
+    const existingUser = await prisma.user.findFirst({
+      where: { email },
     });
     if (existingUser) {
       res.status(400).json({ error: "User already exists!" });
@@ -104,7 +121,7 @@ export const userRegister = async (
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const newUser = await prisma.user.create({
-      data: { email, password: passwordHash, firstName, lastName, phoneNumber },
+      data: { email, password: passwordHash, firstName, lastName },
     });
     res.status(201).json({ message: "User created", user: newUser });
     return;

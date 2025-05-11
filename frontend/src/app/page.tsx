@@ -162,7 +162,10 @@ export default function HomePage() {
       {/* Main */}
       <main className="flex-1">
         {/* Hero */}
-        <section className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-40 px-8 pb-32 text-gray-700" data-aos="fade-in">
+        <section
+          className="container mx-auto grid lg:grid-cols-2 gap-8 items-center py-40 px-8 pb-32 text-gray-700"
+          data-aos="fade-in"
+        >
           <div className="space-y-6">
             <h1 className="text-3xl font-bold">
               Twój cyfrowy asystent do zarządzania autem
@@ -196,10 +199,16 @@ export default function HomePage() {
         {/* Features */}
         <section id="features" className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-bold text-center text-gray-700">
+            <h2
+              className="text-3xl font-bold text-center text-gray-700"
+              data-aos="fade-out"
+            >
               Wszystko, czego potrzebujesz
             </h2>
-            <div className="mt-10 grid md:grid-cols-4 gap-6">
+            <div
+              className="mt-10 grid md:grid-cols-4 gap-6"
+              data-aos="slide-up"
+            >
               {[
                 {
                   icon: <Car className="w-8 h-8 text-emerald-500" />,
@@ -282,11 +291,10 @@ export default function HomePage() {
                   <CardDescription>Podstawowe funkcje</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="mt-4 space-y-2 text-left">
+                  <ul className="mt-4 space-y-2 text-left mb-10">
                     <li>1 pojazd</li>
                     <li>Przypomnienia</li>
                     <li>Historia napraw</li>
-                    <li>ELo</li>
                   </ul>
                 </CardContent>
                 <CardFooter>
@@ -299,12 +307,12 @@ export default function HomePage() {
                 <CardHeader>
                   <CardTitle>Pro</CardTitle>
                   <p className="text-2xl font-bold mt-2">19,99 zł/mies</p>
-                  <div className="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm">
+                  <div className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm">
                     Polecany
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <ul className="mt-4 space-y-2 text-left">
+                  <ul className="mt-4 space-y-2 text-left mb-2">
                     <li>Nieograniczona liczba pojazdów</li>
                     <li>Zaawansowane przypomnienia</li>
                     <li>Raporty wydatków</li>
