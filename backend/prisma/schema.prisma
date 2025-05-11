@@ -21,6 +21,8 @@ model User {
   firstNmae           String
   lastName            String
   phoneNumber         String
+
+  banned              Boolean  @default(false)
   premium             Boolean @default(false)
 
   createdAt           DateTime @default(now())
@@ -28,6 +30,13 @@ model User {
   tokens              UserToken[]
 
   Car                 Car[]
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
 }
 
 model UserToken {

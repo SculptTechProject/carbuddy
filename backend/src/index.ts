@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 /* 
   ^^^^^^^^^^^ Routes imports ^^^^^^^^^^^
 */
-import authUser from "../src/routes/auth/auth.user.routes";
+import authAdmin from "./routes/admin/auth.admin.routes";
+import authUser from "./routes/auth/auth.user.routes";
 /* 
   ^^^^^^^^^^^ Routes imports ^^^^^^^^^^^
 */
@@ -19,11 +20,22 @@ app.get("/", (req: Request, res: Response) => {
   res.send("CarBuddy API is working!");
 });
 
-/* 
+/*
+ ^ USER 
  & START ROUTES
 */
 // Auth user
 app.use("/api/v1", authUser);
+/* 
+ & START ROUTES
+*/
+
+/*
+ ! ADMIN
+ & START ROUTES
+*/
+// Auth admin
+app.use("/api/v1", authAdmin);
 /* 
  & START ROUTES
 */

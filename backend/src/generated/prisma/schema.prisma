@@ -15,19 +15,28 @@ datasource db {
 }
 
 model User {
-  id          String  @id @default(cuid())
-  email       String  @unique
+  id          String @id @default(cuid())
+  email       String @unique
   password    String
   firstNmae   String
   lastName    String
   phoneNumber String
-  premium     Boolean @default(false)
+
+  banned  Boolean @default(false)
+  premium Boolean @default(false)
 
   createdAt DateTime @default(now())
 
   tokens UserToken[]
 
   Car Car[]
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
 }
 
 model UserToken {

@@ -127,7 +127,15 @@ exports.Prisma.UserScalarFieldEnum = {
   firstNmae: 'firstNmae',
   lastName: 'lastName',
   phoneNumber: 'phoneNumber',
+  banned: 'banned',
   premium: 'premium',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AdminScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password',
   createdAt: 'createdAt'
 };
 
@@ -187,6 +195,7 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Admin: 'Admin',
   UserToken: 'UserToken',
   Car: 'Car',
   Repair: 'Repair',
