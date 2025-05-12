@@ -57,7 +57,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await axios.post(
-        `${API_URL}/api/v1/auth/register`,
+        `${API_URL}/api/v1/user/register`,
         { ...form /*, phoneNumber jeśli kiedyś dodasz*/ },
         { headers: { "Content-Type": "application/json" } }
       );

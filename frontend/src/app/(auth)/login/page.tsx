@@ -6,10 +6,12 @@ import axios from "axios";
 import { Car } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -22,12 +24,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await axios.post(
-        `${API_URL}/api/v1/auth/login`,
+      const { data } = await axios.post(
+        `${API_URL}/api/v1/user/login`,
         { email, password, remember },
         { headers: { "Content-Type": "application/json" } }
       );
-      window.location.href = "/dashboard";
+      localStorage.setItem("token", data.token);
+      router.replace("/dashboard");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(

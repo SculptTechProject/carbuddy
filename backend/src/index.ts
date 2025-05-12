@@ -8,13 +8,21 @@ import cookieParser from "cookie-parser";
 */
 import authAdmin from "./routes/admin/auth.admin.routes";
 import authUser from "./routes/auth/auth.user.routes";
+import getUserData from "./routes/user/user.routes";
 /* 
   ^^^^^^^^^^^ Routes imports ^^^^^^^^^^^
 */
 
 dotenv.config();
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -28,8 +36,9 @@ app.get("/", (req: Request, res: Response) => {
 */
 // Auth user
 app.use("/api/v1", authUser);
+app.use("/api/v1", getUserData);
 /* 
- & START ROUTES
+ & END ROUTES
 */
 
 /*
@@ -39,7 +48,7 @@ app.use("/api/v1", authUser);
 // Auth admin
 app.use("/api/v1", authAdmin);
 /* 
- & START ROUTES
+ & END ROUTES
 */
 
 const PORT = process.env.PORT || 4000;

@@ -5,7 +5,7 @@ import { AuthRequest } from "../../middleware/user.authenticate";
 import { prisma } from "../../lib/prisma";
 import { generateToken } from "../../middleware/generateToken.user.utils";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /*
  * POST /api/v1/user/login
@@ -45,7 +45,7 @@ export const userLogin = async (
     // 3) wygeneruj token z dłuższym lub domyślnym expiresIn
     //    np. "30d" gdy remember=true, inaczej użyj ustawienia z env (np. "1h")
     const customExpiry = remember ? "30d" : undefined;
-    const { token, expiresAt } = generateToken(Number(user.id), customExpiry);
+    const { token, expiresAt } = generateToken(user.id, customExpiry);
 
     // 4) zapisz token w bazie (przyda się do revoke / listowania aktywnych sesji)
     await prisma.userToken.create({
@@ -80,6 +80,9 @@ export const userLogout = async (
     }
 
     const token = authHeader.split(" ")[1];
+    if (!JWT_SECRET) {
+      throw new Error("JWT_SECRET is not defined");
+    }
     const decodedToken = jwt.verify(token, JWT_SECRET) as any;
     await prisma.userToken.deleteMany({
       where: { userId: decodedToken.userId },

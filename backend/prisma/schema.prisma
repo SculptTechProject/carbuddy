@@ -29,7 +29,7 @@ model User {
 
   tokens              UserToken[]
 
-  Car                 Car[]
+  cars   Car[]
 }
 
 model Admin {

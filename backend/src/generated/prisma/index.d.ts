@@ -1325,12 +1325,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     tokens: number
-    Car: number
+    cars: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tokens?: boolean | UserCountOutputTypeCountTokensArgs
-    Car?: boolean | UserCountOutputTypeCountCarArgs
+    cars?: boolean | UserCountOutputTypeCountCarsArgs
   }
 
   // Custom InputTypes
@@ -1354,7 +1354,7 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountCarArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeCountCarsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CarWhereInput
   }
 
@@ -1600,7 +1600,7 @@ export namespace Prisma {
     premium?: boolean
     createdAt?: boolean
     tokens?: boolean | User$tokensArgs<ExtArgs>
-    Car?: boolean | User$CarArgs<ExtArgs>
+    cars?: boolean | User$carsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1643,7 +1643,7 @@ export namespace Prisma {
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "firstName" | "lastName" | "phoneNumber" | "banned" | "premium" | "createdAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tokens?: boolean | User$tokensArgs<ExtArgs>
-    Car?: boolean | User$CarArgs<ExtArgs>
+    cars?: boolean | User$carsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1653,7 +1653,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       tokens: Prisma.$UserTokenPayload<ExtArgs>[]
-      Car: Prisma.$CarPayload<ExtArgs>[]
+      cars: Prisma.$CarPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2060,7 +2060,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     tokens<T extends User$tokensArgs<ExtArgs> = {}>(args?: Subset<T, User$tokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    Car<T extends User$CarArgs<ExtArgs> = {}>(args?: Subset<T, User$CarArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CarPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    cars<T extends User$carsArgs<ExtArgs> = {}>(args?: Subset<T, User$carsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CarPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2511,9 +2511,9 @@ export namespace Prisma {
   }
 
   /**
-   * User.Car
+   * User.cars
    */
-  export type User$CarArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$carsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Car
      */
@@ -8241,7 +8241,7 @@ export namespace Prisma {
     premium?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     tokens?: UserTokenListRelationFilter
-    Car?: CarListRelationFilter
+    cars?: CarListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8255,7 +8255,7 @@ export namespace Prisma {
     premium?: SortOrder
     createdAt?: SortOrder
     tokens?: UserTokenOrderByRelationAggregateInput
-    Car?: CarOrderByRelationAggregateInput
+    cars?: CarOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8272,7 +8272,7 @@ export namespace Prisma {
     premium?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     tokens?: UserTokenListRelationFilter
-    Car?: CarListRelationFilter
+    cars?: CarListRelationFilter
   }, "id" | "email" | "phoneNumber">
 
   export type UserOrderByWithAggregationInput = {
@@ -8627,7 +8627,7 @@ export namespace Prisma {
     premium?: boolean
     createdAt?: Date | string
     tokens?: UserTokenCreateNestedManyWithoutUserInput
-    Car?: CarCreateNestedManyWithoutOwnerInput
+    cars?: CarCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8641,7 +8641,7 @@ export namespace Prisma {
     premium?: boolean
     createdAt?: Date | string
     tokens?: UserTokenUncheckedCreateNestedManyWithoutUserInput
-    Car?: CarUncheckedCreateNestedManyWithoutOwnerInput
+    cars?: CarUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUpdateInput = {
@@ -8655,7 +8655,7 @@ export namespace Prisma {
     premium?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tokens?: UserTokenUpdateManyWithoutUserNestedInput
-    Car?: CarUpdateManyWithoutOwnerNestedInput
+    cars?: CarUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8669,7 +8669,7 @@ export namespace Prisma {
     premium?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tokens?: UserTokenUncheckedUpdateManyWithoutUserNestedInput
-    Car?: CarUncheckedUpdateManyWithoutOwnerNestedInput
+    cars?: CarUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8818,7 +8818,7 @@ export namespace Prisma {
     kilometers?: number | null
     color?: string | null
     createdAt?: Date | string
-    owner: UserCreateNestedOneWithoutCarInput
+    owner: UserCreateNestedOneWithoutCarsInput
     Repair?: RepairCreateNestedManyWithoutCarInput
     Expense?: ExpenseCreateNestedManyWithoutCarInput
   }
@@ -8846,7 +8846,7 @@ export namespace Prisma {
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutCarNestedInput
+    owner?: UserUpdateOneRequiredWithoutCarsNestedInput
     Repair?: RepairUpdateManyWithoutCarNestedInput
     Expense?: ExpenseUpdateManyWithoutCarNestedInput
   }
@@ -9591,9 +9591,9 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTokensInput, UserUpdateWithoutTokensInput>, UserUncheckedUpdateWithoutTokensInput>
   }
 
-  export type UserCreateNestedOneWithoutCarInput = {
-    create?: XOR<UserCreateWithoutCarInput, UserUncheckedCreateWithoutCarInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCarInput
+  export type UserCreateNestedOneWithoutCarsInput = {
+    create?: XOR<UserCreateWithoutCarsInput, UserUncheckedCreateWithoutCarsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCarsInput
     connect?: UserWhereUniqueInput
   }
 
@@ -9633,12 +9633,12 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutCarNestedInput = {
-    create?: XOR<UserCreateWithoutCarInput, UserUncheckedCreateWithoutCarInput>
-    connectOrCreate?: UserCreateOrConnectWithoutCarInput
-    upsert?: UserUpsertWithoutCarInput
+  export type UserUpdateOneRequiredWithoutCarsNestedInput = {
+    create?: XOR<UserCreateWithoutCarsInput, UserUncheckedCreateWithoutCarsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCarsInput
+    upsert?: UserUpsertWithoutCarsInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCarInput, UserUpdateWithoutCarInput>, UserUncheckedUpdateWithoutCarInput>
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCarsInput, UserUpdateWithoutCarsInput>, UserUncheckedUpdateWithoutCarsInput>
   }
 
   export type RepairUpdateManyWithoutCarNestedInput = {
@@ -10053,7 +10053,7 @@ export namespace Prisma {
     banned?: boolean
     premium?: boolean
     createdAt?: Date | string
-    Car?: CarCreateNestedManyWithoutOwnerInput
+    cars?: CarCreateNestedManyWithoutOwnerInput
   }
 
   export type UserUncheckedCreateWithoutTokensInput = {
@@ -10066,7 +10066,7 @@ export namespace Prisma {
     banned?: boolean
     premium?: boolean
     createdAt?: Date | string
-    Car?: CarUncheckedCreateNestedManyWithoutOwnerInput
+    cars?: CarUncheckedCreateNestedManyWithoutOwnerInput
   }
 
   export type UserCreateOrConnectWithoutTokensInput = {
@@ -10095,7 +10095,7 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     premium?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    Car?: CarUpdateManyWithoutOwnerNestedInput
+    cars?: CarUpdateManyWithoutOwnerNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTokensInput = {
@@ -10108,10 +10108,10 @@ export namespace Prisma {
     banned?: BoolFieldUpdateOperationsInput | boolean
     premium?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    Car?: CarUncheckedUpdateManyWithoutOwnerNestedInput
+    cars?: CarUncheckedUpdateManyWithoutOwnerNestedInput
   }
 
-  export type UserCreateWithoutCarInput = {
+  export type UserCreateWithoutCarsInput = {
     id?: string
     email: string
     password: string
@@ -10124,7 +10124,7 @@ export namespace Prisma {
     tokens?: UserTokenCreateNestedManyWithoutUserInput
   }
 
-  export type UserUncheckedCreateWithoutCarInput = {
+  export type UserUncheckedCreateWithoutCarsInput = {
     id?: string
     email: string
     password: string
@@ -10137,9 +10137,9 @@ export namespace Prisma {
     tokens?: UserTokenUncheckedCreateNestedManyWithoutUserInput
   }
 
-  export type UserCreateOrConnectWithoutCarInput = {
+  export type UserCreateOrConnectWithoutCarsInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCarInput, UserUncheckedCreateWithoutCarInput>
+    create: XOR<UserCreateWithoutCarsInput, UserUncheckedCreateWithoutCarsInput>
   }
 
   export type RepairCreateWithoutCarInput = {
@@ -10194,18 +10194,18 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserUpsertWithoutCarInput = {
-    update: XOR<UserUpdateWithoutCarInput, UserUncheckedUpdateWithoutCarInput>
-    create: XOR<UserCreateWithoutCarInput, UserUncheckedCreateWithoutCarInput>
+  export type UserUpsertWithoutCarsInput = {
+    update: XOR<UserUpdateWithoutCarsInput, UserUncheckedUpdateWithoutCarsInput>
+    create: XOR<UserCreateWithoutCarsInput, UserUncheckedCreateWithoutCarsInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutCarInput = {
+  export type UserUpdateToOneWithWhereWithoutCarsInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutCarInput, UserUncheckedUpdateWithoutCarInput>
+    data: XOR<UserUpdateWithoutCarsInput, UserUncheckedUpdateWithoutCarsInput>
   }
 
-  export type UserUpdateWithoutCarInput = {
+  export type UserUpdateWithoutCarsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -10218,7 +10218,7 @@ export namespace Prisma {
     tokens?: UserTokenUpdateManyWithoutUserNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutCarInput = {
+  export type UserUncheckedUpdateWithoutCarsInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
@@ -10296,7 +10296,7 @@ export namespace Prisma {
     kilometers?: number | null
     color?: string | null
     createdAt?: Date | string
-    owner: UserCreateNestedOneWithoutCarInput
+    owner: UserCreateNestedOneWithoutCarsInput
     Expense?: ExpenseCreateNestedManyWithoutCarInput
   }
 
@@ -10338,7 +10338,7 @@ export namespace Prisma {
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutCarNestedInput
+    owner?: UserUpdateOneRequiredWithoutCarsNestedInput
     Expense?: ExpenseUpdateManyWithoutCarNestedInput
   }
 
@@ -10364,7 +10364,7 @@ export namespace Prisma {
     kilometers?: number | null
     color?: string | null
     createdAt?: Date | string
-    owner: UserCreateNestedOneWithoutCarInput
+    owner: UserCreateNestedOneWithoutCarsInput
     Repair?: RepairCreateNestedManyWithoutCarInput
   }
 
@@ -10406,7 +10406,7 @@ export namespace Prisma {
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutCarNestedInput
+    owner?: UserUpdateOneRequiredWithoutCarsNestedInput
     Repair?: RepairUpdateManyWithoutCarNestedInput
   }
 
