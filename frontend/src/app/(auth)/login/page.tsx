@@ -23,7 +23,7 @@ export default function LoginPage() {
 
     try {
       await axios.post(
-        `${API_URL}/api/v1/user/login`,
+        `${API_URL}/api/v1/auth/login`,
         { email, password, remember },
         { headers: { "Content-Type": "application/json" } }
       );

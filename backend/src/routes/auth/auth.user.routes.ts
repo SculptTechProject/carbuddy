@@ -8,10 +8,10 @@ import { authenticate } from "../../middleware/user.authenticate";
 
 const router = Router();
 
-router.post("/user/register", userRegister);
+router.post("/auth/register", userRegister);
 
-router.post("/user/login", userLogin);
+router.post("/auth/login", userLogin);
 
-router.post("/user/logout", authenticate, userLogout);
+router.post("/auth/logout", authenticate, userLogout);
 
 export default router;

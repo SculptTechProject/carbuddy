@@ -1,7 +1,6 @@
-// app/dashboard/page.tsx (or wherever you mount it)
 "use client";
 
-import React, { useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -17,11 +16,38 @@ import {
   LogOut,
   Settings,
 } from "lucide-react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<
     "przeglad" | "pojazdy" | "wydatki"
   >("przeglad");
+
+  const handleLogout = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      axios.post(
+        `${API_URL}/api/v1/auth/logout`,
+        {},
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      localStorage.removeItem("token");
+
+      router.replace("/login");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    axios.get(`${API_URL}/api/v1/user/me`);
+  });
 
   // dummy data
   const upcoming = [
@@ -132,7 +158,8 @@ export default function DashboardPage() {
             <Settings className="w-5 h-5 mr-3" /> Ustawienia
           </Link>
           <Link
-            href="#"
+            onClick={handleLogout}
+            href="/login"
             className="mt-2 flex items-center px-2 py-2 rounded hover:bg-gray-50 text-gray-700"
           >
             <LogOut className="w-5 h-5 mr-3" /> Wyloguj
@@ -148,11 +175,15 @@ export default function DashboardPage() {
             <Menu className="w-6 h-6 text-gray-700" />
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <Bell className="w-6 h-6 text-gray-600 relative">
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+            <div className="relative">
+              <Bell className="w-6 h-6 text-gray-600" />
+              <span
+                className="absolute -top-1 -right-1 bg-red-500 text-white text-xs 
+                   rounded-full w-4 h-4 flex items-center justify-center"
+              >
                 3
               </span>
-            </Bell>
+            </div>
             <div className="w-8 h-8 bg-gray-300 rounded-full" />
           </div>
           <button className="flex items-center bg-black text-white px-3 py-1 rounded">
