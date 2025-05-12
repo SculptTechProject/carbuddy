@@ -23,24 +23,43 @@ import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
-interface MeResponse {
-  id: number;
+export interface MeResponse {
+  id: string;
   email: string;
   firstName: string;
   lastName: string;
   premium: boolean;
   cars: Array<{
-    id: number;
+    id: string;
+    vin: string;
     make: string;
     model: string;
-    upcomingServices: Array<{
+    year: number;
+    engine?: string | null;
+    power?: number | null;
+    kilometers?: number | null;
+    registration?: string | null;
+    purchaseDate?: string | null; // frontend trzyma jako ISO-string
+    fuelType?: string | null;
+    color?: string | null;
+    createdAt: string; // ISO-string
+    ownerId: string;
+    // jeżeli masz też serwisy i naprawy:
+    upcomingServices?: Array<{
       type: string;
-      date: string;
+      date: string; // ISO
     }>;
-    recentRepairs: Array<{
+    recentRepairs?: Array<{
       title: string;
-      date: string;
+      date: string; // ISO
       cost: number;
+    }>;
+    expenses?: Array<{
+      id: string;
+      category: string;
+      amount: number;
+      date: string;
+      description?: string;
     }>;
   }>;
 }
@@ -117,7 +136,7 @@ export default function DashboardPage() {
 
   // Przygotowujemy dane
   const upcomingServices = user.cars.flatMap((car) =>
-    car.upcomingServices.map((svc) => ({
+    (car.upcomingServices ?? []).map((svc) => ({
       icon: getServiceIcon(svc.type),
       title: svc.type,
       details: `${car.make} ${car.model} • ${new Date(
@@ -130,7 +149,7 @@ export default function DashboardPage() {
   );
 
   const repairs = user.cars.flatMap((car) =>
-    car.recentRepairs.map((r) => ({
+    (car.recentRepairs ?? []).map((r) => ({
       title: r.title,
       details: `${car.make} ${car.model} • ${new Date(
         r.date
@@ -188,17 +207,33 @@ export default function DashboardPage() {
       {/* --- MAIN AREA --- */}
       <div className="flex-1 flex flex-col">
         {/* top bar */}
-        <header className="flex items-center justify-between bg-white px-4 py-3 border-b">
+        <header className="flex items-center justify-between bg-white px-4 py-4 border-b">
           <div className="hidden md:flex items-center space-x-4">
             <div className="relative">
-              <Bell className="w-6 h-6 text-gray-600" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                {upcomingServices.length}
-              </span>
+              <div className="relative">
+                <Bell className="w-6 h-6 text-gray-600" />
+                {upcomingServices.length !== 0 && (
+                  <span
+                    className="
+        absolute -top-1 -right-1
+        bg-red-500 text-white text-xs
+        rounded-full w-4 h-4
+        flex items-center justify-center
+      "
+                  >
+                    {upcomingServices.length}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="w-8 h-8 bg-gray-300 rounded-full" />
           </div>
-          <button className="flex items-center bg-black text-white px-3 py-1 rounded">
+          <button
+            onClick={() => {
+              router.push("/dashboard/add-car");
+            }}
+            className="flex items-center bg-black text-white px-3 py-1 rounded"
+          >
             <Plus className="w-4 h-4 mr-2" /> Dodaj pojazd
           </button>
         </header>
@@ -234,7 +269,10 @@ export default function DashboardPage() {
           {activeTab === "przeglad" && (
             <>
               {/* statystyki */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+                data-aos="fade-out"
+              >
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="text-gray-500 mb-2 flex justify-between">
                     <span>Nadchodzące usługi</span>
@@ -322,6 +360,171 @@ export default function DashboardPage() {
                     ))}
                   </ul>
                 </div>
+              </div>
+            </>
+          )}
+          {activeTab === "pojazdy" && (
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              data-aos="fade-out"
+            >
+              {user.cars.map((car) => (
+                <div
+                  key={car.id}
+                  className="bg-white p-4 rounded-lg shadow flex flex-col space-y-2"
+                >
+                  <div className="text-lg font-semibold">
+                    {car.make} {car.model}
+                  </div>
+                  <div className="text-sm text-gray-500">Rok: {car.year}</div>
+                  <div className="text-sm text-gray-500">
+                    VIN:{" "}
+                    <code className="bg-gray-100 px-1 rounded">{car.vin}</code>
+                  </div>
+                  {car.registration && (
+                    <div className="text-sm text-gray-500">
+                      Rejestracja: {car.registration}
+                    </div>
+                  )}
+                  {car.kilometers != null && (
+                    <div className="text-sm text-gray-500">
+                      Przebieg: {car.kilometers.toLocaleString()} km
+                    </div>
+                  )}
+                  {car.color && (
+                    <div className="text-sm text-gray-500">
+                      Kolor: {car.color}
+                    </div>
+                  )}
+                  <button
+                    onClick={() => router.push(`/dashboard/cars/${car.id}`)}
+                    className="mt-auto self-start text-sm text-emerald-600 hover:underline"
+                  >
+                    Szczegóły pojazdu →
+                  </button>
+                </div>
+              ))}
+              {user.cars.length === 0 && (
+                <div className="col-span-full text-center text-gray-500">
+                  Nie masz jeszcze żadnych pojazdów.{" "}
+                  <button
+                    onClick={() => router.push("/dashboard/add-car")}
+                    className="text-emerald-600 hover:underline"
+                  >
+                    Dodaj pierwszy
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          {activeTab === "wydatki" && (
+            <>
+              {/* --- Górne kafelki z podsumowaniem wydatków --- */}
+              <div
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+                data-aos="fade-out"
+              >
+                {/* Wydatki w tym miesiącu */}
+                <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col">
+                  <div className="flex items-center justify-between text-gray-500 mb-2">
+                    <span>Wydatki w tym miesiącu</span>
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1">
+                    {/* sumujemy amount dla expense.date w bieżącym miesiącu */}
+                    {user.cars
+                      .flatMap((c) => c.expenses || [])
+                      .filter((e) => {
+                        const d = new Date(e.date);
+                        const now = new Date();
+                        return (
+                          d.getFullYear() === now.getFullYear() &&
+                          d.getMonth() === now.getMonth()
+                        );
+                      })
+                      .reduce((sum, e) => sum + e.amount, 0)
+                      .toFixed(0)}{" "}
+                    zł
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {user.cars
+                      .flatMap((c) => c.expenses || [])
+                      .filter((e) => {
+                        const d = new Date(e.date);
+                        const now = new Date();
+                        return (
+                          d.getFullYear() === now.getFullYear() &&
+                          d.getMonth() === now.getMonth()
+                        );
+                      }).length + ""}
+                    {" wydatków"}
+                  </div>
+                </div>
+
+                {/* Łączna kwota wydatków */}
+                <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col">
+                  <div className="flex items-center justify-between text-gray-500 mb-2">
+                    <span>Wydatki ogółem</span>
+                    <CreditCard className="w-5 h-5" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1">
+                    {user.cars
+                      .flatMap((c) => c.expenses || [])
+                      .reduce((sum, e) => sum + e.amount, 0)
+                      .toFixed(0)}{" "}
+                    zł
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {user.cars.flatMap((c) => c.expenses || []).length +
+                      " pozycji"}
+                  </div>
+                </div>
+
+                {/* Liczba pojazdów – kopiujemy z overview */}
+                <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col">
+                  <div className="flex items-center justify-between text-gray-500 mb-2">
+                    <span>Liczba pojazdów</span>
+                    <CarIcon className="w-5 h-5" />
+                  </div>
+                  <div className="text-3xl font-bold">{user.cars.length}</div>
+                  <div className="text-sm text-gray-600">
+                    zarejestrowanych aut
+                  </div>
+                </div>
+              </div>
+
+              {/* --- Lista wszystkich wydatków --- */}
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Lista wydatków</h3>
+                <ul className="space-y-4">
+                  {user.cars
+                    .flatMap((car) =>
+                      (car.expenses || []).map((e) => ({
+                        ...e,
+                        carLabel: `${car.make} ${car.model}`,
+                      }))
+                    )
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime()
+                    )
+                    .map((e) => (
+                      <li
+                        key={e.id}
+                        className="flex items-center justify-between"
+                      >
+                        <div>
+                          <div className="font-medium">{e.category}</div>
+                          <div className="text-sm text-gray-500">
+                            {e.carLabel} •{" "}
+                            {new Date(e.date).toLocaleDateString()}
+                            {e.description && ` – ${e.description}`}
+                          </div>
+                        </div>
+                        <div className="font-semibold">{e.amount} zł</div>
+                      </li>
+                    ))}
+                </ul>
               </div>
             </>
           )}

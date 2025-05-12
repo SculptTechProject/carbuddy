@@ -4641,11 +4641,13 @@ export namespace Prisma {
 
   export type CarAvgAggregateOutputType = {
     year: number | null
+    power: number | null
     kilometers: number | null
   }
 
   export type CarSumAggregateOutputType = {
     year: number | null
+    power: number | null
     kilometers: number | null
   }
 
@@ -4655,7 +4657,12 @@ export namespace Prisma {
     make: string | null
     model: string | null
     year: number | null
+    engine: string | null
+    power: number | null
     kilometers: number | null
+    registration: string | null
+    purchaseDate: Date | null
+    fuelType: string | null
     color: string | null
     createdAt: Date | null
     ownerId: string | null
@@ -4667,7 +4674,12 @@ export namespace Prisma {
     make: string | null
     model: string | null
     year: number | null
+    engine: string | null
+    power: number | null
     kilometers: number | null
+    registration: string | null
+    purchaseDate: Date | null
+    fuelType: string | null
     color: string | null
     createdAt: Date | null
     ownerId: string | null
@@ -4679,7 +4691,12 @@ export namespace Prisma {
     make: number
     model: number
     year: number
+    engine: number
+    power: number
     kilometers: number
+    registration: number
+    purchaseDate: number
+    fuelType: number
     color: number
     createdAt: number
     ownerId: number
@@ -4689,11 +4706,13 @@ export namespace Prisma {
 
   export type CarAvgAggregateInputType = {
     year?: true
+    power?: true
     kilometers?: true
   }
 
   export type CarSumAggregateInputType = {
     year?: true
+    power?: true
     kilometers?: true
   }
 
@@ -4703,7 +4722,12 @@ export namespace Prisma {
     make?: true
     model?: true
     year?: true
+    engine?: true
+    power?: true
     kilometers?: true
+    registration?: true
+    purchaseDate?: true
+    fuelType?: true
     color?: true
     createdAt?: true
     ownerId?: true
@@ -4715,7 +4739,12 @@ export namespace Prisma {
     make?: true
     model?: true
     year?: true
+    engine?: true
+    power?: true
     kilometers?: true
+    registration?: true
+    purchaseDate?: true
+    fuelType?: true
     color?: true
     createdAt?: true
     ownerId?: true
@@ -4727,7 +4756,12 @@ export namespace Prisma {
     make?: true
     model?: true
     year?: true
+    engine?: true
+    power?: true
     kilometers?: true
+    registration?: true
+    purchaseDate?: true
+    fuelType?: true
     color?: true
     createdAt?: true
     ownerId?: true
@@ -4826,7 +4860,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine: string | null
+    power: number | null
     kilometers: number | null
+    registration: string | null
+    purchaseDate: Date | null
+    fuelType: string | null
     color: string | null
     createdAt: Date
     ownerId: string
@@ -4857,7 +4896,12 @@ export namespace Prisma {
     make?: boolean
     model?: boolean
     year?: boolean
+    engine?: boolean
+    power?: boolean
     kilometers?: boolean
+    registration?: boolean
+    purchaseDate?: boolean
+    fuelType?: boolean
     color?: boolean
     createdAt?: boolean
     ownerId?: boolean
@@ -4873,7 +4917,12 @@ export namespace Prisma {
     make?: boolean
     model?: boolean
     year?: boolean
+    engine?: boolean
+    power?: boolean
     kilometers?: boolean
+    registration?: boolean
+    purchaseDate?: boolean
+    fuelType?: boolean
     color?: boolean
     createdAt?: boolean
     ownerId?: boolean
@@ -4886,7 +4935,12 @@ export namespace Prisma {
     make?: boolean
     model?: boolean
     year?: boolean
+    engine?: boolean
+    power?: boolean
     kilometers?: boolean
+    registration?: boolean
+    purchaseDate?: boolean
+    fuelType?: boolean
     color?: boolean
     createdAt?: boolean
     ownerId?: boolean
@@ -4899,13 +4953,18 @@ export namespace Prisma {
     make?: boolean
     model?: boolean
     year?: boolean
+    engine?: boolean
+    power?: boolean
     kilometers?: boolean
+    registration?: boolean
+    purchaseDate?: boolean
+    fuelType?: boolean
     color?: boolean
     createdAt?: boolean
     ownerId?: boolean
   }
 
-  export type CarOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "vin" | "make" | "model" | "year" | "kilometers" | "color" | "createdAt" | "ownerId", ExtArgs["result"]["car"]>
+  export type CarOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "vin" | "make" | "model" | "year" | "engine" | "power" | "kilometers" | "registration" | "purchaseDate" | "fuelType" | "color" | "createdAt" | "ownerId", ExtArgs["result"]["car"]>
   export type CarInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     Repair?: boolean | Car$RepairArgs<ExtArgs>
@@ -4932,7 +4991,12 @@ export namespace Prisma {
       make: string
       model: string
       year: number
+      engine: string | null
+      power: number | null
       kilometers: number | null
+      registration: string | null
+      purchaseDate: Date | null
+      fuelType: string | null
       color: string | null
       createdAt: Date
       ownerId: string
@@ -5367,7 +5431,12 @@ export namespace Prisma {
     readonly make: FieldRef<"Car", 'String'>
     readonly model: FieldRef<"Car", 'String'>
     readonly year: FieldRef<"Car", 'Int'>
+    readonly engine: FieldRef<"Car", 'String'>
+    readonly power: FieldRef<"Car", 'Int'>
     readonly kilometers: FieldRef<"Car", 'Int'>
+    readonly registration: FieldRef<"Car", 'String'>
+    readonly purchaseDate: FieldRef<"Car", 'DateTime'>
+    readonly fuelType: FieldRef<"Car", 'String'>
     readonly color: FieldRef<"Car", 'String'>
     readonly createdAt: FieldRef<"Car", 'DateTime'>
     readonly ownerId: FieldRef<"Car", 'String'>
@@ -8099,7 +8168,12 @@ export namespace Prisma {
     make: 'make',
     model: 'model',
     year: 'year',
+    engine: 'engine',
+    power: 'power',
     kilometers: 'kilometers',
+    registration: 'registration',
+    purchaseDate: 'purchaseDate',
+    fuelType: 'fuelType',
     color: 'color',
     createdAt: 'createdAt',
     ownerId: 'ownerId'
@@ -8418,7 +8492,12 @@ export namespace Prisma {
     make?: StringFilter<"Car"> | string
     model?: StringFilter<"Car"> | string
     year?: IntFilter<"Car"> | number
+    engine?: StringNullableFilter<"Car"> | string | null
+    power?: IntNullableFilter<"Car"> | number | null
     kilometers?: IntNullableFilter<"Car"> | number | null
+    registration?: StringNullableFilter<"Car"> | string | null
+    purchaseDate?: DateTimeNullableFilter<"Car"> | Date | string | null
+    fuelType?: StringNullableFilter<"Car"> | string | null
     color?: StringNullableFilter<"Car"> | string | null
     createdAt?: DateTimeFilter<"Car"> | Date | string
     ownerId?: StringFilter<"Car"> | string
@@ -8433,7 +8512,12 @@ export namespace Prisma {
     make?: SortOrder
     model?: SortOrder
     year?: SortOrder
+    engine?: SortOrderInput | SortOrder
+    power?: SortOrderInput | SortOrder
     kilometers?: SortOrderInput | SortOrder
+    registration?: SortOrderInput | SortOrder
+    purchaseDate?: SortOrderInput | SortOrder
+    fuelType?: SortOrderInput | SortOrder
     color?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     ownerId?: SortOrder
@@ -8451,7 +8535,12 @@ export namespace Prisma {
     make?: StringFilter<"Car"> | string
     model?: StringFilter<"Car"> | string
     year?: IntFilter<"Car"> | number
+    engine?: StringNullableFilter<"Car"> | string | null
+    power?: IntNullableFilter<"Car"> | number | null
     kilometers?: IntNullableFilter<"Car"> | number | null
+    registration?: StringNullableFilter<"Car"> | string | null
+    purchaseDate?: DateTimeNullableFilter<"Car"> | Date | string | null
+    fuelType?: StringNullableFilter<"Car"> | string | null
     color?: StringNullableFilter<"Car"> | string | null
     createdAt?: DateTimeFilter<"Car"> | Date | string
     ownerId?: StringFilter<"Car"> | string
@@ -8466,7 +8555,12 @@ export namespace Prisma {
     make?: SortOrder
     model?: SortOrder
     year?: SortOrder
+    engine?: SortOrderInput | SortOrder
+    power?: SortOrderInput | SortOrder
     kilometers?: SortOrderInput | SortOrder
+    registration?: SortOrderInput | SortOrder
+    purchaseDate?: SortOrderInput | SortOrder
+    fuelType?: SortOrderInput | SortOrder
     color?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     ownerId?: SortOrder
@@ -8486,7 +8580,12 @@ export namespace Prisma {
     make?: StringWithAggregatesFilter<"Car"> | string
     model?: StringWithAggregatesFilter<"Car"> | string
     year?: IntWithAggregatesFilter<"Car"> | number
+    engine?: StringNullableWithAggregatesFilter<"Car"> | string | null
+    power?: IntNullableWithAggregatesFilter<"Car"> | number | null
     kilometers?: IntNullableWithAggregatesFilter<"Car"> | number | null
+    registration?: StringNullableWithAggregatesFilter<"Car"> | string | null
+    purchaseDate?: DateTimeNullableWithAggregatesFilter<"Car"> | Date | string | null
+    fuelType?: StringNullableWithAggregatesFilter<"Car"> | string | null
     color?: StringNullableWithAggregatesFilter<"Car"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Car"> | Date | string
     ownerId?: StringWithAggregatesFilter<"Car"> | string
@@ -8815,7 +8914,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     owner: UserCreateNestedOneWithoutCarsInput
@@ -8829,7 +8933,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     ownerId: string
@@ -8843,7 +8952,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutCarsNestedInput
@@ -8857,7 +8971,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
@@ -8871,7 +8990,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     ownerId: string
@@ -8883,7 +9007,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8894,7 +9023,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
@@ -9285,6 +9419,17 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type RepairListRelationFilter = {
     every?: RepairWhereInput
     some?: RepairWhereInput
@@ -9311,7 +9456,12 @@ export namespace Prisma {
     make?: SortOrder
     model?: SortOrder
     year?: SortOrder
+    engine?: SortOrder
+    power?: SortOrder
     kilometers?: SortOrder
+    registration?: SortOrder
+    purchaseDate?: SortOrder
+    fuelType?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     ownerId?: SortOrder
@@ -9319,6 +9469,7 @@ export namespace Prisma {
 
   export type CarAvgOrderByAggregateInput = {
     year?: SortOrder
+    power?: SortOrder
     kilometers?: SortOrder
   }
 
@@ -9328,7 +9479,12 @@ export namespace Prisma {
     make?: SortOrder
     model?: SortOrder
     year?: SortOrder
+    engine?: SortOrder
+    power?: SortOrder
     kilometers?: SortOrder
+    registration?: SortOrder
+    purchaseDate?: SortOrder
+    fuelType?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     ownerId?: SortOrder
@@ -9340,7 +9496,12 @@ export namespace Prisma {
     make?: SortOrder
     model?: SortOrder
     year?: SortOrder
+    engine?: SortOrder
+    power?: SortOrder
     kilometers?: SortOrder
+    registration?: SortOrder
+    purchaseDate?: SortOrder
+    fuelType?: SortOrder
     color?: SortOrder
     createdAt?: SortOrder
     ownerId?: SortOrder
@@ -9348,6 +9509,7 @@ export namespace Prisma {
 
   export type CarSumOrderByAggregateInput = {
     year?: SortOrder
+    power?: SortOrder
     kilometers?: SortOrder
   }
 
@@ -9365,6 +9527,20 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -9633,6 +9809,10 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneRequiredWithoutCarsNestedInput = {
     create?: XOR<UserCreateWithoutCarsInput, UserUncheckedCreateWithoutCarsInput>
     connectOrCreate?: UserCreateOrConnectWithoutCarsInput
@@ -9882,6 +10062,17 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -9907,6 +10098,20 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -9955,7 +10160,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     Repair?: RepairCreateNestedManyWithoutCarInput
@@ -9968,7 +10178,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     Repair?: RepairUncheckedCreateNestedManyWithoutCarInput
@@ -10037,7 +10252,12 @@ export namespace Prisma {
     make?: StringFilter<"Car"> | string
     model?: StringFilter<"Car"> | string
     year?: IntFilter<"Car"> | number
+    engine?: StringNullableFilter<"Car"> | string | null
+    power?: IntNullableFilter<"Car"> | number | null
     kilometers?: IntNullableFilter<"Car"> | number | null
+    registration?: StringNullableFilter<"Car"> | string | null
+    purchaseDate?: DateTimeNullableFilter<"Car"> | Date | string | null
+    fuelType?: StringNullableFilter<"Car"> | string | null
     color?: StringNullableFilter<"Car"> | string | null
     createdAt?: DateTimeFilter<"Car"> | Date | string
     ownerId?: StringFilter<"Car"> | string
@@ -10293,7 +10513,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     owner: UserCreateNestedOneWithoutCarsInput
@@ -10306,7 +10531,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     ownerId: string
@@ -10335,7 +10565,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutCarsNestedInput
@@ -10348,7 +10583,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
@@ -10361,7 +10601,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     owner: UserCreateNestedOneWithoutCarsInput
@@ -10374,7 +10619,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
     ownerId: string
@@ -10403,7 +10653,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutCarsNestedInput
@@ -10416,7 +10671,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
@@ -10436,7 +10696,12 @@ export namespace Prisma {
     make: string
     model: string
     year: number
+    engine?: string | null
+    power?: number | null
     kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
     color?: string | null
     createdAt?: Date | string
   }
@@ -10468,7 +10733,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Repair?: RepairUpdateManyWithoutCarNestedInput
@@ -10481,7 +10751,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Repair?: RepairUncheckedUpdateManyWithoutCarNestedInput
@@ -10494,7 +10769,12 @@ export namespace Prisma {
     make?: StringFieldUpdateOperationsInput | string
     model?: StringFieldUpdateOperationsInput | string
     year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
     kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
     color?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -153,7 +153,12 @@ exports.Prisma.CarScalarFieldEnum = {
   make: 'make',
   model: 'model',
   year: 'year',
+  engine: 'engine',
+  power: 'power',
   kilometers: 'kilometers',
+  registration: 'registration',
+  purchaseDate: 'purchaseDate',
+  fuelType: 'fuelType',
   color: 'color',
   createdAt: 'createdAt',
   ownerId: 'ownerId'

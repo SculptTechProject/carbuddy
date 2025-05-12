@@ -9,21 +9,22 @@ import {
   getCarExpenses,
   getCarSummary,
 } from "../../controllers/car/car.controller";
+import { authenticate } from "../../middleware/user.authenticate";
 
 const router = Router();
 
 // CRUD samochodów
-router.post("/cars", createCar);
-router.get("/cars", getCars);
-router.get("/cars/:carId", getCarById);
-router.put("/cars/:carId", updateCar);
-router.delete("/cars/:carId", deleteCar);
+router.post("/cars", authenticate, createCar);
+router.get("/cars", authenticate, getCars);
+router.get("/cars/:carId", authenticate, getCarById);
+router.put("/cars/:carId", authenticate, updateCar);
+router.delete("/cars/:carId", authenticate, deleteCar);
 
 // Naprawy i wydatki
-router.get("/cars/:carId/repairs", getCarRepairs);
-router.get("/cars/:carId/expenses", getCarExpenses);
+router.get("/cars/:carId/repairs", authenticate, getCarRepairs);
+router.get("/cars/:carId/expenses", authenticate, getCarExpenses);
 
 // Podsumowanie dashboardowe
-router.get("/cars/:carId/summary", getCarSummary);
+router.get("/cars/:carId/summary", authenticate, getCarSummary);
 
 export default router;

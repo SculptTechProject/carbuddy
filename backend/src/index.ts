@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import authAdmin from "./routes/admin/auth.admin.routes";
 import authUser from "./routes/auth/auth.user.routes";
 import getUserData from "./routes/user/user.routes";
+import carRoutes from "./routes/car/car.routes";
 /* 
   ^^^^^^^^^^^ Routes imports ^^^^^^^^^^^
 */
@@ -37,6 +38,7 @@ app.get("/", (req: Request, res: Response) => {
 // Auth user
 app.use("/api/v1", authUser);
 app.use("/api/v1", getUserData);
+app.use("/api/v1", carRoutes);
 /* 
  & END ROUTES
 */

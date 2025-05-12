@@ -51,14 +51,19 @@ model UserToken {
 }
 
 model Car {
-  id         String   @id @default(cuid())
-  vin        String   @unique
-  make       String
-  model      String
-  year       Int
-  kilometers Int?
-  color      String?
-  createdAt  DateTime @default(now())
+  id           String    @id @default(cuid())
+  vin          String    @unique
+  make         String
+  model        String
+  year         Int
+  engine       String? // np. "2.0 TDI"
+  power        Int? // moc w KM
+  kilometers   Int? // przebieg
+  registration String? // numer rejestracyjny
+  purchaseDate DateTime? // data zakupu
+  fuelType     String? // rodzaj paliwa
+  color        String?
+  createdAt    DateTime  @default(now())
 
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String

@@ -18,10 +18,32 @@ export interface AuthRequest extends Request {
       make: string;
       model: string;
       year: number;
-      kilometers: number | null;
-      color: string | null;
+      engine?: string | null;
+      power?: number | null;
+      kilometers?: number | null;
+      registration?: string | null;
+      purchaseDate?: Date | null;
+      fuelType?: string | null;
+      color?: string | null;
       createdAt: Date;
       ownerId: string;
+      // jeśli masz również Repair i Expense w relacji, możesz je tu dodać:
+      Repair?: Array<{
+        id: string;
+        date: Date;
+        type: string;
+        description?: string | null;
+        cost: number;
+        carId: string;
+      }>;
+      Expense?: Array<{
+        id: string;
+        date: Date;
+        category: string;
+        amount: number;
+        description?: string | null;
+        carId: string;
+      }>;
     }>;
   };
 }
@@ -57,10 +79,36 @@ export const authenticate = async (
             make: true,
             model: true,
             year: true,
+            engine: true,
+            power: true,
             kilometers: true,
+            registration: true,
+            purchaseDate: true,
+            fuelType: true,
             color: true,
             createdAt: true,
             ownerId: true,
+            // jeśli chcesz od razu Repair/Expense:
+            Repair: {
+              select: {
+                id: true,
+                date: true,
+                type: true,
+                description: true,
+                cost: true,
+                carId: true,
+              },
+            },
+            Expense: {
+              select: {
+                id: true,
+                date: true,
+                category: true,
+                amount: true,
+                description: true,
+                carId: true,
+              },
+            },
           },
         },
       },

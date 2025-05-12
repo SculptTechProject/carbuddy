@@ -9,11 +9,39 @@ export const createCar = async (
   next: NextFunction
 ) => {
   try {
-    const { vin, make, model, year, kilometers, color, ownerId } = req.body;
+    const ownerId = req.user!.id; // masz dzięki authenticate
+    const {
+      vin,
+      make,
+      model,
+      year,
+      engine,
+      power,
+      kilometers,
+      registration,
+      purchaseDate,
+      fuelType,
+      color,
+    } = req.body;
+
     const car = await prisma.car.create({
-      data: { vin, make, model, year, kilometers, color, ownerId },
+      data: {
+        vin,
+        make,
+        model,
+        year: Number(year),
+        engine,
+        power: power ? Number(power) : undefined,
+        kilometers: kilometers ? Number(kilometers) : undefined,
+        registration,
+        purchaseDate: purchaseDate ? new Date(purchaseDate) : undefined,
+        fuelType,
+        color,
+        owner: { connect: { id: ownerId } },
+      },
     });
-    res.status(201).json(car);
+
+    res.status(201).json({ car });
   } catch (err) {
     next(err);
   }
