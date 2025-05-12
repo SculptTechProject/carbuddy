@@ -51,7 +51,12 @@ export default function LoginPage() {
         <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <Car className="mx-auto mb-2 w-8 h-8 text-emerald-500" />
+            <Car
+              onClick={() => {
+                router.push("/");
+              }}
+              className="mx-auto mb-2 w-8 h-8 text-emerald-500 cursor-pointer"
+            />
             <h1 className="text-2xl font-semibold text-gray-700 pb-2">
               Zaloguj się do swojego konta
             </h1>

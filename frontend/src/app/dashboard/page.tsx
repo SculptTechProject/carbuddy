@@ -1,25 +1,16 @@
 "use client";
 
-import React, { FormEvent, useEffect, useState } from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Menu,
-  Bell,
   Car as CarIcon,
   Calendar,
   CreditCard,
-  List,
   FileText,
   Settings as Gear,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Cpu,
-  Plus,
-  LogOut,
-  Settings,
 } from "lucide-react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -71,25 +62,6 @@ export default function DashboardPage() {
   >("przeglad");
   const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const handleLogout = async (e: FormEvent) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    try {
-      if (token) {
-        await axios.post(
-          `${API_URL}/api/v1/user/logout`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      localStorage.removeItem("token");
-      router.replace("/login");
-    }
-  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -160,84 +132,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex bg-gray-100">
-      {/* --- SIDEBAR --- */}
-      <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200">
-        {/* logo */}
-        <div className="flex items-center h-16 px-6 border-b">
-          <CarIcon className="w-6 h-6 text-emerald-500 mr-2" />
-          <span className="font-bold text-lg">CarBuddy</span>
-        </div>
-        {/* plan */}
-        <nav className="flex-1 p-4 space-y-2 text-gray-700 text-sm">
-          <div className="mb-4 px-2 py-1 bg-emerald-50 text-emerald-600 rounded">
-            Plan:{" "}
-            <span className="font-medium">{user.premium ? "Pro" : "Free"}</span>
-          </div>
-          <Link
-            href="#"
-            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
-          >
-            <List className="w-5 h-5 mr-3" /> Dashboard
-          </Link>
-          <Link
-            href="#"
-            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
-          >
-            <CarIcon className="w-5 h-5 mr-3" /> Moje pojazdy (
-            {user.cars.length})
-          </Link>
-          {/* … pozostałe linki */}
-        </nav>
-        <div className="p-4 border-t">
-          <Link
-            href="#"
-            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
-          >
-            <Settings className="w-5 h-5 mr-3" /> Ustawienia
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="mt-2 flex items-center w-full px-2 py-2 rounded hover:bg-gray-50 text-left"
-          >
-            <LogOut className="w-5 h-5 mr-3" /> Wyloguj
-          </button>
-        </div>
-      </aside>
-
       {/* --- MAIN AREA --- */}
       <div className="flex-1 flex flex-col">
-        {/* top bar */}
-        <header className="flex items-center justify-between bg-white px-4 py-4 border-b">
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
-              <div className="relative">
-                <Bell className="w-6 h-6 text-gray-600" />
-                {upcomingServices.length !== 0 && (
-                  <span
-                    className="
-        absolute -top-1 -right-1
-        bg-red-500 text-white text-xs
-        rounded-full w-4 h-4
-        flex items-center justify-center
-      "
-                  >
-                    {upcomingServices.length}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="w-8 h-8 bg-gray-300 rounded-full" />
-          </div>
-          <button
-            onClick={() => {
-              router.push("/dashboard/add-car");
-            }}
-            className="flex items-center bg-black text-white px-3 py-1 rounded"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Dodaj pojazd
-          </button>
-        </header>
-
         {/* content */}
         <main className="p-6 overflow-auto">
           <h2 className="text-2xl font-semibold mb-4">
@@ -257,8 +153,8 @@ export default function DashboardPage() {
                 onClick={() => setActiveTab(tab.key as any)}
                 className={`px-4 py-1 rounded-t-lg font-medium ${
                   activeTab === tab.key
-                    ? "bg-white border-t border-x border-gray-200"
-                    : "bg-gray-100 text-gray-600"
+                    ? "bg-white border-t border-x border-gray-200 "
+                    : "bg-gray-100 text-gray-600 cursor-pointer"
                 }`}
               >
                 {tab.label}
@@ -396,12 +292,12 @@ export default function DashboardPage() {
                       Kolor: {car.color}
                     </div>
                   )}
-                  <button
-                    onClick={() => router.push(`/dashboard/cars/${car.id}`)}
-                    className="mt-auto self-start text-sm text-emerald-600 hover:underline"
+                  <Link
+                    href={`/dashboard/cars/${car.id}`}
+                    className="mt-auto self-start text-sm text-emerald-600 hover:underline cursor-pointer"
                   >
                     Szczegóły pojazdu →
-                  </button>
+                  </Link>
                 </div>
               ))}
               {user.cars.length === 0 && (
@@ -409,7 +305,7 @@ export default function DashboardPage() {
                   Nie masz jeszcze żadnych pojazdów.{" "}
                   <button
                     onClick={() => router.push("/dashboard/add-car")}
-                    className="text-emerald-600 hover:underline"
+                    className="text-emerald-600 hover:underline cursor-pointer"
                   >
                     Dodaj pierwszy
                   </button>

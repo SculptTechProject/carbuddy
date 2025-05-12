@@ -185,13 +185,12 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <div className="relative h-80 w-full">
+          <div className="relative h-80 w-full pl-8">
             <Image
               src={heroImg}
               alt="Podgląd aplikacji"
               className="object-cover rounded-lg shadow-lg"
-              height={650}
-              width={650}
+              width={500}
             />
           </div>
         </section>
@@ -283,40 +282,52 @@ export default function HomePage() {
         <section id="pricing" className="bg-gray-50 py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold">Cennik</h2>
-            <div className="mt-10 grid md:grid-cols-2 gap-8">
-              <Card className="p-6">
+            <p className="mt-2 text-gray-600">
+              Wybierz plan idealny dla siebie — od indywidualnego kierowcy po
+              małą flotę.
+            </p>
+
+            <div className="mt-10 grid gap-8 grid-cols-1 md:grid-cols-3">
+              {/* Free */}
+              <Card className="p-6 border border-gray-200 hover:shadow-lg transition">
                 <CardHeader>
-                  <CardTitle>Free</CardTitle>
-                  <p className="text-2xl font-bold mt-2">0 zł</p>
-                  <CardDescription>Podstawowe funkcje</CardDescription>
+                  <CardTitle className="text-xl">Free</CardTitle>
+                  <p className="text-3xl font-bold mt-4">0&nbsp;zł</p>
+                  <CardDescription className="mt-2 text-gray-600">
+                    Podstawowe wsparcie dla jednoauto.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ul className="mt-4 space-y-2 text-left mb-10">
-                    <li>1 pojazd</li>
-                    <li>Przypomnienia</li>
-                    <li>Historia napraw</li>
+                  <ul className="my-9 space-y-3 text-left">
+                    <li>📍 1 pojazd</li>
+                    <li>⏰ Przypomnienia o terminach</li>
+                    <li>📝 Historia napraw</li>
+                    <li>📊 Podstawowy dashboard wydatków</li>
                   </ul>
                 </CardContent>
                 <CardFooter>
                   <Button className="w-full" asChild>
-                    <Link href="/register">Rozpocznij za darmo</Link>
+                    <Link href="/register">Zarejestruj się za darmo</Link>
                   </Button>
                 </CardFooter>
               </Card>
-              <Card className="p-6 border-2 border-emerald-500 bg-emerald-50">
+
+              {/* Pro */}
+              <Card className="p-6 border-2 border-emerald-500 bg-emerald-50 hover:shadow-lg transition">
                 <CardHeader>
-                  <CardTitle>Pro</CardTitle>
-                  <p className="text-2xl font-bold mt-2">19,99 zł/mies</p>
-                  <div className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm">
-                    Polecany
-                  </div>
+                  <CardTitle className="text-xl">Pro</CardTitle>
+                  <p className="text-3xl font-bold mt-4">19,99&nbsp;zł/mies.</p>
+                  <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm mt-2">
+                    Najpopularniejszy
+                  </span>
                 </CardHeader>
                 <CardContent>
-                  <ul className="mt-4 space-y-2 text-left mb-2">
-                    <li>Nieograniczona liczba pojazdów</li>
-                    <li>Zaawansowane przypomnienia</li>
-                    <li>Raporty wydatków</li>
-                    <li>Integracja z kalendarzem</li>
+                  <ul className="my-4 space-y-3 text-left">
+                    <li>🚗 Nieograniczona liczba pojazdów</li>
+                    <li>🔔 Zaawansowane powiadomienia (SMS & e-mail)</li>
+                    <li>📈 Szczegółowe raporty wydatków</li>
+                    <li>📆 Integracja z Google/Apple Calendar</li>
+                    <li>📁 Eksport danych do CSV/PDF</li>
                   </ul>
                 </CardContent>
                 <CardFooter>
@@ -324,7 +335,32 @@ export default function HomePage() {
                     className="w-full bg-emerald-600 hover:bg-emerald-700"
                     asChild
                   >
-                    <Link href="/register?plan=pro">Wybierz plan Pro</Link>
+                    <Link href="/register?plan=pro">Wybierz Pro</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+
+              {/* Enterprise */}
+              <Card className="p-6 border border-gray-200 hover:shadow-lg transition">
+                <CardHeader>
+                  <CardTitle className="text-xl">Enterprise</CardTitle>
+                  <p className="text-3xl font-bold mt-4">Oferta indyw.</p>
+                  <CardDescription className="mt-2 text-gray-600">
+                    Kompleksowe zarządzanie flotą
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="my-4 space-y-3 text-left">
+                    <li>👥 Multi-user: role i uprawnienia</li>
+                    <li>📑 Raporty kosztów dla całej floty</li>
+                    <li>🔗 API i integracje warsztatowe</li>
+                    <li>📍 Geolokalizacja warsztatów i rezerwacje</li>
+                    <li>🛠︎ Priorytetowe wsparcie 24/7</li>
+                  </ul>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full" asChild>
+                    <Link href="/contact-sales">Skontaktuj się</Link>
                   </Button>
                 </CardFooter>
               </Card>
@@ -338,7 +374,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold text-center">FAQ</h2>
             <div className="mt-6 space-y-4">
               {faqs.map((faq) => (
-                <div key={faq.value} className="border-b">
+                <div key={faq.value} className="border-b ">
                   <button
                     className="w-full flex justify-between items-center py-4 text-left"
                     onClick={() =>
@@ -349,8 +385,8 @@ export default function HomePage() {
                     <ChevronRight
                       className={
                         openFaq === faq.value
-                          ? "rotate-90 transition-transform"
-                          : "transition-transform"
+                          ? "rotate-90 transition-transform cursor-pointer"
+                          : "transition-transform cursor-pointer"
                       }
                     />
                   </button>

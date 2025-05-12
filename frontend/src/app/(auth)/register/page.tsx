@@ -6,6 +6,7 @@ import axios from "axios";
 import { Car } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 type Plan = "free" | "pro";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
@@ -21,6 +22,7 @@ interface FormState {
 }
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [form, setForm] = useState<FormState>({
     firstName: "",
     lastName: "",
@@ -62,7 +64,7 @@ export default function RegisterPage() {
         { headers: { "Content-Type": "application/json" } }
       );
       window.location.href = "/login";
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const message =
         err.response?.data?.error || err.message || "Coś poszło nie tak";
@@ -81,7 +83,12 @@ export default function RegisterPage() {
         <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-8">
           {/* header */}
           <div className="text-center mb-8">
-            <Car className="mx-auto mb-2 w-8 h-8 text-emerald-500" />
+            <Car
+              onClick={() => {
+                router.push("/");
+              }}
+              className="mx-auto mb-2 w-8 h-8 text-emerald-500 cursor-pointer"
+            />
             <h1 className="text-2xl font-semibold text-gray-700">
               Utwórz nowe konto
             </h1>

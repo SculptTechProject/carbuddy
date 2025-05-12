@@ -207,14 +207,14 @@ export default function AddCarPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 border rounded"
+            className="px-4 py-2 border rounded cursor-pointer"
           >
             Anuluj
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
+            className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 cursor-pointer"
           >
             {loading ? "Dodaję…" : "Dodaj pojazd"}
           </button>
