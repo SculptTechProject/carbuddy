@@ -148,6 +148,7 @@ export const getCarExpenses = async (
       where: { carId },
       orderBy: { date: "desc" },
     });
+    console.log("Expenses found:", expenses);
     res.json(expenses);
   } catch (err) {
     next(err);
@@ -187,3 +188,45 @@ export const getCarSummary = async (
     next(err);
   }
 };
+
+export const postCarExpenses = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+): Promise<void> => {
+  try {
+    const carId = req.params.carId;
+    const userId = req.user!.id;
+
+    // Verify car exists and belongs to user
+    const car = await prisma.car.findUnique({
+      where: {
+        id: carId,
+        ownerId: userId
+      }
+    });
+    if (!car) {
+      res.status(404).json({ message: 'Samochód nie znaleziony.' });
+      return;
+    }
+
+    const { date, category, amount, description } = req.body;
+
+    // Create expense using Prisma
+    const expense = await prisma.expense.create({
+      data: {
+        carId,
+        date: new Date(date),
+        category,
+        amount: Number(amount),
+        description,
+      }
+    });
+
+    res.status(201).json({ expense });
+    return;
+  } catch (err) {
+    next(err);
+  }
+};
+

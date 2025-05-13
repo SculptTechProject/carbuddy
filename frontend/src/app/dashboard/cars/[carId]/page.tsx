@@ -58,20 +58,12 @@ export default function CarDetailsPage() {
     (async () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-        // 1) pojedynczy Car
-        const carRes = await axios.get<Car>(`${API_URL}/api/v1/cars/${carId}`, {
-          headers,
-        });
-        // 2) lista napraw
-        const repRes = await axios.get<Repair[]>(
-          `${API_URL}/api/v1/cars/${carId}/repairs`,
-          { headers }
-        );
-        // 3) lista wydatków
-        const expRes = await axios.get<Expense[]>(
-          `${API_URL}/api/v1/cars/${carId}/expenses`,
-          { headers }
-        );
+
+        const [carRes, repRes, expRes] = await Promise.all([
+          axios.get<Car>(`${API_URL}/api/v1/cars/${carId}`, { headers }),
+          axios.get<Repair[]>(`${API_URL}/api/v1/cars/${carId}/repairs`, { headers }),
+          axios.get<Expense[]>(`${API_URL}/api/v1/cars/${carId}/expenses`, { headers }),
+        ]);
 
         setCar(carRes.data);
         setRepairs(repRes.data);
@@ -87,122 +79,114 @@ export default function CarDetailsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen justify-center items-center">
-        <HashLoader size={60} />
-      </div>
+        <div className="flex h-screen justify-center items-center">
+          <HashLoader size={60} />
+        </div>
     );
   }
+
   if (!car) {
     return (
-      <div className="p-6 text-center">
-        <p className="text-red-600">Pojazd nie został znaleziony.</p>
-        <button
-          onClick={() => router.back()}
-          className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          ← Wróć
-        </button>
-      </div>
+        <div className="p-6 text-center">
+          <p className="text-red-600 font-medium">Pojazd nie został znaleziony.</p>
+          <button
+              onClick={() => router.back()}
+              className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+          >
+            ← Wróć
+          </button>
+        </div>
     );
   }
 
+  // helper to format date
+  const formatDate = (iso: string) => new Date(iso).toLocaleDateString();
+
+  const details = [
+    { label: 'VIN', value: car.vin },
+    { label: 'Rejestracja', value: car.registration },
+    { label: 'Przebieg', value: car.kilometers ? `${car.kilometers.toLocaleString()} km` : null },
+    { label: 'Silnik', value: car.engine },
+    { label: 'Moc', value: car.power ? `${car.power} KM` : null },
+    { label: 'Paliwo', value: car.fuelType },
+    { label: 'Kolor', value: car.color },
+    { label: 'Data zakupu', value: car.purchaseDate ? formatDate(car.purchaseDate) : null },
+  ];
+
   return (
-    <div className="p-6">
-      <button
-        onClick={() => router.back()}
-        className="text-sm text-emerald-600 hover:underline mb-4 block"
-      >
-        ← Wróć do listy pojazdów
-      </button>
+      <div className="p-6 space-y-8">
+        <button
+            onClick={() => router.back()}
+            className="text-sm text-emerald-600 hover:underline"
+        >
+          ← Wróć do listy pojazdów
+        </button>
 
-      <h1 className="text-2xl font-semibold mb-4">
-        {car.make} {car.model} ({car.year})
-      </h1>
-      <ul className="mb-8 space-y-1 text-gray-700">
-        <li>
-          <strong>VIN:</strong> {car.vin}
-        </li>
-        {car.registration && (
-          <li>
-            <strong>Rejestracja:</strong> {car.registration}
-          </li>
-        )}
-        {car.kilometers != null && (
-          <li>
-            <strong>Przebieg:</strong> {car.kilometers.toLocaleString()} km
-          </li>
-        )}
-        {car.engine && (
-          <li>
-            <strong>Silnik:</strong> {car.engine}
-          </li>
-        )}
-        {car.power != null && (
-          <li>
-            <strong>Moc:</strong> {car.power} KM
-          </li>
-        )}
-        {car.fuelType && (
-          <li>
-            <strong>Paliwo:</strong> {car.fuelType}
-          </li>
-        )}
-        {car.color && (
-          <li>
-            <strong>Kolor:</strong> {car.color}
-          </li>
-        )}
-        {car.purchaseDate && (
-          <li>
-            <strong>Data zakupu:</strong>{" "}
-            {new Date(car.purchaseDate).toLocaleDateString()}
-          </li>
-        )}
-      </ul>
+        <div className="bg-white shadow rounded-lg p-6">
+          <h1 className="text-2xl font-semibold mb-4">
+            {car.make} {car.model} ({car.year})
+          </h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-gray-700">
+            {details.map((d) =>
+                d.value ? (
+                    <div key={d.label} className="flex">
+                      <span className="w-40 font-medium text-gray-800">{d.label}:</span>
+                      <span>{d.value}</span>
+                    </div>
+                ) : null
+            )}
+          </div>
+        </div>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Naprawy</h2>
-        {repairs.length > 0 ? (
-          <ul className="space-y-3">
-            {repairs.map((r) => (
-              <li key={r.id} className="flex justify-between">
-                <div>
-                  <div className="font-medium">{r.type}</div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(r.date).toLocaleDateString()}
-                    {r.description ? ` • ${r.description}` : ""}
-                  </div>
-                </div>
-                <div className="font-semibold">{r.cost} zł</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">Brak zarejestrowanych napraw.</p>
-        )}
-      </section>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <section className="bg-white shadow rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Naprawy</h2>
+            {repairs.length ? (
+                <ul className="space-y-4">
+                  {repairs.map((r) => (
+                      <li
+                          key={r.id}
+                          className="flex justify-between items-start border-b pb-4 last:border-0"
+                      >
+                        <div>
+                          <div className="font-medium text-gray-800">{r.type}</div>
+                          <div className="text-sm text-gray-500">
+                            {formatDate(r.date)}{r.description && ` • ${r.description}`}
+                          </div>
+                        </div>
+                        <div className="font-semibold text-gray-900">{r.cost} zł</div>
+                      </li>
+                  ))}
+                </ul>
+            ) : (
+                <p className="text-gray-500">Brak zarejestrowanych napraw.</p>
+            )}
+          </section>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">Wydatki</h2>
-        {expenses.length > 0 ? (
-          <ul className="space-y-3">
-            {expenses.map((e) => (
-              <li key={e.id} className="flex justify-between">
-                <div>
-                  <div className="font-medium">{e.category}</div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(e.date).toLocaleDateString()}
-                    {e.description ? ` • ${e.description}` : ""}
-                  </div>
-                </div>
-                <div className="font-semibold">{e.amount} zł</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">Brak zarejestrowanych wydatków.</p>
-        )}
-      </section>
-    </div>
+          <section className="bg-white shadow rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Wydatki</h2>
+            {expenses.length > 0 ? (
+                <ul className="divide-y divide-gray-200">
+                  {expenses.map((e) => (
+                      <li key={e.id} className="flex items-start py-4">
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-800">{e.category}</div>
+                          <div className="text-sm text-gray-500">
+                            {formatDate(e.date)}
+                            {e.description ? <span> • {e.description}</span> : null}
+                          </div>
+                        </div>
+                        <div className="ml-6 text-right font-semibold text-gray-900 min-w-[5rem]">
+                          {e.amount} zł
+                        </div>
+                      </li>
+                  ))}
+                </ul>
+            ) : (
+                <p className="text-gray-500">Brak zarejestrowanych wydatków.</p>
+            )}
+          </section>
+        </div>
+      </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   getCarRepairs,
   getCarExpenses,
   getCarSummary,
+  postCarExpenses,
 } from "../../controllers/car/car.controller";
 import { authenticate } from "../../middleware/user.authenticate";
 
@@ -23,6 +24,7 @@ router.delete("/cars/:carId", authenticate, deleteCar);
 // Naprawy i wydatki
 router.get("/cars/:carId/repairs", authenticate, getCarRepairs);
 router.get("/cars/:carId/expenses", authenticate, getCarExpenses);
+router.post("/cars/:carId/expenses", authenticate, postCarExpenses);
 
 // Podsumowanie dashboardowe
 router.get("/cars/:carId/summary", authenticate, getCarSummary);
