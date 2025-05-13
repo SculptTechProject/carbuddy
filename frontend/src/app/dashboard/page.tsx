@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { HashLoader } from "react-spinners";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -35,7 +36,6 @@ export interface MeResponse {
     color?: string | null;
     createdAt: string; // ISO-string
     ownerId: string;
-    // jeżeli masz też serwisy i naprawy:
     upcomingServices?: Array<{
       type: string;
       date: string; // ISO
@@ -92,7 +92,12 @@ export default function DashboardPage() {
     })();
   }, [router]);
 
-  if (loading) return <div>Ładowanie…</div>;
+  if (loading)
+    return (
+      <div className="flex h-screen justify-center items-center">
+        <HashLoader size={60} />
+      </div>
+    );
   if (!user) return null;
 
   // Ikony według typu usługi

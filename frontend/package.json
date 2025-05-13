@@ -16,9 +16,11 @@
     "lucide-react": "^0.509.0",
     "next": "15.3.2",
     "react": "^19.0.0",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-spinners": "^0.17.0"
+    "react-spinners": "^0.17.0",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -26,6 +28,7 @@
     "@types/aos": "^3.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
+    "@types/react-datepicker": "^6.2.0",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",

@@ -5,6 +5,12 @@ import Link from "next/link";
 import {
   List,
   Car as CarIcon,
+  Calendar,
+  FileText,
+  CreditCard,
+  BarChart,
+  Search,
+  Cpu,
   Settings,
   LogOut,
   Bell,
@@ -24,7 +30,6 @@ export default function DashboardLayout({ children }: Props) {
   };
 
   return (
-    // 1. h-screen + overflow-hidden na root
     <div className="h-screen flex bg-gray-100 overflow-hidden">
       {/* --- SIDEBAR --- */}
       <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200 h-full">
@@ -32,7 +37,7 @@ export default function DashboardLayout({ children }: Props) {
           <CarIcon className="w-6 h-6 text-emerald-500 mr-2" />
           <span className="font-bold text-lg text-gray-700">CarBuddy</span>
         </div>
-        {/* nav rozciąga się na całą dostępną przestrzeń */}
+
         <nav className="flex-1 p-4 space-y-2 text-gray-700 text-sm">
           <Link
             href="/dashboard"
@@ -46,7 +51,44 @@ export default function DashboardLayout({ children }: Props) {
           >
             <CarIcon className="w-5 h-5 mr-3" /> Moje pojazdy
           </Link>
+          <Link
+            href="/dashboard/terminarz"
+            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
+          >
+            <Calendar className="w-5 h-5 mr-3" /> Terminarz
+          </Link>
+          <Link
+            href="/dashboard/historia"
+            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
+          >
+            <FileText className="w-5 h-5 mr-3" /> Historia napraw
+          </Link>
+          <Link
+            href="/dashboard/expenses"
+            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
+          >
+            <CreditCard className="w-5 h-5 mr-3" /> Wydatki
+          </Link>
+          <Link
+            href="/dashboard/analityka"
+            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
+          >
+            <BarChart className="w-5 h-5 mr-3" /> Analityka
+          </Link>
+          <Link
+            href="/dashboard/warsztaty"
+            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
+          >
+            <Search className="w-5 h-5 mr-3" /> Wyszukiwarka warsztatów
+          </Link>
+          <Link
+            href="/dashboard/predykcja"
+            className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
+          >
+            <Cpu className="w-5 h-5 mr-3" /> Predykcja serwisowa
+          </Link>
         </nav>
+
         <div className="p-4 border-t">
           <Link
             href="/dashboard/settings"
@@ -63,6 +105,7 @@ export default function DashboardLayout({ children }: Props) {
         </div>
       </aside>
 
+      {/* --- GŁÓWNA SEKCJA --- */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Navbar */}
         <header className="flex-none flex items-center justify-between bg-white px-6 py-3 border-b">
@@ -78,7 +121,7 @@ export default function DashboardLayout({ children }: Props) {
           </button>
         </header>
 
-        {/* scroll tylko w tym main */}
+        {/* scroll tylko w main */}
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
     </div>

@@ -100,7 +100,7 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+          {error && <p className="text-red-500 mb-4 text-center" data-aos="slide-down">{error}</p>}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* dwie kolumny na md+ */}
