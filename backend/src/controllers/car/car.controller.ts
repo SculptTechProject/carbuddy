@@ -148,7 +148,6 @@ export const getCarExpenses = async (
       where: { carId },
       orderBy: { date: "desc" },
     });
-    console.log("Expenses found:", expenses);
     res.json(expenses);
   } catch (err) {
     next(err);
@@ -190,9 +189,9 @@ export const getCarSummary = async (
 };
 
 export const postCarExpenses = async (
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const carId = req.params.carId;
@@ -202,11 +201,11 @@ export const postCarExpenses = async (
     const car = await prisma.car.findUnique({
       where: {
         id: carId,
-        ownerId: userId
-      }
+        ownerId: userId,
+      },
     });
     if (!car) {
-      res.status(404).json({ message: 'Samochód nie znaleziony.' });
+      res.status(404).json({ message: "Samochód nie znaleziony." });
       return;
     }
 
@@ -220,11 +219,106 @@ export const postCarExpenses = async (
         category,
         amount: Number(amount),
         description,
-      }
+      },
     });
 
     res.status(201).json({ expense });
     return;
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const postCarRepairs = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const carId = req.params.carId;
+    const userId = req.user!.id;
+
+    // 1. Upewnij się, że auto należy do zalogowanego usera
+    const car = await prisma.car.findUnique({
+      where: { id: carId, ownerId: userId },
+    });
+    if (!car) {
+      res.status(404).json({ message: "Samochód nie znaleziony." });
+      return;
+    }
+
+    // 2. Wyciągnij dane z body
+    const { date, type, description, cost } = req.body;
+    if (!date || !type || cost == null) {
+      res
+        .status(400)
+        .json({ message: "Brakuje wymaganych pól: date, type, cost." });
+      return;
+    }
+
+    // 3. Stwórz wpis w tabeli repair
+    const repair = await prisma.repair.create({
+      data: {
+        carId,
+        date: new Date(date),
+        type,
+        description,
+        cost: Number(cost),
+      },
+    });
+
+    // 4. Zwróć 201 + stworzony obiekt
+    res.status(201).json({ repair });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getRepairById = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const repairId = req.params.repairId;
+
+    const repair = await prisma.repair.findUnique({
+      where: { id: repairId },
+      include: {
+        car: {
+          select: {
+            make: true,
+            model: true,
+            registration: true,
+          },
+        },
+      },
+    });
+
+    if (!repair) {
+      res.status(404).json({ message: "Naprawa nie została znaleziona." });
+      return;
+    }
+
+    // Można dodać sprawdzenie, czy repair.car.ownerId === req.user!.id (dla bezpieczeństwa)
+    res.json(repair);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getPlannedRepairs = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const carId = req.params.carId;
+    const planned = await prisma.plannedRepair.findMany({
+      where: { carId },
+      orderBy: { date: "asc" },
+    });
+    res.json(planned);
   } catch (err) {
     next(err);
   }

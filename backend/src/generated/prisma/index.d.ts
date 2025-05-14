@@ -43,6 +43,11 @@ export type Repair = $Result.DefaultSelection<Prisma.$RepairPayload>
  * 
  */
 export type Expense = $Result.DefaultSelection<Prisma.$ExpensePayload>
+/**
+ * Model PlannedRepair
+ * 
+ */
+export type PlannedRepair = $Result.DefaultSelection<Prisma.$PlannedRepairPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -228,6 +233,16 @@ export class PrismaClient<
     * ```
     */
   get expense(): Prisma.ExpenseDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.plannedRepair`: Exposes CRUD operations for the **PlannedRepair** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PlannedRepairs
+    * const plannedRepairs = await prisma.plannedRepair.findMany()
+    * ```
+    */
+  get plannedRepair(): Prisma.PlannedRepairDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -673,7 +688,8 @@ export namespace Prisma {
     UserToken: 'UserToken',
     Car: 'Car',
     Repair: 'Repair',
-    Expense: 'Expense'
+    Expense: 'Expense',
+    PlannedRepair: 'PlannedRepair'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -692,7 +708,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "admin" | "userToken" | "car" | "repair" | "expense"
+      modelProps: "user" | "admin" | "userToken" | "car" | "repair" | "expense" | "plannedRepair"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1140,6 +1156,80 @@ export namespace Prisma {
           }
         }
       }
+      PlannedRepair: {
+        payload: Prisma.$PlannedRepairPayload<ExtArgs>
+        fields: Prisma.PlannedRepairFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PlannedRepairFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PlannedRepairFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>
+          }
+          findFirst: {
+            args: Prisma.PlannedRepairFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PlannedRepairFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>
+          }
+          findMany: {
+            args: Prisma.PlannedRepairFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>[]
+          }
+          create: {
+            args: Prisma.PlannedRepairCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>
+          }
+          createMany: {
+            args: Prisma.PlannedRepairCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PlannedRepairCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>[]
+          }
+          delete: {
+            args: Prisma.PlannedRepairDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>
+          }
+          update: {
+            args: Prisma.PlannedRepairUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>
+          }
+          deleteMany: {
+            args: Prisma.PlannedRepairDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PlannedRepairUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PlannedRepairUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>[]
+          }
+          upsert: {
+            args: Prisma.PlannedRepairUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PlannedRepairPayload>
+          }
+          aggregate: {
+            args: Prisma.PlannedRepairAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePlannedRepair>
+          }
+          groupBy: {
+            args: Prisma.PlannedRepairGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PlannedRepairGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PlannedRepairCountArgs<ExtArgs>
+            result: $Utils.Optional<PlannedRepairCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1230,6 +1320,7 @@ export namespace Prisma {
     car?: CarOmit
     repair?: RepairOmit
     expense?: ExpenseOmit
+    plannedRepair?: PlannedRepairOmit
   }
 
   /* Types for Logging */
@@ -1366,11 +1457,13 @@ export namespace Prisma {
   export type CarCountOutputType = {
     Repair: number
     Expense: number
+    PlannedRepair: number
   }
 
   export type CarCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Repair?: boolean | CarCountOutputTypeCountRepairArgs
     Expense?: boolean | CarCountOutputTypeCountExpenseArgs
+    PlannedRepair?: boolean | CarCountOutputTypeCountPlannedRepairArgs
   }
 
   // Custom InputTypes
@@ -1396,6 +1489,13 @@ export namespace Prisma {
    */
   export type CarCountOutputTypeCountExpenseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ExpenseWhereInput
+  }
+
+  /**
+   * CarCountOutputType without action
+   */
+  export type CarCountOutputTypeCountPlannedRepairArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PlannedRepairWhereInput
   }
 
 
@@ -4908,6 +5008,7 @@ export namespace Prisma {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     Repair?: boolean | Car$RepairArgs<ExtArgs>
     Expense?: boolean | Car$ExpenseArgs<ExtArgs>
+    PlannedRepair?: boolean | Car$PlannedRepairArgs<ExtArgs>
     _count?: boolean | CarCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["car"]>
 
@@ -4969,6 +5070,7 @@ export namespace Prisma {
     owner?: boolean | UserDefaultArgs<ExtArgs>
     Repair?: boolean | Car$RepairArgs<ExtArgs>
     Expense?: boolean | Car$ExpenseArgs<ExtArgs>
+    PlannedRepair?: boolean | Car$PlannedRepairArgs<ExtArgs>
     _count?: boolean | CarCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CarIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4984,6 +5086,7 @@ export namespace Prisma {
       owner: Prisma.$UserPayload<ExtArgs>
       Repair: Prisma.$RepairPayload<ExtArgs>[]
       Expense: Prisma.$ExpensePayload<ExtArgs>[]
+      PlannedRepair: Prisma.$PlannedRepairPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5397,6 +5500,7 @@ export namespace Prisma {
     owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     Repair<T extends Car$RepairArgs<ExtArgs> = {}>(args?: Subset<T, Car$RepairArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RepairPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     Expense<T extends Car$ExpenseArgs<ExtArgs> = {}>(args?: Subset<T, Car$ExpenseArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    PlannedRepair<T extends Car$PlannedRepairArgs<ExtArgs> = {}>(args?: Subset<T, Car$PlannedRepairArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5881,6 +5985,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ExpenseScalarFieldEnum | ExpenseScalarFieldEnum[]
+  }
+
+  /**
+   * Car.PlannedRepair
+   */
+  export type Car$PlannedRepairArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    where?: PlannedRepairWhereInput
+    orderBy?: PlannedRepairOrderByWithRelationInput | PlannedRepairOrderByWithRelationInput[]
+    cursor?: PlannedRepairWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PlannedRepairScalarFieldEnum | PlannedRepairScalarFieldEnum[]
   }
 
   /**
@@ -8113,6 +8241,1137 @@ export namespace Prisma {
 
 
   /**
+   * Model PlannedRepair
+   */
+
+  export type AggregatePlannedRepair = {
+    _count: PlannedRepairCountAggregateOutputType | null
+    _avg: PlannedRepairAvgAggregateOutputType | null
+    _sum: PlannedRepairSumAggregateOutputType | null
+    _min: PlannedRepairMinAggregateOutputType | null
+    _max: PlannedRepairMaxAggregateOutputType | null
+  }
+
+  export type PlannedRepairAvgAggregateOutputType = {
+    cost: number | null
+  }
+
+  export type PlannedRepairSumAggregateOutputType = {
+    cost: number | null
+  }
+
+  export type PlannedRepairMinAggregateOutputType = {
+    id: string | null
+    type: string | null
+    description: string | null
+    date: Date | null
+    cost: number | null
+    notes: string | null
+    carId: string | null
+    createdAt: Date | null
+  }
+
+  export type PlannedRepairMaxAggregateOutputType = {
+    id: string | null
+    type: string | null
+    description: string | null
+    date: Date | null
+    cost: number | null
+    notes: string | null
+    carId: string | null
+    createdAt: Date | null
+  }
+
+  export type PlannedRepairCountAggregateOutputType = {
+    id: number
+    type: number
+    description: number
+    date: number
+    cost: number
+    notes: number
+    carId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type PlannedRepairAvgAggregateInputType = {
+    cost?: true
+  }
+
+  export type PlannedRepairSumAggregateInputType = {
+    cost?: true
+  }
+
+  export type PlannedRepairMinAggregateInputType = {
+    id?: true
+    type?: true
+    description?: true
+    date?: true
+    cost?: true
+    notes?: true
+    carId?: true
+    createdAt?: true
+  }
+
+  export type PlannedRepairMaxAggregateInputType = {
+    id?: true
+    type?: true
+    description?: true
+    date?: true
+    cost?: true
+    notes?: true
+    carId?: true
+    createdAt?: true
+  }
+
+  export type PlannedRepairCountAggregateInputType = {
+    id?: true
+    type?: true
+    description?: true
+    date?: true
+    cost?: true
+    notes?: true
+    carId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type PlannedRepairAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PlannedRepair to aggregate.
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlannedRepairs to fetch.
+     */
+    orderBy?: PlannedRepairOrderByWithRelationInput | PlannedRepairOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PlannedRepairWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlannedRepairs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlannedRepairs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PlannedRepairs
+    **/
+    _count?: true | PlannedRepairCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PlannedRepairAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PlannedRepairSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PlannedRepairMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PlannedRepairMaxAggregateInputType
+  }
+
+  export type GetPlannedRepairAggregateType<T extends PlannedRepairAggregateArgs> = {
+        [P in keyof T & keyof AggregatePlannedRepair]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePlannedRepair[P]>
+      : GetScalarType<T[P], AggregatePlannedRepair[P]>
+  }
+
+
+
+
+  export type PlannedRepairGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PlannedRepairWhereInput
+    orderBy?: PlannedRepairOrderByWithAggregationInput | PlannedRepairOrderByWithAggregationInput[]
+    by: PlannedRepairScalarFieldEnum[] | PlannedRepairScalarFieldEnum
+    having?: PlannedRepairScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PlannedRepairCountAggregateInputType | true
+    _avg?: PlannedRepairAvgAggregateInputType
+    _sum?: PlannedRepairSumAggregateInputType
+    _min?: PlannedRepairMinAggregateInputType
+    _max?: PlannedRepairMaxAggregateInputType
+  }
+
+  export type PlannedRepairGroupByOutputType = {
+    id: string
+    type: string
+    description: string | null
+    date: Date
+    cost: number | null
+    notes: string | null
+    carId: string
+    createdAt: Date
+    _count: PlannedRepairCountAggregateOutputType | null
+    _avg: PlannedRepairAvgAggregateOutputType | null
+    _sum: PlannedRepairSumAggregateOutputType | null
+    _min: PlannedRepairMinAggregateOutputType | null
+    _max: PlannedRepairMaxAggregateOutputType | null
+  }
+
+  type GetPlannedRepairGroupByPayload<T extends PlannedRepairGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PlannedRepairGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PlannedRepairGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PlannedRepairGroupByOutputType[P]>
+            : GetScalarType<T[P], PlannedRepairGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PlannedRepairSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    description?: boolean
+    date?: boolean
+    cost?: boolean
+    notes?: boolean
+    carId?: boolean
+    createdAt?: boolean
+    car?: boolean | CarDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["plannedRepair"]>
+
+  export type PlannedRepairSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    description?: boolean
+    date?: boolean
+    cost?: boolean
+    notes?: boolean
+    carId?: boolean
+    createdAt?: boolean
+    car?: boolean | CarDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["plannedRepair"]>
+
+  export type PlannedRepairSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    description?: boolean
+    date?: boolean
+    cost?: boolean
+    notes?: boolean
+    carId?: boolean
+    createdAt?: boolean
+    car?: boolean | CarDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["plannedRepair"]>
+
+  export type PlannedRepairSelectScalar = {
+    id?: boolean
+    type?: boolean
+    description?: boolean
+    date?: boolean
+    cost?: boolean
+    notes?: boolean
+    carId?: boolean
+    createdAt?: boolean
+  }
+
+  export type PlannedRepairOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "description" | "date" | "cost" | "notes" | "carId" | "createdAt", ExtArgs["result"]["plannedRepair"]>
+  export type PlannedRepairInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    car?: boolean | CarDefaultArgs<ExtArgs>
+  }
+  export type PlannedRepairIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    car?: boolean | CarDefaultArgs<ExtArgs>
+  }
+  export type PlannedRepairIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    car?: boolean | CarDefaultArgs<ExtArgs>
+  }
+
+  export type $PlannedRepairPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PlannedRepair"
+    objects: {
+      car: Prisma.$CarPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: string
+      description: string | null
+      date: Date
+      cost: number | null
+      notes: string | null
+      carId: string
+      createdAt: Date
+    }, ExtArgs["result"]["plannedRepair"]>
+    composites: {}
+  }
+
+  type PlannedRepairGetPayload<S extends boolean | null | undefined | PlannedRepairDefaultArgs> = $Result.GetResult<Prisma.$PlannedRepairPayload, S>
+
+  type PlannedRepairCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PlannedRepairFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PlannedRepairCountAggregateInputType | true
+    }
+
+  export interface PlannedRepairDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PlannedRepair'], meta: { name: 'PlannedRepair' } }
+    /**
+     * Find zero or one PlannedRepair that matches the filter.
+     * @param {PlannedRepairFindUniqueArgs} args - Arguments to find a PlannedRepair
+     * @example
+     * // Get one PlannedRepair
+     * const plannedRepair = await prisma.plannedRepair.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PlannedRepairFindUniqueArgs>(args: SelectSubset<T, PlannedRepairFindUniqueArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PlannedRepair that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PlannedRepairFindUniqueOrThrowArgs} args - Arguments to find a PlannedRepair
+     * @example
+     * // Get one PlannedRepair
+     * const plannedRepair = await prisma.plannedRepair.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PlannedRepairFindUniqueOrThrowArgs>(args: SelectSubset<T, PlannedRepairFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PlannedRepair that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairFindFirstArgs} args - Arguments to find a PlannedRepair
+     * @example
+     * // Get one PlannedRepair
+     * const plannedRepair = await prisma.plannedRepair.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PlannedRepairFindFirstArgs>(args?: SelectSubset<T, PlannedRepairFindFirstArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PlannedRepair that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairFindFirstOrThrowArgs} args - Arguments to find a PlannedRepair
+     * @example
+     * // Get one PlannedRepair
+     * const plannedRepair = await prisma.plannedRepair.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PlannedRepairFindFirstOrThrowArgs>(args?: SelectSubset<T, PlannedRepairFindFirstOrThrowArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PlannedRepairs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PlannedRepairs
+     * const plannedRepairs = await prisma.plannedRepair.findMany()
+     * 
+     * // Get first 10 PlannedRepairs
+     * const plannedRepairs = await prisma.plannedRepair.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const plannedRepairWithIdOnly = await prisma.plannedRepair.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PlannedRepairFindManyArgs>(args?: SelectSubset<T, PlannedRepairFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PlannedRepair.
+     * @param {PlannedRepairCreateArgs} args - Arguments to create a PlannedRepair.
+     * @example
+     * // Create one PlannedRepair
+     * const PlannedRepair = await prisma.plannedRepair.create({
+     *   data: {
+     *     // ... data to create a PlannedRepair
+     *   }
+     * })
+     * 
+     */
+    create<T extends PlannedRepairCreateArgs>(args: SelectSubset<T, PlannedRepairCreateArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PlannedRepairs.
+     * @param {PlannedRepairCreateManyArgs} args - Arguments to create many PlannedRepairs.
+     * @example
+     * // Create many PlannedRepairs
+     * const plannedRepair = await prisma.plannedRepair.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PlannedRepairCreateManyArgs>(args?: SelectSubset<T, PlannedRepairCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PlannedRepairs and returns the data saved in the database.
+     * @param {PlannedRepairCreateManyAndReturnArgs} args - Arguments to create many PlannedRepairs.
+     * @example
+     * // Create many PlannedRepairs
+     * const plannedRepair = await prisma.plannedRepair.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PlannedRepairs and only return the `id`
+     * const plannedRepairWithIdOnly = await prisma.plannedRepair.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PlannedRepairCreateManyAndReturnArgs>(args?: SelectSubset<T, PlannedRepairCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PlannedRepair.
+     * @param {PlannedRepairDeleteArgs} args - Arguments to delete one PlannedRepair.
+     * @example
+     * // Delete one PlannedRepair
+     * const PlannedRepair = await prisma.plannedRepair.delete({
+     *   where: {
+     *     // ... filter to delete one PlannedRepair
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PlannedRepairDeleteArgs>(args: SelectSubset<T, PlannedRepairDeleteArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PlannedRepair.
+     * @param {PlannedRepairUpdateArgs} args - Arguments to update one PlannedRepair.
+     * @example
+     * // Update one PlannedRepair
+     * const plannedRepair = await prisma.plannedRepair.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PlannedRepairUpdateArgs>(args: SelectSubset<T, PlannedRepairUpdateArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PlannedRepairs.
+     * @param {PlannedRepairDeleteManyArgs} args - Arguments to filter PlannedRepairs to delete.
+     * @example
+     * // Delete a few PlannedRepairs
+     * const { count } = await prisma.plannedRepair.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PlannedRepairDeleteManyArgs>(args?: SelectSubset<T, PlannedRepairDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PlannedRepairs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PlannedRepairs
+     * const plannedRepair = await prisma.plannedRepair.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PlannedRepairUpdateManyArgs>(args: SelectSubset<T, PlannedRepairUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PlannedRepairs and returns the data updated in the database.
+     * @param {PlannedRepairUpdateManyAndReturnArgs} args - Arguments to update many PlannedRepairs.
+     * @example
+     * // Update many PlannedRepairs
+     * const plannedRepair = await prisma.plannedRepair.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PlannedRepairs and only return the `id`
+     * const plannedRepairWithIdOnly = await prisma.plannedRepair.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PlannedRepairUpdateManyAndReturnArgs>(args: SelectSubset<T, PlannedRepairUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PlannedRepair.
+     * @param {PlannedRepairUpsertArgs} args - Arguments to update or create a PlannedRepair.
+     * @example
+     * // Update or create a PlannedRepair
+     * const plannedRepair = await prisma.plannedRepair.upsert({
+     *   create: {
+     *     // ... data to create a PlannedRepair
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PlannedRepair we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PlannedRepairUpsertArgs>(args: SelectSubset<T, PlannedRepairUpsertArgs<ExtArgs>>): Prisma__PlannedRepairClient<$Result.GetResult<Prisma.$PlannedRepairPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PlannedRepairs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairCountArgs} args - Arguments to filter PlannedRepairs to count.
+     * @example
+     * // Count the number of PlannedRepairs
+     * const count = await prisma.plannedRepair.count({
+     *   where: {
+     *     // ... the filter for the PlannedRepairs we want to count
+     *   }
+     * })
+    **/
+    count<T extends PlannedRepairCountArgs>(
+      args?: Subset<T, PlannedRepairCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PlannedRepairCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PlannedRepair.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PlannedRepairAggregateArgs>(args: Subset<T, PlannedRepairAggregateArgs>): Prisma.PrismaPromise<GetPlannedRepairAggregateType<T>>
+
+    /**
+     * Group by PlannedRepair.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PlannedRepairGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PlannedRepairGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PlannedRepairGroupByArgs['orderBy'] }
+        : { orderBy?: PlannedRepairGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PlannedRepairGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPlannedRepairGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PlannedRepair model
+   */
+  readonly fields: PlannedRepairFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PlannedRepair.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PlannedRepairClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    car<T extends CarDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CarDefaultArgs<ExtArgs>>): Prisma__CarClient<$Result.GetResult<Prisma.$CarPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PlannedRepair model
+   */
+  interface PlannedRepairFieldRefs {
+    readonly id: FieldRef<"PlannedRepair", 'String'>
+    readonly type: FieldRef<"PlannedRepair", 'String'>
+    readonly description: FieldRef<"PlannedRepair", 'String'>
+    readonly date: FieldRef<"PlannedRepair", 'DateTime'>
+    readonly cost: FieldRef<"PlannedRepair", 'Float'>
+    readonly notes: FieldRef<"PlannedRepair", 'String'>
+    readonly carId: FieldRef<"PlannedRepair", 'String'>
+    readonly createdAt: FieldRef<"PlannedRepair", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PlannedRepair findUnique
+   */
+  export type PlannedRepairFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * Filter, which PlannedRepair to fetch.
+     */
+    where: PlannedRepairWhereUniqueInput
+  }
+
+  /**
+   * PlannedRepair findUniqueOrThrow
+   */
+  export type PlannedRepairFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * Filter, which PlannedRepair to fetch.
+     */
+    where: PlannedRepairWhereUniqueInput
+  }
+
+  /**
+   * PlannedRepair findFirst
+   */
+  export type PlannedRepairFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * Filter, which PlannedRepair to fetch.
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlannedRepairs to fetch.
+     */
+    orderBy?: PlannedRepairOrderByWithRelationInput | PlannedRepairOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PlannedRepairs.
+     */
+    cursor?: PlannedRepairWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlannedRepairs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlannedRepairs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PlannedRepairs.
+     */
+    distinct?: PlannedRepairScalarFieldEnum | PlannedRepairScalarFieldEnum[]
+  }
+
+  /**
+   * PlannedRepair findFirstOrThrow
+   */
+  export type PlannedRepairFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * Filter, which PlannedRepair to fetch.
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlannedRepairs to fetch.
+     */
+    orderBy?: PlannedRepairOrderByWithRelationInput | PlannedRepairOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PlannedRepairs.
+     */
+    cursor?: PlannedRepairWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlannedRepairs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlannedRepairs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PlannedRepairs.
+     */
+    distinct?: PlannedRepairScalarFieldEnum | PlannedRepairScalarFieldEnum[]
+  }
+
+  /**
+   * PlannedRepair findMany
+   */
+  export type PlannedRepairFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * Filter, which PlannedRepairs to fetch.
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PlannedRepairs to fetch.
+     */
+    orderBy?: PlannedRepairOrderByWithRelationInput | PlannedRepairOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PlannedRepairs.
+     */
+    cursor?: PlannedRepairWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PlannedRepairs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PlannedRepairs.
+     */
+    skip?: number
+    distinct?: PlannedRepairScalarFieldEnum | PlannedRepairScalarFieldEnum[]
+  }
+
+  /**
+   * PlannedRepair create
+   */
+  export type PlannedRepairCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PlannedRepair.
+     */
+    data: XOR<PlannedRepairCreateInput, PlannedRepairUncheckedCreateInput>
+  }
+
+  /**
+   * PlannedRepair createMany
+   */
+  export type PlannedRepairCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PlannedRepairs.
+     */
+    data: PlannedRepairCreateManyInput | PlannedRepairCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PlannedRepair createManyAndReturn
+   */
+  export type PlannedRepairCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * The data used to create many PlannedRepairs.
+     */
+    data: PlannedRepairCreateManyInput | PlannedRepairCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PlannedRepair update
+   */
+  export type PlannedRepairUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PlannedRepair.
+     */
+    data: XOR<PlannedRepairUpdateInput, PlannedRepairUncheckedUpdateInput>
+    /**
+     * Choose, which PlannedRepair to update.
+     */
+    where: PlannedRepairWhereUniqueInput
+  }
+
+  /**
+   * PlannedRepair updateMany
+   */
+  export type PlannedRepairUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PlannedRepairs.
+     */
+    data: XOR<PlannedRepairUpdateManyMutationInput, PlannedRepairUncheckedUpdateManyInput>
+    /**
+     * Filter which PlannedRepairs to update
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * Limit how many PlannedRepairs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PlannedRepair updateManyAndReturn
+   */
+  export type PlannedRepairUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * The data used to update PlannedRepairs.
+     */
+    data: XOR<PlannedRepairUpdateManyMutationInput, PlannedRepairUncheckedUpdateManyInput>
+    /**
+     * Filter which PlannedRepairs to update
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * Limit how many PlannedRepairs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PlannedRepair upsert
+   */
+  export type PlannedRepairUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PlannedRepair to update in case it exists.
+     */
+    where: PlannedRepairWhereUniqueInput
+    /**
+     * In case the PlannedRepair found by the `where` argument doesn't exist, create a new PlannedRepair with this data.
+     */
+    create: XOR<PlannedRepairCreateInput, PlannedRepairUncheckedCreateInput>
+    /**
+     * In case the PlannedRepair was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PlannedRepairUpdateInput, PlannedRepairUncheckedUpdateInput>
+  }
+
+  /**
+   * PlannedRepair delete
+   */
+  export type PlannedRepairDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+    /**
+     * Filter which PlannedRepair to delete.
+     */
+    where: PlannedRepairWhereUniqueInput
+  }
+
+  /**
+   * PlannedRepair deleteMany
+   */
+  export type PlannedRepairDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PlannedRepairs to delete
+     */
+    where?: PlannedRepairWhereInput
+    /**
+     * Limit how many PlannedRepairs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PlannedRepair without action
+   */
+  export type PlannedRepairDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PlannedRepair
+     */
+    select?: PlannedRepairSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PlannedRepair
+     */
+    omit?: PlannedRepairOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PlannedRepairInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -8204,6 +9463,20 @@ export namespace Prisma {
   };
 
   export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+  export const PlannedRepairScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    description: 'description',
+    date: 'date',
+    cost: 'cost',
+    notes: 'notes',
+    carId: 'carId',
+    createdAt: 'createdAt'
+  };
+
+  export type PlannedRepairScalarFieldEnum = (typeof PlannedRepairScalarFieldEnum)[keyof typeof PlannedRepairScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -8504,6 +9777,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     Repair?: RepairListRelationFilter
     Expense?: ExpenseListRelationFilter
+    PlannedRepair?: PlannedRepairListRelationFilter
   }
 
   export type CarOrderByWithRelationInput = {
@@ -8524,6 +9798,7 @@ export namespace Prisma {
     owner?: UserOrderByWithRelationInput
     Repair?: RepairOrderByRelationAggregateInput
     Expense?: ExpenseOrderByRelationAggregateInput
+    PlannedRepair?: PlannedRepairOrderByRelationAggregateInput
   }
 
   export type CarWhereUniqueInput = Prisma.AtLeast<{
@@ -8547,6 +9822,7 @@ export namespace Prisma {
     owner?: XOR<UserScalarRelationFilter, UserWhereInput>
     Repair?: RepairListRelationFilter
     Expense?: ExpenseListRelationFilter
+    PlannedRepair?: PlannedRepairListRelationFilter
   }, "id" | "vin">
 
   export type CarOrderByWithAggregationInput = {
@@ -8713,6 +9989,78 @@ export namespace Prisma {
     amount?: FloatWithAggregatesFilter<"Expense"> | number
     description?: StringNullableWithAggregatesFilter<"Expense"> | string | null
     carId?: StringWithAggregatesFilter<"Expense"> | string
+  }
+
+  export type PlannedRepairWhereInput = {
+    AND?: PlannedRepairWhereInput | PlannedRepairWhereInput[]
+    OR?: PlannedRepairWhereInput[]
+    NOT?: PlannedRepairWhereInput | PlannedRepairWhereInput[]
+    id?: StringFilter<"PlannedRepair"> | string
+    type?: StringFilter<"PlannedRepair"> | string
+    description?: StringNullableFilter<"PlannedRepair"> | string | null
+    date?: DateTimeFilter<"PlannedRepair"> | Date | string
+    cost?: FloatNullableFilter<"PlannedRepair"> | number | null
+    notes?: StringNullableFilter<"PlannedRepair"> | string | null
+    carId?: StringFilter<"PlannedRepair"> | string
+    createdAt?: DateTimeFilter<"PlannedRepair"> | Date | string
+    car?: XOR<CarScalarRelationFilter, CarWhereInput>
+  }
+
+  export type PlannedRepairOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    description?: SortOrderInput | SortOrder
+    date?: SortOrder
+    cost?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    carId?: SortOrder
+    createdAt?: SortOrder
+    car?: CarOrderByWithRelationInput
+  }
+
+  export type PlannedRepairWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PlannedRepairWhereInput | PlannedRepairWhereInput[]
+    OR?: PlannedRepairWhereInput[]
+    NOT?: PlannedRepairWhereInput | PlannedRepairWhereInput[]
+    type?: StringFilter<"PlannedRepair"> | string
+    description?: StringNullableFilter<"PlannedRepair"> | string | null
+    date?: DateTimeFilter<"PlannedRepair"> | Date | string
+    cost?: FloatNullableFilter<"PlannedRepair"> | number | null
+    notes?: StringNullableFilter<"PlannedRepair"> | string | null
+    carId?: StringFilter<"PlannedRepair"> | string
+    createdAt?: DateTimeFilter<"PlannedRepair"> | Date | string
+    car?: XOR<CarScalarRelationFilter, CarWhereInput>
+  }, "id">
+
+  export type PlannedRepairOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    description?: SortOrderInput | SortOrder
+    date?: SortOrder
+    cost?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    carId?: SortOrder
+    createdAt?: SortOrder
+    _count?: PlannedRepairCountOrderByAggregateInput
+    _avg?: PlannedRepairAvgOrderByAggregateInput
+    _max?: PlannedRepairMaxOrderByAggregateInput
+    _min?: PlannedRepairMinOrderByAggregateInput
+    _sum?: PlannedRepairSumOrderByAggregateInput
+  }
+
+  export type PlannedRepairScalarWhereWithAggregatesInput = {
+    AND?: PlannedRepairScalarWhereWithAggregatesInput | PlannedRepairScalarWhereWithAggregatesInput[]
+    OR?: PlannedRepairScalarWhereWithAggregatesInput[]
+    NOT?: PlannedRepairScalarWhereWithAggregatesInput | PlannedRepairScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PlannedRepair"> | string
+    type?: StringWithAggregatesFilter<"PlannedRepair"> | string
+    description?: StringNullableWithAggregatesFilter<"PlannedRepair"> | string | null
+    date?: DateTimeWithAggregatesFilter<"PlannedRepair"> | Date | string
+    cost?: FloatNullableWithAggregatesFilter<"PlannedRepair"> | number | null
+    notes?: StringNullableWithAggregatesFilter<"PlannedRepair"> | string | null
+    carId?: StringWithAggregatesFilter<"PlannedRepair"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"PlannedRepair"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -8925,6 +10273,7 @@ export namespace Prisma {
     owner: UserCreateNestedOneWithoutCarsInput
     Repair?: RepairCreateNestedManyWithoutCarInput
     Expense?: ExpenseCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairCreateNestedManyWithoutCarInput
   }
 
   export type CarUncheckedCreateInput = {
@@ -8944,6 +10293,7 @@ export namespace Prisma {
     ownerId: string
     Repair?: RepairUncheckedCreateNestedManyWithoutCarInput
     Expense?: ExpenseUncheckedCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairUncheckedCreateNestedManyWithoutCarInput
   }
 
   export type CarUpdateInput = {
@@ -8963,6 +10313,7 @@ export namespace Prisma {
     owner?: UserUpdateOneRequiredWithoutCarsNestedInput
     Repair?: RepairUpdateManyWithoutCarNestedInput
     Expense?: ExpenseUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUpdateManyWithoutCarNestedInput
   }
 
   export type CarUncheckedUpdateInput = {
@@ -8982,6 +10333,7 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string
     Repair?: RepairUncheckedUpdateManyWithoutCarNestedInput
     Expense?: ExpenseUncheckedUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUncheckedUpdateManyWithoutCarNestedInput
   }
 
   export type CarCreateManyInput = {
@@ -9156,6 +10508,82 @@ export namespace Prisma {
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
     carId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PlannedRepairCreateInput = {
+    id?: string
+    type: string
+    description?: string | null
+    date: Date | string
+    cost?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+    car: CarCreateNestedOneWithoutPlannedRepairInput
+  }
+
+  export type PlannedRepairUncheckedCreateInput = {
+    id?: string
+    type: string
+    description?: string | null
+    date: Date | string
+    cost?: number | null
+    notes?: string | null
+    carId: string
+    createdAt?: Date | string
+  }
+
+  export type PlannedRepairUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    car?: CarUpdateOneRequiredWithoutPlannedRepairNestedInput
+  }
+
+  export type PlannedRepairUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    carId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlannedRepairCreateManyInput = {
+    id?: string
+    type: string
+    description?: string | null
+    date: Date | string
+    cost?: number | null
+    notes?: string | null
+    carId: string
+    createdAt?: Date | string
+  }
+
+  export type PlannedRepairUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlannedRepairUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    carId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -9442,11 +10870,21 @@ export namespace Prisma {
     none?: ExpenseWhereInput
   }
 
+  export type PlannedRepairListRelationFilter = {
+    every?: PlannedRepairWhereInput
+    some?: PlannedRepairWhereInput
+    none?: PlannedRepairWhereInput
+  }
+
   export type RepairOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type ExpenseOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PlannedRepairOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9645,6 +11083,74 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type PlannedRepairCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    date?: SortOrder
+    cost?: SortOrder
+    notes?: SortOrder
+    carId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PlannedRepairAvgOrderByAggregateInput = {
+    cost?: SortOrder
+  }
+
+  export type PlannedRepairMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    date?: SortOrder
+    cost?: SortOrder
+    notes?: SortOrder
+    carId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PlannedRepairMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    description?: SortOrder
+    date?: SortOrder
+    cost?: SortOrder
+    notes?: SortOrder
+    carId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type PlannedRepairSumOrderByAggregateInput = {
+    cost?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type UserTokenCreateNestedManyWithoutUserInput = {
     create?: XOR<UserTokenCreateWithoutUserInput, UserTokenUncheckedCreateWithoutUserInput> | UserTokenCreateWithoutUserInput[] | UserTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserTokenCreateOrConnectWithoutUserInput | UserTokenCreateOrConnectWithoutUserInput[]
@@ -9787,6 +11293,13 @@ export namespace Prisma {
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
   }
 
+  export type PlannedRepairCreateNestedManyWithoutCarInput = {
+    create?: XOR<PlannedRepairCreateWithoutCarInput, PlannedRepairUncheckedCreateWithoutCarInput> | PlannedRepairCreateWithoutCarInput[] | PlannedRepairUncheckedCreateWithoutCarInput[]
+    connectOrCreate?: PlannedRepairCreateOrConnectWithoutCarInput | PlannedRepairCreateOrConnectWithoutCarInput[]
+    createMany?: PlannedRepairCreateManyCarInputEnvelope
+    connect?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+  }
+
   export type RepairUncheckedCreateNestedManyWithoutCarInput = {
     create?: XOR<RepairCreateWithoutCarInput, RepairUncheckedCreateWithoutCarInput> | RepairCreateWithoutCarInput[] | RepairUncheckedCreateWithoutCarInput[]
     connectOrCreate?: RepairCreateOrConnectWithoutCarInput | RepairCreateOrConnectWithoutCarInput[]
@@ -9799,6 +11312,13 @@ export namespace Prisma {
     connectOrCreate?: ExpenseCreateOrConnectWithoutCarInput | ExpenseCreateOrConnectWithoutCarInput[]
     createMany?: ExpenseCreateManyCarInputEnvelope
     connect?: ExpenseWhereUniqueInput | ExpenseWhereUniqueInput[]
+  }
+
+  export type PlannedRepairUncheckedCreateNestedManyWithoutCarInput = {
+    create?: XOR<PlannedRepairCreateWithoutCarInput, PlannedRepairUncheckedCreateWithoutCarInput> | PlannedRepairCreateWithoutCarInput[] | PlannedRepairUncheckedCreateWithoutCarInput[]
+    connectOrCreate?: PlannedRepairCreateOrConnectWithoutCarInput | PlannedRepairCreateOrConnectWithoutCarInput[]
+    createMany?: PlannedRepairCreateManyCarInputEnvelope
+    connect?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -9849,6 +11369,20 @@ export namespace Prisma {
     deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
   }
 
+  export type PlannedRepairUpdateManyWithoutCarNestedInput = {
+    create?: XOR<PlannedRepairCreateWithoutCarInput, PlannedRepairUncheckedCreateWithoutCarInput> | PlannedRepairCreateWithoutCarInput[] | PlannedRepairUncheckedCreateWithoutCarInput[]
+    connectOrCreate?: PlannedRepairCreateOrConnectWithoutCarInput | PlannedRepairCreateOrConnectWithoutCarInput[]
+    upsert?: PlannedRepairUpsertWithWhereUniqueWithoutCarInput | PlannedRepairUpsertWithWhereUniqueWithoutCarInput[]
+    createMany?: PlannedRepairCreateManyCarInputEnvelope
+    set?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    disconnect?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    delete?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    connect?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    update?: PlannedRepairUpdateWithWhereUniqueWithoutCarInput | PlannedRepairUpdateWithWhereUniqueWithoutCarInput[]
+    updateMany?: PlannedRepairUpdateManyWithWhereWithoutCarInput | PlannedRepairUpdateManyWithWhereWithoutCarInput[]
+    deleteMany?: PlannedRepairScalarWhereInput | PlannedRepairScalarWhereInput[]
+  }
+
   export type RepairUncheckedUpdateManyWithoutCarNestedInput = {
     create?: XOR<RepairCreateWithoutCarInput, RepairUncheckedCreateWithoutCarInput> | RepairCreateWithoutCarInput[] | RepairUncheckedCreateWithoutCarInput[]
     connectOrCreate?: RepairCreateOrConnectWithoutCarInput | RepairCreateOrConnectWithoutCarInput[]
@@ -9875,6 +11409,20 @@ export namespace Prisma {
     update?: ExpenseUpdateWithWhereUniqueWithoutCarInput | ExpenseUpdateWithWhereUniqueWithoutCarInput[]
     updateMany?: ExpenseUpdateManyWithWhereWithoutCarInput | ExpenseUpdateManyWithWhereWithoutCarInput[]
     deleteMany?: ExpenseScalarWhereInput | ExpenseScalarWhereInput[]
+  }
+
+  export type PlannedRepairUncheckedUpdateManyWithoutCarNestedInput = {
+    create?: XOR<PlannedRepairCreateWithoutCarInput, PlannedRepairUncheckedCreateWithoutCarInput> | PlannedRepairCreateWithoutCarInput[] | PlannedRepairUncheckedCreateWithoutCarInput[]
+    connectOrCreate?: PlannedRepairCreateOrConnectWithoutCarInput | PlannedRepairCreateOrConnectWithoutCarInput[]
+    upsert?: PlannedRepairUpsertWithWhereUniqueWithoutCarInput | PlannedRepairUpsertWithWhereUniqueWithoutCarInput[]
+    createMany?: PlannedRepairCreateManyCarInputEnvelope
+    set?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    disconnect?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    delete?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    connect?: PlannedRepairWhereUniqueInput | PlannedRepairWhereUniqueInput[]
+    update?: PlannedRepairUpdateWithWhereUniqueWithoutCarInput | PlannedRepairUpdateWithWhereUniqueWithoutCarInput[]
+    updateMany?: PlannedRepairUpdateManyWithWhereWithoutCarInput | PlannedRepairUpdateManyWithWhereWithoutCarInput[]
+    deleteMany?: PlannedRepairScalarWhereInput | PlannedRepairScalarWhereInput[]
   }
 
   export type CarCreateNestedOneWithoutRepairInput = {
@@ -9911,6 +11459,28 @@ export namespace Prisma {
     upsert?: CarUpsertWithoutExpenseInput
     connect?: CarWhereUniqueInput
     update?: XOR<XOR<CarUpdateToOneWithWhereWithoutExpenseInput, CarUpdateWithoutExpenseInput>, CarUncheckedUpdateWithoutExpenseInput>
+  }
+
+  export type CarCreateNestedOneWithoutPlannedRepairInput = {
+    create?: XOR<CarCreateWithoutPlannedRepairInput, CarUncheckedCreateWithoutPlannedRepairInput>
+    connectOrCreate?: CarCreateOrConnectWithoutPlannedRepairInput
+    connect?: CarWhereUniqueInput
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type CarUpdateOneRequiredWithoutPlannedRepairNestedInput = {
+    create?: XOR<CarCreateWithoutPlannedRepairInput, CarUncheckedCreateWithoutPlannedRepairInput>
+    connectOrCreate?: CarCreateOrConnectWithoutPlannedRepairInput
+    upsert?: CarUpsertWithoutPlannedRepairInput
+    connect?: CarWhereUniqueInput
+    update?: XOR<XOR<CarUpdateToOneWithWhereWithoutPlannedRepairInput, CarUpdateWithoutPlannedRepairInput>, CarUncheckedUpdateWithoutPlannedRepairInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10130,6 +11700,22 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
   export type UserTokenCreateWithoutUserInput = {
     id?: string
     token: string
@@ -10170,6 +11756,7 @@ export namespace Prisma {
     createdAt?: Date | string
     Repair?: RepairCreateNestedManyWithoutCarInput
     Expense?: ExpenseCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairCreateNestedManyWithoutCarInput
   }
 
   export type CarUncheckedCreateWithoutOwnerInput = {
@@ -10188,6 +11775,7 @@ export namespace Prisma {
     createdAt?: Date | string
     Repair?: RepairUncheckedCreateNestedManyWithoutCarInput
     Expense?: ExpenseUncheckedCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairUncheckedCreateNestedManyWithoutCarInput
   }
 
   export type CarCreateOrConnectWithoutOwnerInput = {
@@ -10414,6 +12002,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PlannedRepairCreateWithoutCarInput = {
+    id?: string
+    type: string
+    description?: string | null
+    date: Date | string
+    cost?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PlannedRepairUncheckedCreateWithoutCarInput = {
+    id?: string
+    type: string
+    description?: string | null
+    date: Date | string
+    cost?: number | null
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type PlannedRepairCreateOrConnectWithoutCarInput = {
+    where: PlannedRepairWhereUniqueInput
+    create: XOR<PlannedRepairCreateWithoutCarInput, PlannedRepairUncheckedCreateWithoutCarInput>
+  }
+
+  export type PlannedRepairCreateManyCarInputEnvelope = {
+    data: PlannedRepairCreateManyCarInput | PlannedRepairCreateManyCarInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutCarsInput = {
     update: XOR<UserUpdateWithoutCarsInput, UserUncheckedUpdateWithoutCarsInput>
     create: XOR<UserCreateWithoutCarsInput, UserUncheckedCreateWithoutCarsInput>
@@ -10507,6 +12125,36 @@ export namespace Prisma {
     carId?: StringFilter<"Expense"> | string
   }
 
+  export type PlannedRepairUpsertWithWhereUniqueWithoutCarInput = {
+    where: PlannedRepairWhereUniqueInput
+    update: XOR<PlannedRepairUpdateWithoutCarInput, PlannedRepairUncheckedUpdateWithoutCarInput>
+    create: XOR<PlannedRepairCreateWithoutCarInput, PlannedRepairUncheckedCreateWithoutCarInput>
+  }
+
+  export type PlannedRepairUpdateWithWhereUniqueWithoutCarInput = {
+    where: PlannedRepairWhereUniqueInput
+    data: XOR<PlannedRepairUpdateWithoutCarInput, PlannedRepairUncheckedUpdateWithoutCarInput>
+  }
+
+  export type PlannedRepairUpdateManyWithWhereWithoutCarInput = {
+    where: PlannedRepairScalarWhereInput
+    data: XOR<PlannedRepairUpdateManyMutationInput, PlannedRepairUncheckedUpdateManyWithoutCarInput>
+  }
+
+  export type PlannedRepairScalarWhereInput = {
+    AND?: PlannedRepairScalarWhereInput | PlannedRepairScalarWhereInput[]
+    OR?: PlannedRepairScalarWhereInput[]
+    NOT?: PlannedRepairScalarWhereInput | PlannedRepairScalarWhereInput[]
+    id?: StringFilter<"PlannedRepair"> | string
+    type?: StringFilter<"PlannedRepair"> | string
+    description?: StringNullableFilter<"PlannedRepair"> | string | null
+    date?: DateTimeFilter<"PlannedRepair"> | Date | string
+    cost?: FloatNullableFilter<"PlannedRepair"> | number | null
+    notes?: StringNullableFilter<"PlannedRepair"> | string | null
+    carId?: StringFilter<"PlannedRepair"> | string
+    createdAt?: DateTimeFilter<"PlannedRepair"> | Date | string
+  }
+
   export type CarCreateWithoutRepairInput = {
     id?: string
     vin: string
@@ -10523,6 +12171,7 @@ export namespace Prisma {
     createdAt?: Date | string
     owner: UserCreateNestedOneWithoutCarsInput
     Expense?: ExpenseCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairCreateNestedManyWithoutCarInput
   }
 
   export type CarUncheckedCreateWithoutRepairInput = {
@@ -10541,6 +12190,7 @@ export namespace Prisma {
     createdAt?: Date | string
     ownerId: string
     Expense?: ExpenseUncheckedCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairUncheckedCreateNestedManyWithoutCarInput
   }
 
   export type CarCreateOrConnectWithoutRepairInput = {
@@ -10575,6 +12225,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutCarsNestedInput
     Expense?: ExpenseUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUpdateManyWithoutCarNestedInput
   }
 
   export type CarUncheckedUpdateWithoutRepairInput = {
@@ -10593,6 +12244,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     Expense?: ExpenseUncheckedUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUncheckedUpdateManyWithoutCarNestedInput
   }
 
   export type CarCreateWithoutExpenseInput = {
@@ -10611,6 +12263,7 @@ export namespace Prisma {
     createdAt?: Date | string
     owner: UserCreateNestedOneWithoutCarsInput
     Repair?: RepairCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairCreateNestedManyWithoutCarInput
   }
 
   export type CarUncheckedCreateWithoutExpenseInput = {
@@ -10629,6 +12282,7 @@ export namespace Prisma {
     createdAt?: Date | string
     ownerId: string
     Repair?: RepairUncheckedCreateNestedManyWithoutCarInput
+    PlannedRepair?: PlannedRepairUncheckedCreateNestedManyWithoutCarInput
   }
 
   export type CarCreateOrConnectWithoutExpenseInput = {
@@ -10663,6 +12317,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     owner?: UserUpdateOneRequiredWithoutCarsNestedInput
     Repair?: RepairUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUpdateManyWithoutCarNestedInput
   }
 
   export type CarUncheckedUpdateWithoutExpenseInput = {
@@ -10681,6 +12336,99 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerId?: StringFieldUpdateOperationsInput | string
     Repair?: RepairUncheckedUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUncheckedUpdateManyWithoutCarNestedInput
+  }
+
+  export type CarCreateWithoutPlannedRepairInput = {
+    id?: string
+    vin: string
+    make: string
+    model: string
+    year: number
+    engine?: string | null
+    power?: number | null
+    kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
+    color?: string | null
+    createdAt?: Date | string
+    owner: UserCreateNestedOneWithoutCarsInput
+    Repair?: RepairCreateNestedManyWithoutCarInput
+    Expense?: ExpenseCreateNestedManyWithoutCarInput
+  }
+
+  export type CarUncheckedCreateWithoutPlannedRepairInput = {
+    id?: string
+    vin: string
+    make: string
+    model: string
+    year: number
+    engine?: string | null
+    power?: number | null
+    kilometers?: number | null
+    registration?: string | null
+    purchaseDate?: Date | string | null
+    fuelType?: string | null
+    color?: string | null
+    createdAt?: Date | string
+    ownerId: string
+    Repair?: RepairUncheckedCreateNestedManyWithoutCarInput
+    Expense?: ExpenseUncheckedCreateNestedManyWithoutCarInput
+  }
+
+  export type CarCreateOrConnectWithoutPlannedRepairInput = {
+    where: CarWhereUniqueInput
+    create: XOR<CarCreateWithoutPlannedRepairInput, CarUncheckedCreateWithoutPlannedRepairInput>
+  }
+
+  export type CarUpsertWithoutPlannedRepairInput = {
+    update: XOR<CarUpdateWithoutPlannedRepairInput, CarUncheckedUpdateWithoutPlannedRepairInput>
+    create: XOR<CarCreateWithoutPlannedRepairInput, CarUncheckedCreateWithoutPlannedRepairInput>
+    where?: CarWhereInput
+  }
+
+  export type CarUpdateToOneWithWhereWithoutPlannedRepairInput = {
+    where?: CarWhereInput
+    data: XOR<CarUpdateWithoutPlannedRepairInput, CarUncheckedUpdateWithoutPlannedRepairInput>
+  }
+
+  export type CarUpdateWithoutPlannedRepairInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vin?: StringFieldUpdateOperationsInput | string
+    make?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneRequiredWithoutCarsNestedInput
+    Repair?: RepairUpdateManyWithoutCarNestedInput
+    Expense?: ExpenseUpdateManyWithoutCarNestedInput
+  }
+
+  export type CarUncheckedUpdateWithoutPlannedRepairInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    vin?: StringFieldUpdateOperationsInput | string
+    make?: StringFieldUpdateOperationsInput | string
+    model?: StringFieldUpdateOperationsInput | string
+    year?: IntFieldUpdateOperationsInput | number
+    engine?: NullableStringFieldUpdateOperationsInput | string | null
+    power?: NullableIntFieldUpdateOperationsInput | number | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
+    registration?: NullableStringFieldUpdateOperationsInput | string | null
+    purchaseDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fuelType?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerId?: StringFieldUpdateOperationsInput | string
+    Repair?: RepairUncheckedUpdateManyWithoutCarNestedInput
+    Expense?: ExpenseUncheckedUpdateManyWithoutCarNestedInput
   }
 
   export type UserTokenCreateManyUserInput = {
@@ -10743,6 +12491,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Repair?: RepairUpdateManyWithoutCarNestedInput
     Expense?: ExpenseUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUpdateManyWithoutCarNestedInput
   }
 
   export type CarUncheckedUpdateWithoutOwnerInput = {
@@ -10761,6 +12510,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Repair?: RepairUncheckedUpdateManyWithoutCarNestedInput
     Expense?: ExpenseUncheckedUpdateManyWithoutCarNestedInput
+    PlannedRepair?: PlannedRepairUncheckedUpdateManyWithoutCarNestedInput
   }
 
   export type CarUncheckedUpdateManyWithoutOwnerInput = {
@@ -10793,6 +12543,16 @@ export namespace Prisma {
     category: string
     amount: number
     description?: string | null
+  }
+
+  export type PlannedRepairCreateManyCarInput = {
+    id?: string
+    type: string
+    description?: string | null
+    date: Date | string
+    cost?: number | null
+    notes?: string | null
+    createdAt?: Date | string
   }
 
   export type RepairUpdateWithoutCarInput = {
@@ -10841,6 +12601,36 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     amount?: FloatFieldUpdateOperationsInput | number
     description?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PlannedRepairUpdateWithoutCarInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlannedRepairUncheckedUpdateWithoutCarInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PlannedRepairUncheckedUpdateManyWithoutCarInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    cost?: NullableFloatFieldUpdateOperationsInput | number | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

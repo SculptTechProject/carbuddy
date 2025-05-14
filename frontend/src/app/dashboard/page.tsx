@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -62,6 +63,8 @@ export default function DashboardPage() {
   >("przeglad");
   const [user, setUser] = useState<MeResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [planned, setPlanned] = useState<any[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -92,6 +95,34 @@ export default function DashboardPage() {
     })();
   }, [router]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const fetchPlannedRepairs = async () => {
+      try {
+        const all: any[] = [];
+        if (!user) return;
+        for (const car of user.cars) {
+          const res = await axios.get(
+            `${API_URL}/api/v1/cars/${car.id}/planned-repairs`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          res.data.forEach((p: any) =>
+            all.push({
+              ...p,
+              carLabel: `${car.make} ${car.model}`,
+            })
+          );
+        }
+        setPlanned(all);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchPlannedRepairs();
+  }, [user]);
+
   if (loading)
     return (
       <div className="flex h-screen justify-center items-center">
@@ -111,19 +142,23 @@ export default function DashboardPage() {
     return <CarIcon className="w-6 h-6 text-gray-500" />;
   };
 
-  // Przygotowujemy dane
-  const upcomingServices = user.cars.flatMap((car) =>
-    (car.upcomingServices ?? []).map((svc) => ({
-      icon: getServiceIcon(svc.type),
-      title: svc.type,
-      details: `${car.make} ${car.model} • ${new Date(
-        svc.date
-      ).toLocaleDateString()}`,
-      days: Math.ceil(
-        (new Date(svc.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-      ),
-    }))
-  );
+  const upcomingServices =
+    (user as any).upcomingServices
+      ?.map((svc: any) => ({
+        icon: getServiceIcon(svc.type),
+        title: svc.type,
+        date: svc.date,
+        details: `${svc.carLabel} • ${new Date(svc.date).toLocaleDateString(
+          "pl-PL"
+        )}`,
+        days: Math.ceil(
+          (new Date(svc.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        ),
+      }))
+      .sort(
+        (a: any, b: any) =>
+          new Date(a.date).getTime() - new Date(b.date).getTime()
+      ) || [];
 
   const repairs = user.cars.flatMap((car) =>
     (car.recentRepairs ?? []).map((r) => ({
@@ -154,7 +189,6 @@ export default function DashboardPage() {
             ].map((tab) => (
               <button
                 key={tab.key}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onClick={() => setActiveTab(tab.key as any)}
                 className={`px-4 py-1 rounded-t-lg font-medium ${
                   activeTab === tab.key
@@ -217,7 +251,7 @@ export default function DashboardPage() {
                     Nadchodzące terminy
                   </h3>
                   <ul className="space-y-4 flex-1">
-                    {upcomingServices.map((item) => (
+                    {upcomingServices.map((item: any) => (
                       <li
                         key={item.title + item.details}
                         className="flex items-center justify-between"
@@ -231,8 +265,14 @@ export default function DashboardPage() {
                             </div>
                           </div>
                         </div>
-                        <div className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                          {item.days} dni
+                        <div
+                          className={`px-3 py-1 rounded-full text-sm ${
+                            item.days === 0
+                              ? "bg-red-100 text-red-700"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {item.days === 0 ? "Dziś" : `${item.days} dni`}
                         </div>
                       </li>
                     ))}

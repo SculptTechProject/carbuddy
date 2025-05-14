@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { Car as CarIcon, Calendar, Plus } from "lucide-react";
+import { Car as CarIcon, Plus } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -28,14 +28,6 @@ interface Car {
 export default function MyCarsPage() {
   const router = useRouter();
   const [cars, setCars] = useState<Car[]>([]);
-  const [upcoming, setUpcoming] = useState<
-    Array<{
-      carId: string;
-      type: string;
-      date: string;
-      days: number;
-    }>
-  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -55,20 +47,6 @@ export default function MyCarsPage() {
         );
         const carsData = data.user.cars;
         setCars(carsData);
-
-        // spłaszczamy wszystkie upcomingServices do jednej tablicy
-        const now = Date.now();
-        const list = carsData.flatMap((car) =>
-          (car.upcomingServices ?? []).map((svc) => ({
-            carId: car.id,
-            type: svc.type,
-            date: svc.date,
-            days: Math.ceil(
-              (new Date(svc.date).getTime() - now) / (1000 * 60 * 60 * 24)
-            ),
-          }))
-        );
-        setUpcoming(list);
       } catch (err) {
         console.error(err);
       } finally {
@@ -89,12 +67,6 @@ export default function MyCarsPage() {
       {/* Nagłówek */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Moje pojazdy</h1>
-        <button
-          onClick={() => router.push("/dashboard/add-car")}
-          className="flex items-center bg-black text-white px-4 py-2 rounded"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Dodaj pojazd
-        </button>
       </div>
 
       {/* Karty pojazdów */}
@@ -171,40 +143,6 @@ export default function MyCarsPage() {
             Dodaj pojazd
           </button>
         </div>
-      </div>
-
-      {/* Nadchodzące terminy */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Nadchodzące terminy</h2>
-        <ul className="space-y-3">
-          {upcoming.length > 0 ? (
-            upcoming.map((item) => {
-              const car = cars.find((c) => c.id === item.carId)!;
-              return (
-                <li
-                  key={`${item.carId}-${item.type}`}
-                  className="flex justify-between items-center bg-white p-4 rounded shadow"
-                >
-                  <div className="flex items-center space-x-3">
-                    <Calendar className="w-6 h-6 text-emerald-500" />
-                    <div>
-                      <div className="font-medium">{item.type}</div>
-                      <div className="text-sm text-gray-500">
-                        {car.make} {car.model} •{" "}
-                        {new Date(item.date).toLocaleDateString("pl-PL")}
-                      </div>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 bg-gray-100 rounded-full text-sm">
-                    {item.days} dni
-                  </span>
-                </li>
-              );
-            })
-          ) : (
-            <p className="text-gray-500">Brak zaplanowanych terminów.</p>
-          )}
-        </ul>
       </div>
     </div>
   );

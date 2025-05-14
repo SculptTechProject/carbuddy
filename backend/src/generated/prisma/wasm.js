@@ -182,6 +182,17 @@ exports.Prisma.ExpenseScalarFieldEnum = {
   carId: 'carId'
 };
 
+exports.Prisma.PlannedRepairScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  description: 'description',
+  date: 'date',
+  cost: 'cost',
+  notes: 'notes',
+  carId: 'carId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -204,7 +215,8 @@ exports.Prisma.ModelName = {
   UserToken: 'UserToken',
   Car: 'Car',
   Repair: 'Repair',
-  Expense: 'Expense'
+  Expense: 'Expense',
+  PlannedRepair: 'PlannedRepair'
 };
 
 /**

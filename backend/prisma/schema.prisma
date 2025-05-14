@@ -15,21 +15,21 @@ datasource db {
 }
 
 model User {
-  id                  String   @id @default(cuid())
-  email               String   @unique
-  password            String
-  firstName           String
-  lastName            String
-  phoneNumber         String?  @unique
+  id          String  @id @default(cuid())
+  email       String  @unique
+  password    String
+  firstName   String
+  lastName    String
+  phoneNumber String? @unique
 
-  banned              Boolean  @default(false)
-  premium             Boolean @default(false)
+  banned  Boolean @default(false)
+  premium Boolean @default(false)
 
-  createdAt           DateTime @default(now())
+  createdAt DateTime @default(now())
 
-  tokens              UserToken[]
+  tokens UserToken[]
 
-  cars   Car[]
+  cars Car[]
 }
 
 model Admin {
@@ -40,57 +40,72 @@ model Admin {
 }
 
 model UserToken {
-  id         String   @id @default(cuid())
-  token      String   @unique
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 
   @@index([userId])
 }
 
 model Car {
-  id              String   @id @default(cuid())
-  vin             String   @unique
-  make            String
-  model           String
-  year            Int
-  engine          String?    // np. "2.0 TDI"
-  power           Int?       // moc w KM
-  kilometers      Int?       // przebieg
-  registration    String?    // numer rejestracyjny
-  purchaseDate    DateTime?  // data zakupu
-  fuelType        String?    // rodzaj paliwa
-  color           String?
-  createdAt       DateTime @default(now())
+  id           String    @id @default(cuid())
+  vin          String    @unique
+  make         String
+  model        String
+  year         Int
+  engine       String? // np. "2.0 TDI"
+  power        Int? // moc w KM
+  kilometers   Int? // przebieg
+  registration String? // numer rejestracyjny
+  purchaseDate DateTime? // data zakupu
+  fuelType     String? // rodzaj paliwa
+  color        String?
+  createdAt    DateTime  @default(now())
 
-  owner        User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId      String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId String
 
-  Repair       Repair[]
-  Expense      Expense[]
+  Repair  Repair[]
+  Expense Expense[]
+  PlannedRepair PlannedRepair[]
 
   @@index([ownerId])
 }
 
 model Repair {
-  id       String   @id @default(cuid())
-  date     DateTime
-  type     String
+  id          String   @id @default(cuid())
+  date        DateTime
+  type        String
   description String?
-  cost     Float
-  car      Car     @relation(fields: [carId], references: [id], onDelete: Cascade)
-  carId    String
+  cost        Float
+  car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId       String
 }
 
 model Expense {
-  id       String   @id @default(cuid())
-  date     DateTime
-  category String
-  amount   Float
+  id          String   @id @default(cuid())
+  date        DateTime
+  category    String
+  amount      Float
   description String?
-  car      Car     @relation(fields: [carId], references: [id], onDelete: Cascade)
-  carId    String
+  car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId       String
+}
+
+model PlannedRepair {
+  id          String   @id @default(cuid())
+  type        String
+  description String?
+  date        DateTime
+  cost        Float?
+  notes       String?
+
+  car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId       String
+
+  createdAt   DateTime @default(now())
 }
 

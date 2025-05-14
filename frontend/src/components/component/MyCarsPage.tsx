@@ -30,12 +30,6 @@ export default function MyCarsPage({ cars }: MyCarsPageProps) {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Moje pojazdy</h1>
-        <button
-          onClick={() => router.push("/dashboard/add-car")}
-          className="flex items-center bg-black text-white px-4 py-2 rounded"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Dodaj pojazd
-        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

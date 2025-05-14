@@ -1,11 +1,11 @@
 import { Response, NextFunction } from "express";
 import { AuthRequest } from "../../middleware/user.authenticate";
-import {prisma} from "../../lib/prisma";
+import { prisma } from "../../lib/prisma";
 
 export const getUserData = async (
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
     const userId = req.user!.id;
@@ -16,7 +16,7 @@ export const getUserData = async (
         cars: {
           include: {
             Expense: { orderBy: { date: "desc" } },
-            Repair: { orderBy: { date: "desc" } },  // jeżeli potrzebujesz też napraw
+            Repair: { orderBy: { date: "desc" } },
           },
         },
       },
@@ -27,8 +27,21 @@ export const getUserData = async (
       return;
     }
 
+    const upcomingRepairs =
+      user?.cars.flatMap((car) =>
+        car.Repair.filter((r) => new Date(r.date) > new Date()).map((r) => ({
+          ...r,
+          carLabel: `${car.make} ${car.model}`,
+        }))
+      ) || [];
+
     // teraz user.cars[i].expenses to tablica wydatków
-    res.status(200).json({ user });
+    res.status(200).json({
+      user: {
+        ...user,
+        upcomingServices: upcomingRepairs,
+      },
+    });
   } catch (err) {
     next(err);
   }

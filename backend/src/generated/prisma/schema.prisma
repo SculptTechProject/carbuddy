@@ -68,8 +68,9 @@ model Car {
   owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId String
 
-  Repair  Repair[]
-  Expense Expense[]
+  Repair        Repair[]
+  Expense       Expense[]
+  PlannedRepair PlannedRepair[]
 
   @@index([ownerId])
 }
@@ -92,4 +93,18 @@ model Expense {
   description String?
   car         Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
   carId       String
+}
+
+model PlannedRepair {
+  id          String   @id @default(cuid())
+  type        String
+  description String?
+  date        DateTime
+  cost        Float?
+  notes       String?
+
+  car   Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
+  carId String
+
+  createdAt DateTime @default(now())
 }

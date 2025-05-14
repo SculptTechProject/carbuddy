@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   List,
@@ -17,17 +17,66 @@ import {
   Plus,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { HashLoader } from "react-spinners";
 
 interface Props {
   children: ReactNode;
 }
 
+export interface MeResponse {
+  premium: boolean;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+
 export default function DashboardLayout({ children }: Props) {
   const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<MeResponse | null>(null);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.replace("/login");
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.replace("/login");
+      return;
+    }
+
+    (async () => {
+      try {
+        setLoading(true);
+        // backend zwraca `{ user: MeResponse }`
+        const res = await axios.get<{ user: MeResponse }>(
+          `${API_URL}/api/v1/user/me`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setUser(res.data.user);
+      } catch (err) {
+        // token nieważny / brak dostępu
+        localStorage.removeItem("token");
+        router.replace("/login");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [router]);
+
+  if (loading)
+    return (
+      <div className="flex h-screen justify-center items-center">
+        <HashLoader size={60} />
+      </div>
+    );
+  if (!user) return null;
 
   return (
     <div className="h-screen flex bg-gray-100 overflow-hidden">
@@ -37,7 +86,14 @@ export default function DashboardLayout({ children }: Props) {
           <CarIcon className="w-6 h-6 text-emerald-500 mr-2" />
           <span className="font-bold text-lg text-gray-700">CarBuddy</span>
         </div>
-
+        <div className="text-center pt-4">
+          <span className="text-semibold text-gray-700 font-normal">Plan:</span>{" "}
+          {user.premium ? (
+            <span className="text-emerald-600 font-semibold">Premium</span>
+          ) : (
+            <span className="text-gray-500 font-semibold">Darmowy</span>
+          )}
+        </div>
         <nav className="flex-1 p-4 space-y-2 text-gray-700 text-sm">
           <Link
             href="/dashboard"
@@ -58,7 +114,7 @@ export default function DashboardLayout({ children }: Props) {
             <Calendar className="w-5 h-5 mr-3" /> Terminarz
           </Link>
           <Link
-            href="/dashboard/historia"
+            href="/dashboard/repairs"
             className="flex items-center px-2 py-2 rounded hover:bg-gray-50"
           >
             <FileText className="w-5 h-5 mr-3" /> Historia napraw
@@ -88,7 +144,6 @@ export default function DashboardLayout({ children }: Props) {
             <Cpu className="w-5 h-5 mr-3" /> Predykcja serwisowa
           </Link>
         </nav>
-
         <div className="p-4 border-t">
           <Link
             href="/dashboard/settings"
