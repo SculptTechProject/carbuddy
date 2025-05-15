@@ -87,12 +87,16 @@ export default function DashboardLayout({ children }: Props) {
           <span className="font-bold text-lg text-gray-700">CarBuddy</span>
         </div>
         <div className="text-center pt-4">
-          <span className="text-semibold text-gray-700 font-normal">Plan:</span>{" "}
-          {user.premium ? (
-            <span className="text-emerald-600 font-semibold">Premium</span>
-          ) : (
-            <span className="text-gray-500 font-semibold">Darmowy</span>
-          )}
+          <div className="mx-6 my-2 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50">
+            <span className="text-semibold text-gray-700 font-semibold">
+              Plan:
+            </span>{" "}
+            {user.premium ? (
+              <span className="text-emerald-700 font-semibold ">Premium</span>
+            ) : (
+              <span className="text-gray-500 font-semibold">Darmowy</span>
+            )}
+          </div>
         </div>
         <nav className="flex-1 p-4 space-y-2 text-gray-700 text-sm">
           <Link

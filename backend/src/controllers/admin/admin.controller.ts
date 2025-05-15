@@ -6,7 +6,6 @@ export const getUsers = async (_: Request, res: Response) => {
     select: {
       id: true,
       email: true,
-      plan: true,
       banned: true,
       createdAt: true,
     },
@@ -22,7 +21,7 @@ export const banUser = async (req: Request, res: Response) => {
   }
 
   await prisma.user.update({
-    where: { id: userId },
+    where: { id: userId.toString() },
     data: { banned: true },
   });
 

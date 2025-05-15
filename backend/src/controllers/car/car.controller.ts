@@ -324,3 +324,77 @@ export const getPlannedRepairs = async (
   }
 };
 
+// PATCH /api/v1/cars/:carId/planned-repairs/:repairId
+export const patchPlannedRepair = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { carId, repairId } = req.params;
+    const userId = req.user!.id;
+    const { date, type, description } = req.body;
+
+    // 1. Pobierz naprawę razem z autem (żeby sprawdzić ownerId)
+    const existing = await prisma.plannedRepair.findUnique({
+      where: { id: repairId },
+      include: { car: { select: { id: true, ownerId: true } } },
+    });
+    if (
+      !existing ||
+      existing.carId !== carId ||
+      existing.car.ownerId !== userId
+    ) {
+      res.status(404).json({ message: "Nie znaleziono zaplanowanej naprawy." });
+      return;
+    }
+
+    // 2. Zbuduj obiekt update tylko z przekazanych pól
+    const data: any = {};
+    if (date) data.date = new Date(date);
+    if (type !== undefined) data.type = type;
+    if (description !== undefined) data.description = description;
+
+    // 3. Wykonaj update
+    const updated = await prisma.plannedRepair.update({
+      where: { id: repairId },
+      data,
+    });
+
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE /api/v1/cars/:carId/planned-repairs/:repairId
+export const deletePlannedRepair = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { carId, repairId } = req.params;
+    const userId = req.user!.id;
+
+    // Sprawdzenie, czy naprawa i auto istnieją i należą do usera
+    const existing = await prisma.plannedRepair.findUnique({
+      where: { id: repairId },
+      include: { car: { select: { id: true, ownerId: true } } },
+    });
+    if (
+      !existing ||
+      existing.carId !== carId ||
+      existing.car.ownerId !== userId
+    ) {
+      res.status(404).json({ message: "Nie znaleziono zaplanowanej naprawy." });
+      return;
+    }
+
+    // Usuń wpis
+    await prisma.plannedRepair.delete({ where: { id: repairId } });
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+};
