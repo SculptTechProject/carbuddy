@@ -1,4 +1,4 @@
-# CarBuddy
+# CarBuddy !
 
 CarBuddy to cyfrowy asystent i towarzysz każdego kierowcy, który pilnuje wszystkich terminów serwisowych, gromadzi
 historię napraw oraz pomaga znaleźć najlepsze warsztaty. Projekt został stworzony, aby dać kierowcom pełną kontrolę nad
