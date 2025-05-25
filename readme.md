@@ -21,7 +21,6 @@ kosztami i stanem technicznym pojazdu — bez zbędnej biurokracji i stresu!
 * [Licencja](#licencja)
 
 ## Wizja
-
 CarBuddy to twój cyfrowy kumpl-asystent, który:
 
 * Pilnuje wszystkich terminów związanych z autem (przeglądy, wymiany płynów, opony, ubezpieczenia).
