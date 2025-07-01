@@ -81,28 +81,81 @@ export default function DashboardLayout({ children }: Props) {
     );
   if (!user) return null;
 
+  const links: {
+    href: string;
+    Icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    premiumOnly: boolean;
+  }[] = [
+    { href: "/dashboard", Icon: List, label: "Dashboard", premiumOnly: false },
+    {
+      href: "/dashboard/cars",
+      Icon: CarIcon,
+      label: "Moje pojazdy",
+      premiumOnly: false,
+    },
+    {
+      href: "/dashboard/timetable",
+      Icon: Calendar,
+      label: "Terminarz",
+      premiumOnly: false,
+    },
+    {
+      href: "/dashboard/repairs",
+      Icon: FileText,
+      label: "Historia napraw",
+      premiumOnly: false,
+    },
+    {
+      href: "/dashboard/expenses",
+      Icon: CreditCard,
+      label: "Wydatki",
+      premiumOnly: false,
+    },
+    {
+      href: "/dashboard/analitycs",
+      Icon: BarChart,
+      label: "Analityka",
+      premiumOnly: true,
+    },
+    {
+      href: "/dashboard/workshops",
+      Icon: Search,
+      label: "Warsztaty",
+      premiumOnly: true,
+    },
+    {
+      href: "/dashboard/prediction",
+      Icon: Cpu,
+      label: "Predykcja serwisowa",
+      premiumOnly: true,
+    },
+  ];
+
   const NavLinks = () => (
     <nav className="flex flex-col flex-1 p-4 space-y-2 text-gray-700 text-sm">
-      {(
-        [
-          ["/dashboard", List, "Dashboard"],
-          ["/dashboard/cars", CarIcon, "Moje pojazdy"],
-          ["/dashboard/terminarz", Calendar, "Terminarz"],
-          ["/dashboard/repairs", FileText, "Historia napraw"],
-          ["/dashboard/expenses", CreditCard, "Wydatki"],
-          ["/dashboard/analityka", BarChart, "Analityka"],
-          ["/dashboard/warsztaty", Search, "Warsztaty"],
-          ["/dashboard/predykcja", Cpu, "Predykcja serwisowa"],
-        ] as [string, React.ComponentType<{ className?: string }>, string][]
-      ).map(([href, Icon, label]) => (
-        <Link
-          key={href}
-          href={href}
-          className="flex items-center px-2 py-2 rounded hover:bg-gray-50 hover:px-6 transition-all cursor-pointer"
-        >
-          <Icon className="w-5 h-5 mr-3" /> {label}
-        </Link>
-      ))}
+      {links.map(({ href, Icon, label, premiumOnly }) => {
+        const disabled = premiumOnly && !user!.premium;
+        const base = "flex items-center px-2 py-2 rounded transition-all";
+        const hover = disabled
+          ? ""
+          : "hover:bg-gray-50 hover:px-6 cursor-pointer";
+        const text = disabled ? "text-gray-400 pointer-events-none" : "";
+        const classes = `${base} ${hover} ${text}`;
+        return disabled ? (
+          <div
+            key={href}
+            className={classes}
+            title="Tylko dla użytkowników Premium"
+          >
+            <Icon className="w-5 h-5 mr-3" /> {label}
+          </div>
+        ) : (
+          <Link key={href} href={href} className={classes}>
+            <Icon className="w-5 h-5 mr-3" /> {label}
+          </Link>
+        );
+      })}
     </nav>
   );
 
