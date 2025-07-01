@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Plus, X } from "lucide-react";
+import HashLoader from "react-spinners/HashLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 const DEFAULT_REPAIR_TYPES = ["Naprawa", "Serwis"]; // możesz rozbudować
@@ -158,13 +159,13 @@ export default function RepairsPage() {
     }
   };
 
-  if (loading) {
+
+  if (loading)
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-600 border-t-transparent"></div>
+        <HashLoader size={60} />
       </div>
     );
-  }
 
   return (
     <div className="p-6 space-y-6">

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Car as CarIcon, Plus } from "lucide-react";
+import HashLoader from "react-spinners/HashLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -58,7 +59,7 @@ export default function MyCarsPage() {
   if (loading)
     return (
       <div className="flex h-screen items-center justify-center">
-        Ładowanie…
+        <HashLoader size={60} />
       </div>
     );
 

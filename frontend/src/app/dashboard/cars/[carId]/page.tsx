@@ -46,6 +46,7 @@ export default function CarDetailsPage() {
   const [repairs, setRepairs] = useState<Repair[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!carId) return;
@@ -58,13 +59,15 @@ export default function CarDetailsPage() {
     (async () => {
       try {
         const headers = { Authorization: `Bearer ${token}` };
-
         const [carRes, repRes, expRes] = await Promise.all([
           axios.get<Car>(`${API_URL}/api/v1/cars/${carId}`, { headers }),
-          axios.get<Repair[]>(`${API_URL}/api/v1/cars/${carId}/repairs`, { headers }),
-          axios.get<Expense[]>(`${API_URL}/api/v1/cars/${carId}/expenses`, { headers }),
+          axios.get<Repair[]>(`${API_URL}/api/v1/cars/${carId}/repairs`, {
+            headers,
+          }),
+          axios.get<Expense[]>(`${API_URL}/api/v1/cars/${carId}/expenses`, {
+            headers,
+          }),
         ]);
-
         setCar(carRes.data);
         setRepairs(repRes.data);
         setExpenses(expRes.data);
@@ -77,25 +80,47 @@ export default function CarDetailsPage() {
     })();
   }, [carId, router]);
 
+  const handleDelete = async () => {
+    if (!carId || !confirm("Czy na pewno chcesz usunąć ten pojazd?")) return;
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_URL}/api/v1/cars/${carId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      router.replace("/dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("Nie udało się usunąć pojazdu.");
+      setDeleting(false);
+    }
+  };
+
+  const handleEdit = () => {
+    router.push(`/dashboard/cars/${carId}/edit`);
+  };
+
   if (loading) {
     return (
-        <div className="flex h-screen justify-center items-center">
-          <HashLoader size={60} />
-        </div>
+      <div className="flex h-screen justify-center items-center">
+        <HashLoader size={60} />
+      </div>
     );
   }
 
   if (!car) {
     return (
-        <div className="p-6 text-center">
-          <p className="text-red-600 font-medium">Pojazd nie został znaleziony.</p>
-          <button
-              onClick={() => router.back()}
-              className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
-          >
-            ← Wróć
-          </button>
-        </div>
+      <div className="p-6 text-center">
+        <p className="text-red-600 font-medium">
+          Pojazd nie został znaleziony.
+        </p>
+        <button
+          onClick={() => router.back()}
+          className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+        >
+          ← Wróć
+        </button>
+      </div>
     );
   }
 
@@ -103,90 +128,118 @@ export default function CarDetailsPage() {
   const formatDate = (iso: string) => new Date(iso).toLocaleDateString();
 
   const details = [
-    { label: 'VIN', value: car.vin },
-    { label: 'Rejestracja', value: car.registration },
-    { label: 'Przebieg', value: car.kilometers ? `${car.kilometers.toLocaleString()} km` : null },
-    { label: 'Silnik', value: car.engine },
-    { label: 'Moc', value: car.power ? `${car.power} KM` : null },
-    { label: 'Paliwo', value: car.fuelType },
-    { label: 'Kolor', value: car.color },
-    { label: 'Data zakupu', value: car.purchaseDate ? formatDate(car.purchaseDate) : null },
+    { label: "VIN", value: car.vin },
+    { label: "Rejestracja", value: car.registration },
+    {
+      label: "Przebieg",
+      value: car.kilometers ? `${car.kilometers.toLocaleString()} km` : null,
+    },
+    { label: "Silnik", value: car.engine },
+    { label: "Moc", value: car.power ? `${car.power} KM` : null },
+    { label: "Paliwo", value: car.fuelType },
+    { label: "Kolor", value: car.color },
+    {
+      label: "Data zakupu",
+      value: car.purchaseDate ? formatDate(car.purchaseDate) : null,
+    },
   ];
 
   return (
-      <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8">
+      <div className="flex items-center justify-between">
         <button
-            onClick={() => router.back()}
-            className="text-sm text-emerald-600 hover:underline"
+          onClick={() => router.back()}
+          className="text-sm text-emerald-600 hover:underline"
         >
           ← Wróć do listy pojazdów
         </button>
-
-        <div className="bg-white shadow rounded-lg p-6">
-          <h1 className="text-2xl font-semibold mb-4">
-            {car.make} {car.model} ({car.year})
-          </h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-gray-700">
-            {details.map((d) =>
-                d.value ? (
-                    <div key={d.label} className="flex">
-                      <span className="w-40 font-medium text-gray-800">{d.label}:</span>
-                      <span>{d.value}</span>
-                    </div>
-                ) : null
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <section className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Naprawy</h2>
-            {repairs.length ? (
-                <ul className="space-y-4">
-                  {repairs.map((r) => (
-                      <li
-                          key={r.id}
-                          className="flex justify-between items-start border-b pb-4 last:border-0"
-                      >
-                        <div>
-                          <div className="font-medium text-gray-800">{r.type}</div>
-                          <div className="text-sm text-gray-500">
-                            {formatDate(r.date)}{r.description && ` • ${r.description}`}
-                          </div>
-                        </div>
-                        <div className="font-semibold text-gray-900">{r.cost} zł</div>
-                      </li>
-                  ))}
-                </ul>
-            ) : (
-                <p className="text-gray-500">Brak zarejestrowanych napraw.</p>
-            )}
-          </section>
-
-          <section className="bg-white shadow rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Wydatki</h2>
-            {expenses.length > 0 ? (
-                <ul className="divide-y divide-gray-200">
-                  {expenses.map((e) => (
-                      <li key={e.id} className="flex items-start py-4">
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-800">{e.category}</div>
-                          <div className="text-sm text-gray-500">
-                            {formatDate(e.date)}
-                            {e.description ? <span> • {e.description}</span> : null}
-                          </div>
-                        </div>
-                        <div className="ml-6 text-right font-semibold text-gray-900 min-w-[5rem]">
-                          {e.amount} zł
-                        </div>
-                      </li>
-                  ))}
-                </ul>
-            ) : (
-                <p className="text-gray-500">Brak zarejestrowanych wydatków.</p>
-            )}
-          </section>
+        <div className="space-x-2">
+          <button
+            onClick={handleEdit}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Edytuj
+          </button>
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            {deleting ? "Usuwanie…" : "Usuń"}
+          </button>
         </div>
       </div>
+
+      <div className="bg-white shadow rounded-lg p-6">
+        <h1 className="text-2xl font-semibold mb-4 text-gray-800">
+          {car.make} {car.model} ({car.year})
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-gray-700">
+          {details.map((d) =>
+            d.value ? (
+              <div key={d.label} className="flex">
+                <span className="w-40 font-medium text-gray-800">
+                  {d.label}:
+                </span>
+                <span>{d.value}</span>
+              </div>
+            ) : null
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Naprawy</h2>
+          {repairs.length ? (
+            <ul className="space-y-4">
+              {repairs.map((r) => (
+                <li
+                  key={r.id}
+                  className="flex justify-between items-start border-b pb-4 last:border-0"
+                >
+                  <div>
+                    <div className="font-medium text-gray-800">{r.type}</div>
+                    <div className="text-sm text-gray-500">
+                      {formatDate(r.date)}
+                      {r.description && ` • ${r.description}`}
+                    </div>
+                  </div>
+                  <div className="font-semibold text-gray-900">{r.cost} zł</div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">Brak zarejestrowanych napraw.</p>
+          )}
+        </section>
+
+        <section className="bg-white shadow rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">Wydatki</h2>
+          {expenses.length > 0 ? (
+            <ul className="divide-y divide-gray-200">
+              {expenses.map((e) => (
+                <li key={e.id} className="flex items-start py-4">
+                  <div className="flex-1">
+                    <div className="font-medium text-gray-800">
+                      {e.category}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {formatDate(e.date)}
+                      {e.description ? <span> • {e.description}</span> : null}
+                    </div>
+                  </div>
+                  <div className="ml-6 text-right font-semibold text-gray-900 min-w-[5rem]">
+                    {e.amount} zł
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500">Brak zarejestrowanych wydatków.</p>
+          )}
+        </section>
+      </div>
+    </div>
   );
 }

@@ -1,222 +1,215 @@
 "use client";
-
-import React, { useState, FormEvent, ChangeEvent } from "react";
-import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+interface FormData {
+  vin: string;
+  make: string;
+  model: string;
+  year: number;
+  engine?: string;
+  power?: number;
+  kilometers?: number;
+  registration?: string;
+  purchaseDate?: string;
+  fuelType?: string;
+  color?: string;
+}
 
 export default function AddCarPage() {
   const router = useRouter();
-  // stan formularza
-  const [form, setForm] = useState({
-    vin: "",
-    make: "",
-    model: "",
-    year: "",
-    engine: "",
-    power: "",
-    kilometers: "",
-    registration: "",
-    purchaseDate: "",
-    fuelType: "",
-    color: "",
-  });
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>();
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  const onSubmit = async (data: FormData) => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("Brak tokena!");
-
-      await axios.post(
-        `${API_URL}/api/v1/cars`,
-        {
-          ...form,
-          year: Number(form.year),
-          power: form.power ? Number(form.power) : undefined,
-          kilometers: form.kilometers ? Number(form.kilometers) : undefined,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      router.replace("/dashboard"); // albo /cars
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!token) throw new Error("Brak tokena");
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/cars`, data, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      router.replace("/dashboard");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.response?.data?.error || err.message);
-    } finally {
-      setLoading(false);
+      console.error(err);
+      alert(err.response?.data?.error || err.message);
     }
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl mb-4">{`Dodaj pojazd`}</h1>
-      {error && <div className="mb-4 text-red-500">{error}</div>}
+    <div className="max-w-4xl mx-auto p-8 bg-white bg-opacity-20 backdrop-blur-lg border border-gray-200 rounded-xl shadow-md">
+      <h1 className="text-3xl font-semibold mb-6 text-gray-800">
+        Dodaj pojazd
+      </h1>
       <form
-        onSubmit={handleSubmit}
-        className="space-y-4 bg-white p-6 rounded shadow"
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
         {/* VIN */}
-        <div>
-          <label className="block text-sm font-medium">Numer VIN</label>
+        <div className="col-span-full">
+          <label className="block text-sm font-medium text-gray-700">
+            Numer VIN
+          </label>
           <input
-            name="vin"
-            value={form.vin}
-            onChange={handleChange}
-            required
-            className="mt-1 w-full border rounded px-3 py-2"
+            {...register("vin", { required: "VIN jest wymagany" })}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+          {errors.vin && (
+            <p className="text-red-500 text-sm mt-1">{errors.vin.message}</p>
+          )}
+        </div>
+
+        {/* Marka */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Marka
+          </label>
+          <input
+            {...register("make", { required: "Pole wymagane" })}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+          {errors.make && (
+            <p className="text-red-500 text-sm mt-1">{errors.make.message}</p>
+          )}
+        </div>
+
+        {/* Model */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Model
+          </label>
+          <input
+            {...register("model", { required: "Pole wymagane" })}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+          {errors.model && (
+            <p className="text-red-500 text-sm mt-1">{errors.model.message}</p>
+          )}
+        </div>
+
+        {/* Rok */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Rok produkcji
+          </label>
+          <input
+            type="number"
+            {...register("year", {
+              valueAsNumber: true,
+              required: "Pole wymagane",
+            })}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+          {errors.year && (
+            <p className="text-red-500 text-sm mt-1">{errors.year.message}</p>
+          )}
+        </div>
+
+        {/* Silnik */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Silnik
+          </label>
+          <input
+            {...register("engine")}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
           />
         </div>
 
-        {/* Marka / model */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Marka</label>
-            <input
-              name="make"
-              value={form.make}
-              onChange={handleChange}
-              required
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Model</label>
-            <input
-              name="model"
-              value={form.model}
-              onChange={handleChange}
-              required
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-        </div>
-
-        {/* Rok, silnik */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Rok produkcji</label>
-            <input
-              name="year"
-              type="number"
-              value={form.year}
-              onChange={handleChange}
-              required
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Silnik</label>
-            <input
-              name="engine"
-              value={form.engine}
-              onChange={handleChange}
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-        </div>
-
-        {/* Moc / przebieg */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Moc (KM)</label>
-            <input
-              name="power"
-              type="number"
-              value={form.power}
-              onChange={handleChange}
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Przebieg (km)</label>
-            <input
-              name="kilometers"
-              type="number"
-              value={form.kilometers}
-              onChange={handleChange}
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-        </div>
-
-        {/* Rejestracja / data zakupu / paliwo */}
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Numer rej.</label>
-            <input
-              name="registration"
-              value={form.registration}
-              onChange={handleChange}
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Data zakupu</label>
-            <input
-              name="purchaseDate"
-              type="date"
-              value={form.purchaseDate}
-              onChange={handleChange}
-              className="mt-1 w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Rodzaj paliwa</label>
-            <select
-              name="fuelType"
-              value={form.fuelType}
-              onChange={handleChange}
-              className="mt-1 w-full border rounded px-3 py-2"
-            >
-              <option value="">Wybierz</option>
-              <option>ON</option>
-              <option>PB</option>
-              <option>EV</option>
-            </select>
-          </div>
-        </div>
-
-        {/* kolor */}
+        {/* Moc */}
         <div>
-          <label className="block text-sm font-medium">Kolor</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Moc (KM)
+          </label>
           <input
-            name="color"
-            value={form.color}
-            onChange={handleChange}
-            className="mt-1 w-full border rounded px-3 py-2"
+            type="number"
+            {...register("power", { valueAsNumber: true })}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+        </div>
+
+        {/* Przebieg */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Przebieg (km)
+          </label>
+          <input
+            type="number"
+            {...register("kilometers", { valueAsNumber: true })}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+        </div>
+
+        {/* Rejestracja */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Numer rej.
+          </label>
+          <input
+            {...register("registration")}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+        </div>
+
+        {/* Data zakupu */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Data zakupu
+          </label>
+          <input
+            type="date"
+            {...register("purchaseDate")}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          />
+        </div>
+
+        {/* Paliwo */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Rodzaj paliwa
+          </label>
+          <select
+            {...register("fuelType")}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
+          >
+            <option value="">Wybierz</option>
+            <option value="ON">ON</option>
+            <option value="PB">PB</option>
+            <option value="EV">EV</option>
+          </select>
+        </div>
+
+        {/* Kolor */}
+        <div className="col-span-full">
+          <label className="block text-sm font-medium text-gray-700">
+            Kolor
+          </label>
+          <input
+            {...register("color")}
+            className="mt-1 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring"
           />
         </div>
 
         {/* Akcje */}
-        <div className="flex justify-end space-x-2">
+        <div className="col-span-full flex justify-end space-x-4 mt-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-4 py-2 border rounded cursor-pointer"
+            className="px-4 py-2 border rounded hover:bg-gray-100"
           >
             Anuluj
           </button>
           <button
             type="submit"
-            disabled={loading}
-            className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 cursor-pointer"
+            disabled={isSubmitting}
+            className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
           >
-            {loading ? "Dodaję…" : "Dodaj pojazd"}
+            {isSubmitting ? "Dodaję…" : "Dodaj pojazd"}
           </button>
         </div>
       </form>
