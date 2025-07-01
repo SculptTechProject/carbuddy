@@ -19,6 +19,7 @@ import { Plus, X } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import { HashLoader } from "react-spinners";
 import { Transition } from "@headlessui/react";
+import { Edit2, Trash2 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const DEFAULT_CATEGORIES = [
@@ -29,6 +30,7 @@ const DEFAULT_CATEGORIES = [
   "Zawieszenie",
   "Elektryka",
   "Płyny chłodnicze",
+  "Przegląd",
   "Inne",
 ];
 
@@ -48,6 +50,9 @@ export default function ExpensesPage() {
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [catData, setCatData] = useState<any[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [filterStartDate, setFilterStartDate] = useState<Date | null>(null);
+  const [filterEndDate, setFilterEndDate] = useState<Date | null>(null);
+  const [editingExpense, setEditingExpense] = useState<any | null>(null);
 
   // modal state
   const [showModal, setShowModal] = useState(false);
@@ -132,29 +137,74 @@ export default function ExpensesPage() {
     fetchData();
   }, [refreshTrigger]);
 
-  const handleAdd = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
+  const handleSave = async (ev: React.FormEvent) => {
+    ev.preventDefault();
     try {
-      await axios.post(
-        `${API_URL}/api/v1/cars/${newVehicleId}/expenses`,
-        {
-          date: newDate,
-          category: newCategory,
-          amount: newAmount,
-          description: newDesc,
-        },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      if (editingExpense) {
+        // edytuj
+        await axios.patch(
+          `${API_URL}/api/v1/cars/${newVehicleId}/expenses/${editingExpense.id}`,
+          {
+            date: newDate?.toISOString().split("T")[0],
+            category: newCategory,
+            amount: newAmount,
+            description: newDesc,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      } else {
+        // dodaj
+        await axios.post(
+          `${API_URL}/api/v1/cars/${newVehicleId}/expenses`,
+          {
+            date: newDate,
+            category: newCategory,
+            amount: newAmount,
+            description: newDesc,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+      }
       setShowModal(false);
+      setEditingExpense(null);
+      setErrorMsg(null);
       setRefreshTrigger((p) => p + 1);
+      setNewDate(new Date());
+      setNewVehicleId(vehicles[0]?.id || "");
+      setNewCategory(DEFAULT_CATEGORIES[0]);
+      setNewAmount(0);
+      setNewDesc("");
     } catch (err: any) {
-      setErrorMsg(
-        err.response?.data?.message || "Nie udało się dodać wydatku."
-      );
+      setErrorMsg(err.response?.data?.message || "Coś poszło nie tak.");
     }
+  };
+
+  const handleDelete = async (id: string, carId: string) => {
+    if (!confirm("Na pewno usunąć ten wydatek?")) return;
+    await axios.delete(`${API_URL}/api/v1/cars/${carId}/expenses/${id}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    setRefreshTrigger((p) => p + 1);
+  };
+
+  const handleEdit = (e: any) => {
+    setErrorMsg(null);
+    setEditingExpense(e);
+    setEditingExpense(e);
+    setNewDate(new Date(e.date));
+    setNewVehicleId(e.carId);
+    setNewCategory(e.category);
+    setNewAmount(e.amount);
+    setNewDesc(e.description);
+    setShowModal(true);
   };
 
   if (loading)
@@ -165,13 +215,19 @@ export default function ExpensesPage() {
     );
 
   // filtering
-  const filtered = expenses.filter(
-    (e) =>
-      (!filterVehicle || e.carId === filterVehicle) &&
-      (!filterCategory || e.category === filterCategory) &&
-      (!searchTerm ||
-        e.description?.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filtered = expenses.filter((e) => {
+    const d = new Date(e.date);
+    if (filterStartDate && d < filterStartDate) return false;
+    if (filterEndDate && d > filterEndDate) return false;
+    if (filterVehicle && e.carId !== filterVehicle) return false;
+    if (filterCategory && e.category !== filterCategory) return false;
+    if (
+      searchTerm &&
+      !e.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+      return false;
+    return true;
+  });
 
   const now = new Date();
   const thisMonthSum = expenses
@@ -238,8 +294,8 @@ export default function ExpensesPage() {
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative z-10">
               {/* header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  Nowy wydatek
+                <h2 className="text-2xl">
+                  {editingExpense ? "Edytuj wydatek" : "Nowy wydatek"}
                 </h2>
                 <button
                   onClick={() => setShowModal(false)}
@@ -256,7 +312,7 @@ export default function ExpensesPage() {
               )}
 
               <form
-                onSubmit={handleAdd}
+                onSubmit={handleSave}
                 className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
                 {/* Data */}
@@ -335,7 +391,11 @@ export default function ExpensesPage() {
                 <div className="md:col-span-2 flex justify-end space-x-3 mt-2">
                   <button
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => {
+                      setShowModal(false);
+                      setEditingExpense(null);
+                      setErrorMsg(null);
+                    }}
                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
                   >
                     Anuluj
@@ -488,31 +548,101 @@ export default function ExpensesPage() {
               ))}
             </select>
           </div>
+          <div className="flex gap-2">
+            <DatePicker
+              selected={filterStartDate}
+              onChange={setFilterStartDate}
+              placeholderText="Od"
+              dateFormat="dd.MM.yyyy"
+              className="border rounded px-3 py-2"
+            />
+            <DatePicker
+              selected={filterEndDate}
+              onChange={setFilterEndDate}
+              placeholderText="Do"
+              dateFormat="dd.MM.yyyy"
+              className="border rounded px-3 py-2"
+            />
+          </div>
         </div>
-        <table className="w-full text-left table-auto">
-          <thead>
-            <tr className="text-sm text-gray-600">
-              <th className="py-2">Data</th>
-              <th>Pojazd</th>
-              <th>Kategoria</th>
-              <th>Opis</th>
-              <th className="text-right">Kwota</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {filtered.map((e) => (
-              <tr key={e.id} className="hover:bg-gray-50">
-                <td className="py-2">
-                  {new Date(e.date).toLocaleDateString()}
-                </td>
-                <td>{e.car}</td>
-                <td>{e.category}</td>
-                <td>{e.description}</td>
-                <td className="text-right font-semibold">{e.amount} zł</td>
+        <div className="sm:hidden space-y-2">
+          {filtered.map((e) => (
+            <div
+              key={e.id}
+              className="bg-white p-4 rounded-lg shadow flex flex-col"
+            >
+              <div className="flex justify-between mb-1">
+                <span className="font-medium">
+                  {new Date(e.date).toLocaleDateString("pl-PL")}
+                </span>
+                <span className="font-semibold">{e.amount} zł</span>
+              </div>
+              <div className="text-sm text-gray-600">{e.car}</div>
+              <div className="text-sm text-gray-600 mb-2">{e.category}</div>
+              <div className="text-sm mb-3">{e.description}</div>
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => handleEdit(e)}
+                  className="inline-flex items-center p-1 hover:bg-blue-100 rounded"
+                  title="Edytuj"
+                >
+                  <Edit2 className="w-5 h-5 text-blue-600" />
+                </button>
+                <button
+                  onClick={() => handleDelete(e.id, e.carId)}
+                  className="inline-flex items-center p-1 hover:bg-red-100 rounded"
+                  title="Usuń"
+                >
+                  <Trash2 className="w-5 h-5 text-red-600" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden sm:block overflow-x-auto">
+          <table className="min-w-[600px] w-full text-left table-auto">
+            <thead>
+              <tr className="text-sm text-gray-600">
+                <th className="py-2">Data</th>
+                <th>Pojazd</th>
+                <th>Kategoria</th>
+                <th>Opis</th>
+                <th className="text-right">Kwota</th>
+                <th className="text-right">Akcje</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y">
+              {filtered.map((e) => (
+                <tr key={e.id} className="hover:bg-gray-50 border-b">
+                  <td className="py-2">
+                    {new Date(e.date).toLocaleDateString("pl-PL")}
+                  </td>
+                  <td>{e.car}</td>
+                  <td>{e.category}</td>
+                  <td>{e.description}</td>
+                  <td className="text-right font-semibold">{e.amount} zł</td>
+                  <td className="py-2 text-right flex justify-end space-x-2">
+                    <button
+                      onClick={() => handleEdit(e)}
+                      title="Edytuj"
+                      className="p-1 hover:bg-blue-100 rounded transition"
+                    >
+                      <Edit2 className="w-5 h-5 text-blue-600" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(e.id, e.carId)}
+                      title="Usuń"
+                      className="p-1 hover:bg-red-100 rounded transition"
+                    >
+                      <Trash2 className="w-5 h-5 text-red-600" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

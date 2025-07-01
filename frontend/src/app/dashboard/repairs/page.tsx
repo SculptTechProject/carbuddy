@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
@@ -10,7 +10,8 @@ import { Plus, X } from "lucide-react";
 import HashLoader from "react-spinners/HashLoader";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-const DEFAULT_REPAIR_TYPES = ["Naprawa", "Serwis"]; // możesz rozbudować
+const DEFAULT_REPAIR_TYPES = ["Naprawa", "Serwis"];
+import { Transition } from "@headlessui/react";
 
 interface Vehicle {
   id: string;
@@ -159,7 +160,6 @@ export default function RepairsPage() {
     }
   };
 
-
   if (loading)
     return (
       <div className="flex h-screen items-center justify-center">
@@ -270,134 +270,179 @@ export default function RepairsPage() {
 
       {/* Modal dodawania naprawy */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-50/75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative space-y-4">
-            <button
-              className="absolute top-4 right-4 text-gray-600"
-              onClick={() => setShowModal(false)}
+        <Transition appear show={showModal} as={Fragment}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            {/* overlay */}
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
             >
-              <X className="w-5 h-5" />
-            </button>
-
-            <h2 className="text-xl font-semibold">Dodaj nową naprawę</h2>
-            <form
-              onSubmit={handleAdd}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              {/* lewa kolumna */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm">Pojazd</label>
-                  <select
-                    className="w-full border rounded px-3 py-2"
-                    value={newVehicleId}
-                    onChange={(e) => setNewVehicleId(e.target.value)}
-                  >
-                    {vehicles.map((v) => (
-                      <option key={v.id} value={v.id}>
-                        {v.make} {v.model}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm">Data naprawy</label>
-                  <DatePicker
-                    selected={newDate}
-                    onChange={(d) => setNewDate(d)}
-                    className="w-full border rounded px-3 py-2"
-                    dateFormat="yyyy-MM-dd"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm">Typ naprawy</label>
-                  <select
-                    className="w-full border rounded px-3 py-2"
-                    value={newType}
-                    onChange={(e) => setNewType(e.target.value)}
-                  >
-                    {DEFAULT_REPAIR_TYPES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm">Warsztat</label>
-                  <input
-                    type="text"
-                    className="w-full border rounded px-3 py-2"
-                    value={newWorkshop}
-                    onChange={(e) => setNewWorkshop(e.target.value)}
-                  />
-                </div>
-              </div>
-              {/* prawa kolumna */}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm">Przebieg</label>
-                  <input
-                    type="number"
-                    placeholder="np. 120 000"
-                    className="w-full border rounded px-3 py-2"
-                    value={newKilometers}
-                    onChange={(e) =>
-                      setNewKilometers(
-                        e.target.value === "" ? "" : parseInt(e.target.value)
-                      )
-                    }
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm">Całkowity koszt</label>
-                  <input
-                    type="number"
-                    placeholder="np. 650"
-                    className="w-full border rounded px-3 py-2"
-                    value={newCost}
-                    onChange={(e) => setNewCost(parseFloat(e.target.value))}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm">Opis naprawy</label>
-                  <input
-                    type="text"
-                    className="w-full border rounded px-3 py-2"
-                    value={newDesc}
-                    onChange={(e) => setNewDesc(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm">Dodatkowe notatki</label>
-                  <textarea
-                    className="w-full border rounded px-3 py-2"
-                    rows={3}
-                    value={newNotes}
-                    onChange={(e) => setNewNotes(e.target.value)}
-                  />
-                </div>
-              </div>
-              {/* tutaj możesz dodać dynamiczne części, dropzone itp */}
-            </form>
-
-            {/* Akcje */}
-            <div className="flex justify-end space-x-2 pt-4">
-              <button
+              <div
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm"
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                Anuluj
-              </button>
-              <button
-                onClick={(e) => handleAdd(e as any)}
-                className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
-              >
-                Zapisz naprawę
-              </button>
-            </div>
+              />
+            </Transition.Child>
+
+            {/* panel */}
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+                <button
+                  className="absolute top-4 right-4 text-gray-600"
+                  onClick={() => setShowModal(false)}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <h2 className="text-xl font-semibold mb-4">
+                  Dodaj nową naprawę
+                </h2>
+                <form
+                  onSubmit={handleAdd}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                >
+                  {/* 1. Pojazd */}
+                  <div>
+                    <label className="block text-sm font-medium">Pojazd</label>
+                    <select
+                      className="w-full border rounded px-3 py-2"
+                      value={newVehicleId}
+                      onChange={(e) => setNewVehicleId(e.target.value)}
+                    >
+                      {vehicles.map((v) => (
+                        <option key={v.id} value={v.id}>
+                          {v.make} {v.model}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/* 2. Data */}
+                  <div>
+                    <label className="block text-sm font-medium">Data</label>
+                    <DatePicker
+                      selected={newDate}
+                      onChange={(d) => setNewDate(d)}
+                      className="w-full border rounded px-3 py-2"
+                      dateFormat="yyyy-MM-dd"
+                    />
+                  </div>
+                  {/* 3. Typ */}
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Typ naprawy
+                    </label>
+                    <select
+                      className="w-full border rounded px-3 py-2"
+                      value={newType}
+                      onChange={(e) => setNewType(e.target.value)}
+                    >
+                      {DEFAULT_REPAIR_TYPES.map((t) => (
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/* 4. Warsztat */}
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Warsztat
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border rounded px-3 py-2"
+                      value={newWorkshop}
+                      onChange={(e) => setNewWorkshop(e.target.value)}
+                    />
+                  </div>
+                  {/* 5. Przebieg */}
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Przebieg (km)
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="np. 120000"
+                      value={newKilometers}
+                      onChange={(e) =>
+                        setNewKilometers(
+                          e.target.value ? parseInt(e.target.value) : ""
+                        )
+                      }
+                    />
+                  </div>
+                  {/* 6. Koszt */}
+                  <div>
+                    <label className="block text-sm font-medium">
+                      Całkowity koszt (zł)
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="np. 650"
+                      value={newCost}
+                      onChange={(e) => setNewCost(parseFloat(e.target.value))}
+                    />
+                  </div>
+                  {/* 7. Opis */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium">
+                      Opis naprawy
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border rounded px-3 py-2"
+                      placeholder="Co zostało zrobione?"
+                      value={newDesc}
+                      onChange={(e) => setNewDesc(e.target.value)}
+                    />
+                  </div>
+                  {/* 8. Notatki */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium">
+                      Dodatkowe notatki
+                    </label>
+                    <textarea
+                      className="w-full border rounded px-3 py-2"
+                      rows={3}
+                      placeholder="Uwagi dodatkowe..."
+                      value={newNotes}
+                      onChange={(e) => setNewNotes(e.target.value)}
+                    />
+                  </div>
+                </form>
+
+                {/* Akcje */}
+                <div className="flex justify-end space-x-2 pt-4">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    onClick={(e) => handleAdd(e as any)}
+                    className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+                  >
+                    Zapisz naprawę
+                  </button>
+                </div>
+              </div>
+            </Transition.Child>
           </div>
-        </div>
+        </Transition>
       )}
     </div>
   );

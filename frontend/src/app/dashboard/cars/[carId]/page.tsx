@@ -149,21 +149,21 @@ export default function CarDetailsPage() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => router.back()}
-          className="text-sm text-emerald-600 hover:underline"
+          className="text-sm text-emerald-600 hover:text-emerald-800 hover:underline transition-all cursor-pointer"
         >
           ← Wróć do listy pojazdów
         </button>
         <div className="space-x-2">
           <button
             onClick={handleEdit}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-gray-500 text-gray-100 rounded-xl hover:bg-gray-700 transition-all cursor-pointer"
           >
             Edytuj
           </button>
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-4 py-2 bg-red-500 text-gray-100 rounded-xl hover:bg-red-600 transition-all cursor-pointer"
           >
             {deleting ? "Usuwanie…" : "Usuń"}
           </button>

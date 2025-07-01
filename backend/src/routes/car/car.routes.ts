@@ -14,6 +14,8 @@ import {
   getPlannedRepairs,
   patchPlannedRepair,
   deletePlannedRepair,
+  patchCarExpense,
+  deleteCarExpense,
 } from "../../controllers/car/car.controller";
 import { authenticate } from "../../middleware/user.authenticate";
 
@@ -46,6 +48,15 @@ router.delete(
   "/cars/:carId/planned-repairs/:id",
   authenticate,
   deletePlannedRepair
+);
+
+router.get("/cars/:carId/expenses", authenticate, getCarExpenses);
+router.post("/cars/:carId/expenses", authenticate, postCarExpenses);
+router.patch("/cars/:carId/expenses/:expenseId", authenticate, patchCarExpense);
+router.delete(
+  "/cars/:carId/expenses/:expenseId",
+  authenticate,
+  deleteCarExpense
 );
 
 // Podsumowanie dashboardowe

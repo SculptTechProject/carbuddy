@@ -1,4 +1,4 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../../middleware/user.authenticate";
 
@@ -396,5 +396,51 @@ export const deletePlannedRepair = async (
     res.status(204).send();
   } catch (err) {
     next(err);
+  }
+};
+
+export const deleteCarExpense = async (
+  req: Request<{ carId: string; expenseId: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { carId, expenseId } = req.params;
+  try {
+    await prisma.expense.delete({
+      where: { id: expenseId },
+    });
+    res.status(204).send();
+    return;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Nie udało się usunąć wydatku." });
+    return;
+  }
+};
+
+export const patchCarExpense = async (
+  req: Request<{ carId: string; expenseId: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { expenseId } = req.params;
+  const { date, category, amount, description } = req.body;
+
+  try {
+    const updated = await prisma.expense.update({
+      where: { id: expenseId },
+      data: {
+        date: new Date(date),
+        category,
+        amount,
+        description,
+      },
+    });
+    res.json(updated);
+    return;
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Nie udało się zaktualizować wydatku." });
+    return;
   }
 };

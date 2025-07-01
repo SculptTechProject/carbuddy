@@ -15,7 +15,6 @@ import {
   Settings,
   LogOut,
   Bell,
-  Plus,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
@@ -135,24 +134,44 @@ export default function DashboardLayout({ children }: Props) {
   const NavLinks = () => (
     <nav className="flex flex-col flex-1 p-4 space-y-2 text-gray-700 text-sm">
       {links.map(({ href, Icon, label, premiumOnly }) => {
+        const premiumActive = premiumOnly && user!.premium;
         const disabled = premiumOnly && !user!.premium;
+
         const base = "flex items-center px-2 py-2 rounded transition-all";
+
         const hover = disabled
           ? ""
           : "hover:bg-gray-50 hover:px-6 cursor-pointer";
-        const text = disabled ? "text-gray-400 pointer-events-none" : "";
-        const classes = `${base} ${hover} ${text}`;
+
+        const textDisabled = disabled
+          ? "text-gray-400 pointer-events-none"
+          : "";
+
+        const textPremium = premiumActive ? "text-yellow-600" : "";
+
+        const classes = `${base} ${hover} ${textDisabled} ${textPremium}`;
+
         return disabled ? (
           <div
             key={href}
             className={classes}
             title="Tylko dla użytkowników Premium"
           >
-            <Icon className="w-5 h-5 mr-3" /> {label}
+            <Icon
+              className={`w-5 h-5 mr-3 ${
+                premiumActive ? "text-yellow-600" : "text-gray-600"
+              }`}
+            />{" "}
+            {label}
           </div>
         ) : (
           <Link key={href} href={href} className={classes}>
-            <Icon className="w-5 h-5 mr-3" /> {label}
+            <Icon
+              className={`w-5 h-5 mr-3 ${
+                premiumActive ? "text-yellow-600" : "text-gray-600"
+              }`}
+            />{" "}
+            {label}
           </Link>
         );
       })}
@@ -195,10 +214,10 @@ export default function DashboardLayout({ children }: Props) {
           </button>
         </div>
         <div className="text-center pt-4">
-          <div className="mx-6 my-2 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50">
+          <div className="mx-6 my-2 py-2 rounded-xl border-2 border-yellow-600 bg-yellow-50">
             Plan:{" "}
             <span
-              className={user.premium ? "text-emerald-700" : "text-gray-500"}
+              className={user.premium ? "text-yellow-700" : "text-gray-500"}
             >
               {user.premium ? "Premium" : "Darmowy"}
             </span>
@@ -225,7 +244,7 @@ export default function DashboardLayout({ children }: Props) {
       </aside>
 
       {/* desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200 h-full">
+      <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200 h-full shadow-xl">
         <div
           className="flex items-center h-16 px-6 border-b cursor-pointer hover:px-12 transition-all"
           onClick={() => router.push("/dashboard")}
@@ -237,7 +256,7 @@ export default function DashboardLayout({ children }: Props) {
           <div
             className={
               user.premium
-                ? "mx-6 my-2 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50"
+                ? "mx-6 my-2 py-2 rounded-xl border-2 border-yellow-600 bg-yellow-50"
                 : "mx-6 my-2 py-2 rounded-xl border-2 border-gray-400 bg-gray-50"
             }
           >
@@ -245,7 +264,7 @@ export default function DashboardLayout({ children }: Props) {
             <span
               className={
                 user.premium
-                  ? "text-emerald-700 font-semibold"
+                  ? "text-yellow-700 font-semibold"
                   : "text-gray-500 font-semibold"
               }
             >
@@ -276,18 +295,12 @@ export default function DashboardLayout({ children }: Props) {
       {/* main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="flex-none flex items-center justify-between bg-white px-4 md:px-6 py-3 border-b">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 pt-4">
             <button className="md:hidden p-2" onClick={() => setOpen(true)}>
               <List className="w-6 h-6 text-gray-600" />
             </button>
             <Bell className="w-6 h-6 text-gray-600" />
           </div>
-          <button
-            onClick={() => router.push("/dashboard/add-car")}
-            className="flex items-center bg-gray-700 text-gray-200 px-4 py-2 rounded hover:opacity-90 hover:px-6 hover:py-3 cursor-pointer transition-all"
-          >
-            <Plus className="w-4 h-4 mr-2" /> Dodaj pojazd
-          </button>
         </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
