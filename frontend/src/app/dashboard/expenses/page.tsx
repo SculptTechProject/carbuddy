@@ -1,6 +1,6 @@
 "use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import {
@@ -18,6 +18,7 @@ import {
 import { Plus, X } from "lucide-react";
 import "react-datepicker/dist/react-datepicker.css";
 import { HashLoader } from "react-spinners";
+import { Transition } from "@headlessui/react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const DEFAULT_CATEGORIES = [
@@ -65,7 +66,7 @@ export default function ExpensesPage() {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 
-        // map vehicles with id and label
+        // map vehicles
         const opts: VehicleOption[] = user.user.cars.map((c: any) => ({
           id: c.id,
           label: `${c.make} ${c.model}`,
@@ -73,8 +74,8 @@ export default function ExpensesPage() {
         setVehicles(opts);
         setNewVehicleId(opts[0]?.id || "");
 
-        // Fetch expenses for each car
-        const allExpenses = [];
+        // fetch all expenses
+        const allExpenses: any[] = [];
         for (const car of user.user.cars) {
           const { data: carExpenses } = await axios.get(
             `${API_URL}/api/v1/cars/${car.id}/expenses`,
@@ -84,21 +85,19 @@ export default function ExpensesPage() {
               },
             }
           );
-
-          const mappedExpenses = carExpenses.map((e: any) => ({
-            ...e,
-            car: `${car.make} ${car.model}`,
-            carId: car.id,
-          }));
-
-          allExpenses.push(...mappedExpenses);
+          allExpenses.push(
+            ...carExpenses.map((e: any) => ({
+              ...e,
+              car: `${car.make} ${car.model}`,
+              carId: car.id,
+            }))
+          );
         }
-
         setExpenses(allExpenses);
 
-        // merge categories
+        // build categories
         const existing = Array.from(
-          new Set(allExpenses.map((e: any) => e.category))
+          new Set(allExpenses.map((e) => e.category))
         );
         const mergedCats = Array.from(
           new Set([...DEFAULT_CATEGORIES, ...existing])
@@ -106,7 +105,7 @@ export default function ExpensesPage() {
         setCategories(mergedCats);
         setNewCategory(mergedCats[0] || DEFAULT_CATEGORIES[0]);
 
-        // monthly data
+        // monthly chart data
         const m: Record<string, number> = {};
         allExpenses.forEach((e) => {
           const d = new Date(e.date);
@@ -120,7 +119,7 @@ export default function ExpensesPage() {
           Object.entries(m).map(([month, amount]) => ({ month, amount }))
         );
 
-        // category pie
+        // category pie data
         const c: Record<string, number> = {};
         allExpenses.forEach((e) => {
           c[e.category] = (c[e.category] || 0) + e.amount;
@@ -137,7 +136,6 @@ export default function ExpensesPage() {
     e.preventDefault();
     setErrorMsg(null);
     try {
-      // POST to specific car expenses endpoint
       await axios.post(
         `${API_URL}/api/v1/cars/${newVehicleId}/expenses`,
         {
@@ -151,10 +149,8 @@ export default function ExpensesPage() {
         }
       );
       setShowModal(false);
-      // Odśwież dane zamiast używać router.refresh()
-      setRefreshTrigger((prev) => prev + 1);
+      setRefreshTrigger((p) => p + 1);
     } catch (err: any) {
-      console.error(err);
       setErrorMsg(
         err.response?.data?.message || "Nie udało się dodać wydatku."
       );
@@ -168,10 +164,10 @@ export default function ExpensesPage() {
       </div>
     );
 
-  // Poprawione filtrowanie
+  // filtering
   const filtered = expenses.filter(
     (e) =>
-      (!filterVehicle || e.carId === filterVehicle) && // Użyj carId zamiast porównywania labelów
+      (!filterVehicle || e.carId === filterVehicle) &&
       (!filterCategory || e.category === filterCategory) &&
       (!searchTerm ||
         e.description?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -198,107 +194,164 @@ export default function ExpensesPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Wydatki</h1>
         <div className="space-x-2">
-          <button className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 border border-gray-500 hover:boder-gray-200 cursor-pointer transition-all">
+          <button className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 border border-gray-300 transition">
             Export
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 cursor-pointer transition-al"
+            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
           >
-            <Plus className="w-4 h-4 mr-1" />
-            Dodaj wydatek
+            <Plus className="w-4 h-4 mr-1" /> Dodaj wydatek
           </button>
         </div>
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-gray-50/75 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
-            <button
+      {/* Modal with animation */}
+      <Transition appear show={showModal} as={Fragment}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          {/* overlay */}
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div
+              className="fixed inset-0 backdrop-blur-xl"
               onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4"
-            >
-              <X className="w-5 h-5 text-gray-600" />
-            </button>
-            <h2 className="text-xl font-semibold mb-4">Nowy wydatek</h2>
-            {errorMsg && <div className="mb-2 text-red-600">{errorMsg}</div>}
-            <form onSubmit={handleAdd} className="space-y-4">
-              <div>
-                <label className="block text-sm">Data</label>
-                <DatePicker
-                  selected={newDate}
-                  onChange={(d) => setNewDate(d)}
-                  className="w-full border rounded px-3 py-2"
-                  dateFormat="yyyy-MM-dd"
-                />
-              </div>
-              <div>
-                <label className="block text-sm">Pojazd</label>
-                <select
-                  value={newVehicleId}
-                  onChange={(e) => setNewVehicleId(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                >
-                  {vehicles.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm">Kategoria</label>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                >
-                  {categories.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm">Kwota (zł)</label>
-                <input
-                  type="number"
-                  value={newAmount}
-                  onChange={(e) =>
-                    setNewAmount(parseFloat(e.target.value) || 0)
-                  }
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm">Opis</label>
-                <textarea
-                  value={newDesc}
-                  onChange={(e) => setNewDesc(e.target.value)}
-                  className="w-full border rounded px-3 py-2"
-                />
-              </div>
-              <div className="flex justify-end space-x-2 mt-4">
+            />
+          </Transition.Child>
+
+          {/* modal panel */}
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 md:p-8 relative z-10">
+              {/* header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  Nowy wydatek
+                </h2>
                 <button
-                  type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                  className="text-gray-500 hover:text-gray-700 transition"
                 >
-                  Anuluj
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
-                >
-                  Zapisz
+                  <X size={24} />
                 </button>
               </div>
-            </form>
-          </div>
+
+              {errorMsg && (
+                <div className="mb-4 text-sm text-red-600 bg-red-50 p-2 rounded">
+                  {errorMsg}
+                </div>
+              )}
+
+              <form
+                onSubmit={handleAdd}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
+                {/* Data */}
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium text-gray-700">
+                    Data
+                  </label>
+                  <DatePicker
+                    selected={newDate}
+                    onChange={(d) => setNewDate(d)}
+                    className="border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                    dateFormat="yyyy-MM-dd"
+                  />
+                </div>
+                {/* Pojazd */}
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium text-gray-700 transition-all">
+                    Pojazd
+                  </label>
+                  <select
+                    value={newVehicleId}
+                    onChange={(e) => setNewVehicleId(e.target.value)}
+                    className="border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  >
+                    {vehicles.map((v) => (
+                      <option key={v.id} value={v.id}>
+                        {v.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Kategoria */}
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium text-gray-700">
+                    Kategoria
+                  </label>
+                  <select
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    className="border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  >
+                    {categories.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Kwota */}
+                <div className="flex flex-col">
+                  <label className="mb-1 text-sm font-medium text-gray-700">
+                    Kwota (zł)
+                  </label>
+                  <input
+                    type="number"
+                    value={newAmount}
+                    onChange={(e) =>
+                      setNewAmount(parseFloat(e.target.value) || 0)
+                    }
+                    className="border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                  />
+                </div>
+                {/* Opis */}
+                <div className="md:col-span-2 flex flex-col">
+                  <label className="mb-1 text-sm font-medium text-gray-700">
+                    Opis
+                  </label>
+                  <textarea
+                    value={newDesc}
+                    onChange={(e) => setNewDesc(e.target.value)}
+                    rows={3}
+                    className="border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none transition-all"
+                  />
+                </div>
+                {/* Buttons */}
+                <div className="md:col-span-2 flex justify-end space-x-3 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                  >
+                    Anuluj
+                  </button>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
+                  >
+                    <Plus className="w-4 h-4 mr-1" /> Zapisz
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Transition.Child>
         </div>
-      )}
+      </Transition>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -308,21 +361,9 @@ export default function ExpensesPage() {
             value: thisMonthSum,
             suffix: "zł",
           },
-          {
-            title: "Wydatki w tym roku",
-            value: thisYearSum,
-            suffix: "zł",
-          },
-          {
-            title: "Śr. miesięczny koszt",
-            value: avgMonthly,
-            suffix: "zł",
-          },
-          {
-            title: "Koszt na km",
-            value: costPerKm,
-            suffix: "zł",
-          },
+          { title: "Wydatki w tym roku", value: thisYearSum, suffix: "zł" },
+          { title: "Śr. miesięczny koszt", value: avgMonthly, suffix: "zł" },
+          { title: "Koszt na km", value: costPerKm, suffix: "zł" },
         ].map(({ title, value, suffix }) => (
           <div key={title} className="bg-white p-4 rounded-lg shadow">
             <div className="text-sm text-gray-500 mb-1">{title}</div>
@@ -335,6 +376,7 @@ export default function ExpensesPage() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* line chart */}
         <div className="bg-white p-6 rounded-lg shadow">
           <div className="font-semibold mb-2">
             Podsumowanie wydatków (ostatnie 12 mies.)
@@ -354,7 +396,9 @@ export default function ExpensesPage() {
             </LineChart>
           </ResponsiveContainer>
         </div>
+        {/* pie & bar */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* pie */}
           <div className="bg-white p-6 rounded-lg shadow">
             <div className="font-semibold mb-2">Wydatki według kategorii</div>
             <ResponsiveContainer width="100%" height={150}>
@@ -378,18 +422,18 @@ export default function ExpensesPage() {
               </PieChart>
             </ResponsiveContainer>
           </div>
+          {/* vehicle bars */}
           <div className="bg-white p-6 rounded-lg shadow space-y-4">
             <div className="font-semibold mb-2">Wydatki według pojazdów</div>
-            {vehicles.map((vehicle) => {
-              // Poprawione filtrowanie według ID pojazdu
+            {vehicles.map((v) => {
               const sum = expenses
-                .filter((e) => e.carId === vehicle.id)
+                .filter((e) => e.carId === v.id)
                 .reduce((s, e) => s + e.amount, 0);
               const pct = thisYearSum ? (sum / thisYearSum) * 100 : 0;
               return (
-                <div key={vehicle.id}>
+                <div key={v.id}>
                   <div className="flex justify-between font-medium">
-                    <span>{vehicle.label}</span>
+                    <span>{v.label}</span>
                     <span>{sum.toFixed(0)} zł</span>
                   </div>
                   <div className="w-full h-2 bg-gray-200 rounded">

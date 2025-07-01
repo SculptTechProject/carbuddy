@@ -21,13 +21,13 @@ export const Button: React.FC<ButtonProps> = ({
     "inline-flex items-center justify-center font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all";
   const variants: Record<string, string> = {
     primary:
-      "bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500",
+      "bg-emerald-600 px-6 text-gray-100 hover:bg-gray-100 hover:text-gray-800 focus:ring-emerald-500 border-1 border-transparent hover:border-gray-400",
     secondary:
       "bg-gray-100 text-gray-800 hover:bg-gray-200 focus:ring-gray-300",
     outline:
       "border border-gray-300 text-gray-800 hover:bg-gray-50 focus:ring-gray-300",
     ghost:
-      "bg-transparent text-gray-800 hover:bg-gray-100 focus:ring-gray-300 px-5 py-3",
+      "bg-transparent text-gray-800 hover:bg-gray-200 focus:ring-gray-300 px-5 py-3 border border-gray-400 hover:border-gray-800 hover:bg-gray-800 hover:text-gray-50",
   };
   const sizesMap: Record<string, string> = {
     sm: "px-2 py-1 text-sm",

@@ -181,10 +181,20 @@ export default function DashboardLayout({ children }: Props) {
           <span className="font-bold text-lg text-gray-700">CarBuddy</span>
         </div>
         <div className="text-center pt-4">
-          <div className="mx-6 my-2 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50">
+          <div
+            className={
+              user.premium
+                ? "mx-6 my-2 py-2 rounded-xl border-2 border-emerald-600 bg-emerald-50"
+                : "mx-6 my-2 py-2 rounded-xl border-2 border-gray-400 bg-gray-50"
+            }
+          >
             Plan:{" "}
             <span
-              className={user.premium ? "text-emerald-700" : "text-gray-500"}
+              className={
+                user.premium
+                  ? "text-emerald-700 font-semibold"
+                  : "text-gray-500 font-semibold"
+              }
             >
               {user.premium ? "Premium" : "Darmowy"}
             </span>
