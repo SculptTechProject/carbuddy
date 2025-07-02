@@ -396,13 +396,13 @@ export default function ExpensesPage() {
                       setEditingExpense(null);
                       setErrorMsg(null);
                     }}
-                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                    className="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg hover:text-gray-50 hover:bg-gray-600 transition-all cursor-pointer"
                   >
                     Anuluj
                   </button>
                   <button
                     type="submit"
-                    className="inline-flex items-center px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition"
+                    className="inline-flex items-center px-5 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all cursor-pointer"
                   >
                     <Plus className="w-4 h-4 mr-1" /> Zapisz
                   </button>

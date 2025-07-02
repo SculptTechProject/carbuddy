@@ -234,7 +234,7 @@ export function useDashboardData() {
     /* koszt/km per car */
     const barArr = Object.values(costCar).map((v) => ({
       ...v,
-      costKm: v.cost / v.km,
+      costKm: Number((v.cost / v.km).toFixed(5)),
     }));
 
     const dtFmt = new Intl.DateTimeFormat("pl-PL");

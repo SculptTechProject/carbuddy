@@ -93,6 +93,7 @@ export default function DashboardPage() {
           icon={<TrendingUp className="w-5 h-5" />}
           label="Średni koszt / km"
           value={costPerKm}
+          fractionDigits={2}
         />
       </section>
 
@@ -120,15 +121,18 @@ function Kpi({
   icon,
   label,
   value,
+  fractionDigits = 0,
 }: {
   icon: React.ReactNode;
   label: string;
   value: number;
+  fractionDigits?: number;
 }) {
   const money = new Intl.NumberFormat("pl-PL", {
     style: "currency",
     currency: "PLN",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
   }).format(value);
 
   return (
