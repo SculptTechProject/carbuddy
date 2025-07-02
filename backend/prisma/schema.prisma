@@ -73,6 +73,7 @@ model Car {
   PlannedRepair PlannedRepair[]
 
   @@index([ownerId])
+  FluidCheckPlan FluidCheckPlan[]
 }
 
 model Repair {
@@ -112,3 +113,16 @@ model PlannedRepair {
   createdAt   DateTime @default(now())
 }
 
+model FluidCheckPlan {
+  id          String   @id @default(uuid())
+  carId       String   @unique
+  intervalDay Int    
+  lastCheck   DateTime 
+  nextCheck   DateTime
+  enabled     Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  car Car @relation(fields: [carId], references: [id])
+}

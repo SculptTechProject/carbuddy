@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { prisma } from "../../lib/prisma";
 import { AuthRequest } from "../../middleware/user.authenticate";
 
+const DAY_MS = 86_400_000;
+
 // 1. Utworzenie nowego auta
 export const createCar = async (
   req: AuthRequest,
@@ -496,4 +498,85 @@ export const deleteCarRepair = async (
   } catch (err) {
     next(err);
   }
+};
+
+/* -------------------------------------------------------------------------- */
+/* GET /cars/:carId/fluid-check – pobierz plan                                */
+/* -------------------------------------------------------------------------- */
+export const getFluidPlan = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { carId } = req.params as { carId: string };
+
+  const plan = await prisma.fluidCheckPlan.findUnique({ where: { carId } });
+  if (!plan) {
+    res.sendStatus(404);
+    return;
+  }
+  res.json(plan);
+};
+
+/* -------------------------------------------------------------------------- */
+/* POST /cars/:carId/fluid-check – utwórz lub zaktualizuj plan                */
+/* -------------------------------------------------------------------------- */
+export const upsertFluidPlan = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { carId } = req.params as { carId: string };
+  const { intervalDay = 14, enabled = true } = req.body as {
+    intervalDay?: number;
+    enabled?: boolean;
+  };
+
+  const now = new Date();
+  const next = new Date(now.getTime() + intervalDay * DAY_MS);
+
+  const plan = await prisma.fluidCheckPlan.upsert({
+    where: { carId }, // klucz unikalny
+    update: { intervalDay, enabled, nextCheck: next },
+    create: { carId, intervalDay, enabled, lastCheck: now, nextCheck: next },
+  });
+
+  res.json(plan);
+};
+
+/* -------------------------------------------------------------------------- */
+/* PATCH /cars/:carId/fluid-check – użytkownik kliknął „Sprawdzono”           */
+/* -------------------------------------------------------------------------- */
+export const confirmCheck = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { carId } = req.params as { carId: string };
+
+  const plan = await prisma.fluidCheckPlan.findUnique({ where: { carId } });
+  if (!plan) {
+    res.status(404).json({ message: "Plan not found" });
+    return;
+  }
+
+  const now = new Date();
+  const next = new Date(now.getTime() + plan.intervalDay * DAY_MS);
+
+  const updated = await prisma.fluidCheckPlan.update({
+    where: { carId },
+    data: { lastCheck: now, nextCheck: next },
+  });
+
+  res.json(updated);
+};
+
+/* -------------------------------------------------------------------------- */
+/* DELETE /cars/:carId/fluid-check – usuń plan                                */
+/* -------------------------------------------------------------------------- */
+export const deleteFluidPlan = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  const { carId } = req.params as { carId: string };
+
+  await prisma.fluidCheckPlan.delete({ where: { carId } });
+  res.sendStatus(204);
 };

@@ -18,6 +18,10 @@ import {
   deleteCarExpense,
   patchRepairById,
   deleteCarRepair,
+  getFluidPlan,
+  upsertFluidPlan,
+  confirmCheck,
+  deleteFluidPlan,
 } from "../../controllers/car/car.controller";
 import { authenticate } from "../../middleware/user.authenticate";
 
@@ -54,6 +58,7 @@ router.delete(
   deletePlannedRepair
 );
 
+// Edycja wydatków
 router.get("/cars/:carId/expenses", authenticate, getCarExpenses);
 router.post("/cars/:carId/expenses", authenticate, postCarExpenses);
 router.patch("/cars/:carId/expenses/:expenseId", authenticate, patchCarExpense);
@@ -62,6 +67,12 @@ router.delete(
   authenticate,
   deleteCarExpense
 );
+
+// Płyny kontrolne
+router.get("/cars/:carId/fluid-check", authenticate, getFluidPlan);
+router.post("/cars/:carId/fluid-check", authenticate, upsertFluidPlan);
+router.patch("/cars/:carId/fluid-check", authenticate, confirmCheck);
+router.delete("/cars/:carId/fluid-check", authenticate, deleteFluidPlan);
 
 // Podsumowanie dashboardowe
 router.get("/cars/:carId/summary", authenticate, getCarSummary);

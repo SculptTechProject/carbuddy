@@ -172,9 +172,6 @@ export default function MyCarsPage() {
             </ul>
 
             <div className="mt-4 flex justify-end space-x-2">
-              <button className="px-4 py-2 bg-gray-50 text-gray-700 rounded-xl hover:bg-gray-700 hover:text-gray-50 transition-all cursor-pointer font-semibold border border-gray-600">
-                Edytuj
-              </button>
               <button
                 onClick={() => router.push(`/dashboard/cars/${car.id}`)}
                 className="px-4 py-2 bg-gray-700 text-gray-50 rounded-xl hover:bg-gray-50 hover:text-gray-700 transition-all cursor-pointer font-semibold border border-transparent hover:border-gray-600"
