@@ -248,11 +248,20 @@ export const postCarRepairs = async (
     }
 
     // 2. Wyciągnij dane z body
-    const { date, type, description, cost } = req.body;
-    if (!date || !type || cost == null) {
-      res
-        .status(400)
-        .json({ message: "Brakuje wymaganych pól: date, type, cost." });
+    const { date, type, description, cost, workshop, notes, kilometers } =
+      req.body;
+    if (
+      !date ||
+      !type ||
+      cost == null ||
+      !workshop ||
+      !notes ||
+      kilometers == null
+    ) {
+      res.status(400).json({
+        message:
+          "Brakuje wymaganych pól: date, type, cost, workshop, note, kilometers.",
+      });
       return;
     }
 
@@ -264,6 +273,9 @@ export const postCarRepairs = async (
         type,
         description,
         cost: Number(cost),
+        workshop,
+        notes,
+        kilometers: Number(kilometers),
       },
     });
 
@@ -442,5 +454,44 @@ export const patchCarExpense = async (
     console.error(err);
     res.status(500).json({ message: "Nie udało się zaktualizować wydatku." });
     return;
+  }
+};
+
+export const patchRepairById = async (
+  req: Request<{ carId: string; repairId: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { repairId } = req.params;
+  const { date, type, description, cost, workshop, notes } = req.body;
+  try {
+    const updated = await prisma.repair.update({
+      where: { id: repairId },
+      data: {
+        date: new Date(date),
+        type,
+        description,
+        cost,
+        workshop,
+        notes,
+      },
+    });
+    res.json(updated);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteCarRepair = async (
+  req: Request<{ carId: string; repairId: string }>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { repairId } = req.params;
+  try {
+    await prisma.repair.delete({ where: { id: repairId } });
+    res.status(204).send();
+  } catch (err) {
+    next(err);
   }
 };

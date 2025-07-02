@@ -238,19 +238,22 @@ export default function RepairsPage() {
           </thead>
           <tbody className="divide-y">
             {filtered.map((r) => (
-              <tr key={r.id} className="hover:bg-gray-50">
+              <tr
+                key={r.id}
+                className="hover:bg-gray-100 hover:backdrop-blur-xs transition-all hover:shadow-xl "
+              >
                 <td className="px-4 py-3">
                   {new Date(r.date).toLocaleDateString("pl-PL")}
                 </td>
                 <td className="px-4 py-3">{r.carLabel}</td>
                 <td className="px-4 py-3">{r.type}</td>
-                <td className="px-4 py-3 text-gray-600">{r.description}</td>
+                <td className="px-4 py-3">{r.description}</td>
                 <td className="px-4 py-3">{r.workshop}</td>
                 <td className="px-4 py-3 text-right font-semibold">
                   {r.cost} zł
                 </td>
                 <td
-                  className="px-4 py-3 text-emerald-600 hover:underline cursor-pointer"
+                  className="px-4 py-3 text-emerald-600 hover:text-emerald-500 hover:underline cursor-pointer transition-all"
                   onClick={() => router.push(`/dashboard/repairs/${r.id}`)}
                 >
                   Szczegóły

@@ -169,6 +169,9 @@ exports.Prisma.RepairScalarFieldEnum = {
   date: 'date',
   type: 'type',
   description: 'description',
+  workshop: 'workshop',
+  notes: 'notes',
+  kilometers: 'kilometers',
   cost: 'cost',
   carId: 'carId'
 };

@@ -16,6 +16,8 @@ import {
   deletePlannedRepair,
   patchCarExpense,
   deleteCarExpense,
+  patchRepairById,
+  deleteCarRepair,
 } from "../../controllers/car/car.controller";
 import { authenticate } from "../../middleware/user.authenticate";
 
@@ -32,6 +34,8 @@ router.delete("/cars/:carId", authenticate, deleteCar);
 router.get("/cars/:carId/repairs", authenticate, getCarRepairs);
 router.post("/cars/:carId/repairs", authenticate, postCarRepairs);
 router.get("/repairs/:repairId", authenticate, getRepairById);
+router.patch("/cars/:carId/repairs/:repairId", authenticate, patchRepairById);
+router.delete("/cars/:carId/repairs/:repairId", authenticate, deleteCarRepair);
 
 // Wydatki
 router.get("/cars/:carId/expenses", authenticate, getCarExpenses);

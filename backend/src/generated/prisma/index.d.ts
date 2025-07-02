@@ -6043,10 +6043,12 @@ export namespace Prisma {
   }
 
   export type RepairAvgAggregateOutputType = {
+    kilometers: number | null
     cost: number | null
   }
 
   export type RepairSumAggregateOutputType = {
+    kilometers: number | null
     cost: number | null
   }
 
@@ -6055,6 +6057,9 @@ export namespace Prisma {
     date: Date | null
     type: string | null
     description: string | null
+    workshop: string | null
+    notes: string | null
+    kilometers: number | null
     cost: number | null
     carId: string | null
   }
@@ -6064,6 +6069,9 @@ export namespace Prisma {
     date: Date | null
     type: string | null
     description: string | null
+    workshop: string | null
+    notes: string | null
+    kilometers: number | null
     cost: number | null
     carId: string | null
   }
@@ -6073,6 +6081,9 @@ export namespace Prisma {
     date: number
     type: number
     description: number
+    workshop: number
+    notes: number
+    kilometers: number
     cost: number
     carId: number
     _all: number
@@ -6080,10 +6091,12 @@ export namespace Prisma {
 
 
   export type RepairAvgAggregateInputType = {
+    kilometers?: true
     cost?: true
   }
 
   export type RepairSumAggregateInputType = {
+    kilometers?: true
     cost?: true
   }
 
@@ -6092,6 +6105,9 @@ export namespace Prisma {
     date?: true
     type?: true
     description?: true
+    workshop?: true
+    notes?: true
+    kilometers?: true
     cost?: true
     carId?: true
   }
@@ -6101,6 +6117,9 @@ export namespace Prisma {
     date?: true
     type?: true
     description?: true
+    workshop?: true
+    notes?: true
+    kilometers?: true
     cost?: true
     carId?: true
   }
@@ -6110,6 +6129,9 @@ export namespace Prisma {
     date?: true
     type?: true
     description?: true
+    workshop?: true
+    notes?: true
+    kilometers?: true
     cost?: true
     carId?: true
     _all?: true
@@ -6206,6 +6228,9 @@ export namespace Prisma {
     date: Date
     type: string
     description: string | null
+    workshop: string | null
+    notes: string | null
+    kilometers: number | null
     cost: number
     carId: string
     _count: RepairCountAggregateOutputType | null
@@ -6234,6 +6259,9 @@ export namespace Prisma {
     date?: boolean
     type?: boolean
     description?: boolean
+    workshop?: boolean
+    notes?: boolean
+    kilometers?: boolean
     cost?: boolean
     carId?: boolean
     car?: boolean | CarDefaultArgs<ExtArgs>
@@ -6244,6 +6272,9 @@ export namespace Prisma {
     date?: boolean
     type?: boolean
     description?: boolean
+    workshop?: boolean
+    notes?: boolean
+    kilometers?: boolean
     cost?: boolean
     carId?: boolean
     car?: boolean | CarDefaultArgs<ExtArgs>
@@ -6254,6 +6285,9 @@ export namespace Prisma {
     date?: boolean
     type?: boolean
     description?: boolean
+    workshop?: boolean
+    notes?: boolean
+    kilometers?: boolean
     cost?: boolean
     carId?: boolean
     car?: boolean | CarDefaultArgs<ExtArgs>
@@ -6264,11 +6298,14 @@ export namespace Prisma {
     date?: boolean
     type?: boolean
     description?: boolean
+    workshop?: boolean
+    notes?: boolean
+    kilometers?: boolean
     cost?: boolean
     carId?: boolean
   }
 
-  export type RepairOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "date" | "type" | "description" | "cost" | "carId", ExtArgs["result"]["repair"]>
+  export type RepairOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "date" | "type" | "description" | "workshop" | "notes" | "kilometers" | "cost" | "carId", ExtArgs["result"]["repair"]>
   export type RepairInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     car?: boolean | CarDefaultArgs<ExtArgs>
   }
@@ -6289,6 +6326,9 @@ export namespace Prisma {
       date: Date
       type: string
       description: string | null
+      workshop: string | null
+      notes: string | null
+      kilometers: number | null
       cost: number
       carId: string
     }, ExtArgs["result"]["repair"]>
@@ -6719,6 +6759,9 @@ export namespace Prisma {
     readonly date: FieldRef<"Repair", 'DateTime'>
     readonly type: FieldRef<"Repair", 'String'>
     readonly description: FieldRef<"Repair", 'String'>
+    readonly workshop: FieldRef<"Repair", 'String'>
+    readonly notes: FieldRef<"Repair", 'String'>
+    readonly kilometers: FieldRef<"Repair", 'Int'>
     readonly cost: FieldRef<"Repair", 'Float'>
     readonly carId: FieldRef<"Repair", 'String'>
   }
@@ -9446,6 +9489,9 @@ export namespace Prisma {
     date: 'date',
     type: 'type',
     description: 'description',
+    workshop: 'workshop',
+    notes: 'notes',
+    kilometers: 'kilometers',
     cost: 'cost',
     carId: 'carId'
   };
@@ -9875,6 +9921,9 @@ export namespace Prisma {
     date?: DateTimeFilter<"Repair"> | Date | string
     type?: StringFilter<"Repair"> | string
     description?: StringNullableFilter<"Repair"> | string | null
+    workshop?: StringNullableFilter<"Repair"> | string | null
+    notes?: StringNullableFilter<"Repair"> | string | null
+    kilometers?: IntNullableFilter<"Repair"> | number | null
     cost?: FloatFilter<"Repair"> | number
     carId?: StringFilter<"Repair"> | string
     car?: XOR<CarScalarRelationFilter, CarWhereInput>
@@ -9885,6 +9934,9 @@ export namespace Prisma {
     date?: SortOrder
     type?: SortOrder
     description?: SortOrderInput | SortOrder
+    workshop?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    kilometers?: SortOrderInput | SortOrder
     cost?: SortOrder
     carId?: SortOrder
     car?: CarOrderByWithRelationInput
@@ -9898,6 +9950,9 @@ export namespace Prisma {
     date?: DateTimeFilter<"Repair"> | Date | string
     type?: StringFilter<"Repair"> | string
     description?: StringNullableFilter<"Repair"> | string | null
+    workshop?: StringNullableFilter<"Repair"> | string | null
+    notes?: StringNullableFilter<"Repair"> | string | null
+    kilometers?: IntNullableFilter<"Repair"> | number | null
     cost?: FloatFilter<"Repair"> | number
     carId?: StringFilter<"Repair"> | string
     car?: XOR<CarScalarRelationFilter, CarWhereInput>
@@ -9908,6 +9963,9 @@ export namespace Prisma {
     date?: SortOrder
     type?: SortOrder
     description?: SortOrderInput | SortOrder
+    workshop?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    kilometers?: SortOrderInput | SortOrder
     cost?: SortOrder
     carId?: SortOrder
     _count?: RepairCountOrderByAggregateInput
@@ -9925,6 +9983,9 @@ export namespace Prisma {
     date?: DateTimeWithAggregatesFilter<"Repair"> | Date | string
     type?: StringWithAggregatesFilter<"Repair"> | string
     description?: StringNullableWithAggregatesFilter<"Repair"> | string | null
+    workshop?: StringNullableWithAggregatesFilter<"Repair"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"Repair"> | string | null
+    kilometers?: IntNullableWithAggregatesFilter<"Repair"> | number | null
     cost?: FloatWithAggregatesFilter<"Repair"> | number
     carId?: StringWithAggregatesFilter<"Repair"> | string
   }
@@ -10391,6 +10452,9 @@ export namespace Prisma {
     date: Date | string
     type: string
     description?: string | null
+    workshop?: string | null
+    notes?: string | null
+    kilometers?: number | null
     cost: number
     car: CarCreateNestedOneWithoutRepairInput
   }
@@ -10400,6 +10464,9 @@ export namespace Prisma {
     date: Date | string
     type: string
     description?: string | null
+    workshop?: string | null
+    notes?: string | null
+    kilometers?: number | null
     cost: number
     carId: string
   }
@@ -10409,6 +10476,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
     car?: CarUpdateOneRequiredWithoutRepairNestedInput
   }
@@ -10418,6 +10488,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
     carId?: StringFieldUpdateOperationsInput | string
   }
@@ -10427,6 +10500,9 @@ export namespace Prisma {
     date: Date | string
     type: string
     description?: string | null
+    workshop?: string | null
+    notes?: string | null
+    kilometers?: number | null
     cost: number
     carId: string
   }
@@ -10436,6 +10512,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
   }
 
@@ -10444,6 +10523,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
     carId?: StringFieldUpdateOperationsInput | string
   }
@@ -11002,11 +11084,15 @@ export namespace Prisma {
     date?: SortOrder
     type?: SortOrder
     description?: SortOrder
+    workshop?: SortOrder
+    notes?: SortOrder
+    kilometers?: SortOrder
     cost?: SortOrder
     carId?: SortOrder
   }
 
   export type RepairAvgOrderByAggregateInput = {
+    kilometers?: SortOrder
     cost?: SortOrder
   }
 
@@ -11015,6 +11101,9 @@ export namespace Prisma {
     date?: SortOrder
     type?: SortOrder
     description?: SortOrder
+    workshop?: SortOrder
+    notes?: SortOrder
+    kilometers?: SortOrder
     cost?: SortOrder
     carId?: SortOrder
   }
@@ -11024,11 +11113,15 @@ export namespace Prisma {
     date?: SortOrder
     type?: SortOrder
     description?: SortOrder
+    workshop?: SortOrder
+    notes?: SortOrder
+    kilometers?: SortOrder
     cost?: SortOrder
     carId?: SortOrder
   }
 
   export type RepairSumOrderByAggregateInput = {
+    kilometers?: SortOrder
     cost?: SortOrder
   }
 
@@ -11955,6 +12048,9 @@ export namespace Prisma {
     date: Date | string
     type: string
     description?: string | null
+    workshop?: string | null
+    notes?: string | null
+    kilometers?: number | null
     cost: number
   }
 
@@ -11963,6 +12059,9 @@ export namespace Prisma {
     date: Date | string
     type: string
     description?: string | null
+    workshop?: string | null
+    notes?: string | null
+    kilometers?: number | null
     cost: number
   }
 
@@ -12093,6 +12192,9 @@ export namespace Prisma {
     date?: DateTimeFilter<"Repair"> | Date | string
     type?: StringFilter<"Repair"> | string
     description?: StringNullableFilter<"Repair"> | string | null
+    workshop?: StringNullableFilter<"Repair"> | string | null
+    notes?: StringNullableFilter<"Repair"> | string | null
+    kilometers?: IntNullableFilter<"Repair"> | number | null
     cost?: FloatFilter<"Repair"> | number
     carId?: StringFilter<"Repair"> | string
   }
@@ -12534,6 +12636,9 @@ export namespace Prisma {
     date: Date | string
     type: string
     description?: string | null
+    workshop?: string | null
+    notes?: string | null
+    kilometers?: number | null
     cost: number
   }
 
@@ -12560,6 +12665,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
   }
 
@@ -12568,6 +12676,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
   }
 
@@ -12576,6 +12687,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    workshop?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    kilometers?: NullableIntFieldUpdateOperationsInput | number | null
     cost?: FloatFieldUpdateOperationsInput | number
   }
 
