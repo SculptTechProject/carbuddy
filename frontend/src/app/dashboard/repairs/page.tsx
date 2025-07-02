@@ -8,10 +8,22 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Plus, X } from "lucide-react";
 import HashLoader from "react-spinners/HashLoader";
+import { Transition } from "@headlessui/react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 const DEFAULT_REPAIR_TYPES = ["Naprawa", "Serwis"];
-import { Transition } from "@headlessui/react";
 
 interface Vehicle {
   id: string;
@@ -44,6 +56,8 @@ export default function RepairsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterVehicle, setFilterVehicle] = useState("");
   const [filterType, setFilterType] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   // modal
   const [showModal, setShowModal] = useState(false);
@@ -111,7 +125,13 @@ export default function RepairsPage() {
   }, [router]);
 
   const filtered = repairs.filter((r) => {
+    const d = new Date(r.date);
+    const okFrom = !dateFrom || d >= new Date(dateFrom);
+    const okTo = !dateTo || d <= new Date(dateTo);
+
     return (
+      okFrom &&
+      okTo &&
       (!filterVehicle || r.carId === filterVehicle) &&
       (!filterType || r.type === filterType) &&
       (!searchTerm ||
@@ -119,6 +139,46 @@ export default function RepairsPage() {
         r.workshop?.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   });
+
+  /* ── dane do kart i wykresów ───────────────────────── */
+  const now = new Date();
+  const thisMonthCost = repairs
+    .filter((r) => {
+      const d = new Date(r.date);
+      return (
+        d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((s, r) => s + r.cost, 0);
+
+  const thisYearCost = repairs
+    .filter((r) => new Date(r.date).getFullYear() === now.getFullYear())
+    .reduce((s, r) => s + r.cost, 0);
+
+  const monthlyTrend: Record<string, number> = {};
+  repairs.forEach((r) => {
+    const d = new Date(r.date);
+    const key = d.toLocaleString("default", {
+      month: "short",
+      year: "numeric",
+    });
+    monthlyTrend[key] = (monthlyTrend[key] || 0) + r.cost;
+  });
+  const monthlyChartData = Object.entries(monthlyTrend).map(
+    ([month, cost]) => ({
+      month,
+      cost,
+    })
+  );
+
+  const typeSplit: Record<string, number> = {};
+  repairs.forEach((r) => {
+    typeSplit[r.type] = (typeSplit[r.type] || 0) + r.cost;
+  });
+  const typeChartData = Object.entries(typeSplit).map(([name, value]) => ({
+    name,
+    value,
+  }));
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -168,34 +228,101 @@ export default function RepairsPage() {
     );
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Nagłówek */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h1 className="text-2xl font-semibold">Historia napraw</h1>
-        <div className="space-x-2">
-          <button className="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200">
+        <div className="flex gap-2">
+          <button className="px-4 py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 transition-colors text-sm">
             Eksportuj
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-800 cursor-pointer transition-all"
+            className="px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm flex items-center gap-1 cursor-pointer transition-all"
           >
-            <Plus className="w-4 h-4 inline-block mr-1" /> Dodaj naprawę
+            <Plus className="w-4 h-4" /> Dodaj naprawę
           </button>
         </div>
       </div>
 
+      {/* KPI + Charts */}
+      <div className="space-y-8">
+        {/* KPI cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { label: "Koszt w tym miesiącu", value: thisMonthCost },
+            { label: "Koszt w tym roku", value: thisYearCost },
+            {
+              label: "Śr. koszt / naprawę",
+              value: repairs.length ? thisYearCost / repairs.length : 0,
+            },
+          ].map((k) => (
+            <div key={k.label} className="rounded-lg bg-white shadow p-4">
+              <div className="text-sm text-gray-500">{k.label}</div>
+              <div className="text-2xl font-bold">{k.value.toFixed(0)} zł</div>
+            </div>
+          ))}
+        </div>
+
+        {/* charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* line – trend */}
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="font-semibold mb-2">
+              Koszt napraw – ostatnie 12 mies.
+            </div>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={monthlyChartData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="cost"
+                  stroke="#10B981"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* pie – Naprawa vs Serwis */}
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="font-semibold mb-2">Podział kosztów wg typu</div>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={typeChartData}
+                  dataKey="value"
+                  nameKey="name"
+                  outerRadius={70}
+                >
+                  {typeChartData.map((_, i) => (
+                    <Cell
+                      key={i}
+                      fill={["#EF4444", "#3B82F6", "#FBBF24"][i % 3]}
+                    />
+                  ))}
+                </Pie>
+                <Legend verticalAlign="bottom" height={24} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
       {/* Filtry */}
-      <div className="bg-white shadow rounded-lg p-4 flex flex-col sm:flex-row gap-4">
+      <div className="bg-white shadow rounded-lg p-4 flex flex-col md:flex-row md:items-center gap-4">
         <input
           type="text"
           placeholder="Szukaj napraw..."
-          className="flex-1 border rounded px-3 py-2"
+          className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <select
-          className="border rounded px-3 py-2"
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           value={filterVehicle}
           onChange={(e) => setFilterVehicle(e.target.value)}
         >
@@ -207,7 +334,7 @@ export default function RepairsPage() {
           ))}
         </select>
         <select
-          className="border rounded px-3 py-2"
+          className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
         >
@@ -220,61 +347,86 @@ export default function RepairsPage() {
             </option>
           ))}
         </select>
+        <label className="text-sm font-medium flex flex-col">
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="rounded-xl border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          />
+        </label>
+
+        <label className="text-sm font-medium flex flex-col">
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="rounded-xl border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+          />
+        </label>
       </div>
 
       {/* Tabela */}
-      <div className="bg-white shadow rounded-lg overflow-auto">
-        <table className="w-full text-left table-auto">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="px-4 py-2">Data</th>
-              <th className="px-4 py-2">Pojazd</th>
-              <th className="px-4 py-2">Typ</th>
-              <th className="px-4 py-2">Opis</th>
-              <th className="px-4 py-2">Warsztat</th>
-              <th className="px-4 py-2 text-right">Koszt</th>
-              <th className="px-4 py-2">Akcje</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {filtered.map((r) => (
-              <tr
-                key={r.id}
-                className="hover:bg-gray-100 hover:backdrop-blur-xs transition-all hover:shadow-xl "
-              >
-                <td className="px-4 py-3">
-                  {new Date(r.date).toLocaleDateString("pl-PL")}
-                </td>
-                <td className="px-4 py-3">{r.carLabel}</td>
-                <td className="px-4 py-3">{r.type}</td>
-                <td className="px-4 py-3">{r.description}</td>
-                <td className="px-4 py-3">{r.workshop}</td>
-                <td className="px-4 py-3 text-right font-semibold">
-                  {r.cost} zł
-                </td>
-                <td
-                  className="px-4 py-3 text-emerald-600 hover:text-emerald-500 hover:underline cursor-pointer transition-all"
-                  onClick={() => router.push(`/dashboard/repairs/${r.id}`)}
-                >
-                  Szczegóły
-                </td>
+      <div className="bg-white shadow rounded-lg overflow-x-auto">
+        <div className="h-[70vh] md:h-[250px] overflow-y-auto hide-y-scrollbar">
+          <table className="w-full min-w-[700px] text-left divide-y divide-gray-200">
+            <thead className="bg-gray-50 sticky top-0 z-10">
+              <tr className="text-xs uppercase tracking-wider text-gray-500">
+                <th className="px-4 py-3">Data</th>
+                <th className="px-4 py-3">Pojazd</th>
+                <th className="px-4 py-3">Typ</th>
+                <th className="px-4 py-3 hidden lg:table-cell">Opis</th>
+                <th className="px-4 py-3 hidden md:table-cell">Warsztat</th>
+                <th className="px-4 py-3 text-right">Koszt</th>
+                <th className="px-4 py-3">Akcje</th>
               </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-gray-500">
-                  Brak zarejestrowanych napraw.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody className="divide-y divide-gray-100">
+              {filtered.map((r) => (
+                <tr key={r.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    {new Date(r.date).toLocaleDateString("pl-PL")}
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">{r.carLabel}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">{r.type}</td>
+                  <td className="px-4 py-3 hidden lg:table-cell max-w-xs truncate">
+                    {r.description}
+                  </td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    {r.workshop}
+                  </td>
+                  <td className="px-4 py-3 text-right font-semibold whitespace-nowrap">
+                    {r.cost} zł
+                  </td>
+                  <td
+                    onClick={() => router.push(`/dashboard/repairs/${r.id}`)}
+                    className="px-4 py-3 text-emerald-600 hover:underline cursor-pointer"
+                  >
+                    Szczegóły
+                  </td>
+                </tr>
+              ))}
+
+              {filtered.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-4 py-6 text-center text-gray-500"
+                  >
+                    Brak zarejestrowanych napraw.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modal dodawania naprawy */}
       {showModal && (
         <Transition appear show={showModal} as={Fragment}>
-          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
             {/* overlay */}
             <Transition.Child
               as={Fragment}
@@ -301,25 +453,25 @@ export default function RepairsPage() {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 relative">
+              <div className="bg-white rounded-lg shadow-lg w-full sm:max-w-lg md:max-w-2xl p-6 relative">
                 <button
-                  className="absolute top-4 right-4 text-gray-600"
+                  className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
                   onClick={() => setShowModal(false)}
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <h2 className="text-xl font-semibold mb-4">
+                <h2 className="text-lg font-semibold mb-4">
                   Dodaj nową naprawę
                 </h2>
                 <form
                   onSubmit={handleAdd}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                 >
                   {/* 1. Pojazd */}
-                  <div>
-                    <label className="block text-sm font-medium">Pojazd</label>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium">Pojazd</label>
                     <select
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       value={newVehicleId}
                       onChange={(e) => setNewVehicleId(e.target.value)}
                     >
@@ -331,22 +483,20 @@ export default function RepairsPage() {
                     </select>
                   </div>
                   {/* 2. Data */}
-                  <div>
-                    <label className="block text-sm font-medium">Data</label>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium">Data</label>
                     <DatePicker
                       selected={newDate}
                       onChange={(d) => setNewDate(d)}
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       dateFormat="yyyy-MM-dd"
                     />
                   </div>
                   {/* 3. Typ */}
-                  <div>
-                    <label className="block text-sm font-medium">
-                      Typ naprawy
-                    </label>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium">Typ naprawy</label>
                     <select
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       value={newType}
                       onChange={(e) => setNewType(e.target.value)}
                     >
@@ -358,25 +508,21 @@ export default function RepairsPage() {
                     </select>
                   </div>
                   {/* 4. Warsztat */}
-                  <div>
-                    <label className="block text-sm font-medium">
-                      Warsztat
-                    </label>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium">Warsztat</label>
                     <input
                       type="text"
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       value={newWorkshop}
                       onChange={(e) => setNewWorkshop(e.target.value)}
                     />
                   </div>
                   {/* 5. Przebieg */}
-                  <div>
-                    <label className="block text-sm font-medium">
-                      Przebieg (km)
-                    </label>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium">Przebieg (km)</label>
                     <input
                       type="number"
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="np. 120000"
                       value={newKilometers}
                       onChange={(e) =>
@@ -387,38 +533,36 @@ export default function RepairsPage() {
                     />
                   </div>
                   {/* 6. Koszt */}
-                  <div>
-                    <label className="block text-sm font-medium">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm font-medium">
                       Całkowity koszt (zł)
                     </label>
                     <input
                       type="number"
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="np. 650"
                       value={newCost}
                       onChange={(e) => setNewCost(parseFloat(e.target.value))}
                     />
                   </div>
                   {/* 7. Opis */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium">
-                      Opis naprawy
-                    </label>
+                  <div className="flex flex-col gap-1 sm:col-span-2">
+                    <label className="text-sm font-medium">Opis naprawy</label>
                     <input
                       type="text"
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       placeholder="Co zostało zrobione?"
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
                     />
                   </div>
                   {/* 8. Notatki */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium">
+                  <div className="flex flex-col gap-1 sm:col-span-2">
+                    <label className="text-sm font-medium">
                       Dodatkowe notatki
                     </label>
                     <textarea
-                      className="w-full border rounded px-3 py-2"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       rows={3}
                       placeholder="Uwagi dodatkowe..."
                       value={newNotes}
@@ -428,16 +572,16 @@ export default function RepairsPage() {
                 </form>
 
                 {/* Akcje */}
-                <div className="flex justify-end space-x-2 pt-4">
+                <div className="flex justify-end gap-2 pt-6">
                   <button
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+                    className="px-4 py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-50 text-sm"
                   >
                     Anuluj
                   </button>
                   <button
                     onClick={(e) => handleAdd(e as any)}
-                    className="px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
+                    className="px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 text-sm"
                   >
                     Zapisz naprawę
                   </button>

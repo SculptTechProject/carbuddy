@@ -1,1 +1,5 @@
 @import "tailwindcss";
+
+.hide-y-scrollbar::-webkit-scrollbar        { width: 6px; }
+.hide-y-scrollbar::-webkit-scrollbar-thumb  { background:#d1d5db; border-radius:9999px; }
+.hide-y-scrollbar                           { scrollbar-width: thin; }

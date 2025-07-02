@@ -255,7 +255,7 @@ export default function ExpensesPage() {
           </button>
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition"
+            className="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-all cursor-pointer"
           >
             <Plus className="w-4 h-4 mr-1" /> Dodaj wydatek
           </button>
@@ -473,7 +473,13 @@ export default function ExpensesPage() {
                     <Cell
                       key={entry.name}
                       fill={
-                        ["#10B981", "#3B82F6", "#FBBF24", "#EF4444"][idx % 4]
+                        [
+                          "#10B981",
+                          "#3B82F6",
+                          "#FBBF24",
+                          "#EF4444",
+                          "#EA15EAFF",
+                        ][idx % 5]
                       }
                     />
                   ))}
@@ -513,135 +519,149 @@ export default function ExpensesPage() {
       </div>
 
       {/* Filters & Table */}
-      <div className="bg-white p-6 rounded-lg shadow space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="bg-white p-6 rounded-2xl shadow space-y-6">
+        {/* ── Filtry ── */}
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <input
             type="text"
             placeholder="Szukaj wydatków..."
-            className="flex-1 border rounded px-3 py-2"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <div className="flex gap-2">
-            <select
-              value={filterVehicle}
-              onChange={(e) => setFilterVehicle(e.target.value)}
-              className="border rounded px-3 py-2"
-            >
-              <option value="">Wszystkie pojazdy</option>
-              {vehicles.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="border rounded px-3 py-2"
-            >
-              <option value="">Wszystkie kategorie</option>
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex gap-2">
-            <DatePicker
-              selected={filterStartDate}
-              onChange={setFilterStartDate}
-              placeholderText="Od"
-              dateFormat="dd.MM.yyyy"
-              className="border rounded px-3 py-2"
-            />
-            <DatePicker
-              selected={filterEndDate}
-              onChange={setFilterEndDate}
-              placeholderText="Do"
-              dateFormat="dd.MM.yyyy"
-              className="border rounded px-3 py-2"
-            />
-          </div>
+
+          <select
+            value={filterVehicle}
+            onChange={(e) => setFilterVehicle(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">Wszystkie pojazdy</option>
+            {vehicles.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.label}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="">Wszystkie kategorie</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+
+          <DatePicker
+            selected={filterStartDate}
+            onChange={setFilterStartDate}
+            placeholderText="Od"
+            dateFormat="dd.MM.yyyy"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+          />
+
+          <DatePicker
+            selected={filterEndDate}
+            onChange={setFilterEndDate}
+            placeholderText="Do"
+            dateFormat="dd.MM.yyyy"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+          />
         </div>
-        <div className="sm:hidden space-y-2">
+
+        {/* ── Mobile cards ── */}
+        <div className="sm:hidden space-y-3">
           {filtered.map((e) => (
             <div
               key={e.id}
-              className="bg-white p-4 rounded-lg shadow flex flex-col"
+              className="rounded-xl border border-gray-200 p-4 shadow-sm relative"
             >
-              <div className="flex justify-between mb-1">
-                <span className="font-medium">
-                  {new Date(e.date).toLocaleDateString("pl-PL")}
-                </span>
-                <span className="font-semibold">{e.amount} zł</span>
-              </div>
-              <div className="text-sm text-gray-600">{e.car}</div>
-              <div className="text-sm text-gray-600 mb-2">{e.category}</div>
-              <div className="text-sm mb-3">{e.description}</div>
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => handleEdit(e)}
-                  className="inline-flex items-center p-1 hover:bg-blue-100 rounded"
-                  title="Edytuj"
-                >
+              <div className="absolute top-3 right-3 flex gap-3">
+                <button onClick={() => handleEdit(e)} title="Edytuj">
                   <Edit2 className="w-5 h-5 text-blue-600" />
                 </button>
                 <button
                   onClick={() => handleDelete(e.id, e.carId)}
-                  className="inline-flex items-center p-1 hover:bg-red-100 rounded"
                   title="Usuń"
                 >
                   <Trash2 className="w-5 h-5 text-red-600" />
                 </button>
               </div>
+
+              <div className="text-sm text-gray-500">
+                {new Date(e.date).toLocaleDateString("pl-PL")}
+              </div>
+              <div className="font-medium">{e.car}</div>
+              <div className="text-sm text-gray-700">{e.category}</div>
+              {e.description && (
+                <div className="text-sm text-gray-600 mt-2 line-clamp-2">
+                  {e.description}
+                </div>
+              )}
+              <div className="font-semibold mt-3">{e.amount} zł</div>
             </div>
           ))}
         </div>
 
+        {/* ── Desktop table ── */}
         <div className="hidden sm:block overflow-x-auto">
-          <table className="min-w-[600px] w-full text-left table-auto">
-            <thead>
-              <tr className="text-sm text-gray-600">
-                <th className="py-2">Data</th>
-                <th>Pojazd</th>
-                <th>Kategoria</th>
-                <th>Opis</th>
-                <th className="text-right">Kwota</th>
-                <th className="text-right">Akcje</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {filtered.map((e) => (
-                <tr key={e.id} className="hover:bg-gray-50 border-b">
-                  <td className="py-2">
-                    {new Date(e.date).toLocaleDateString("pl-PL")}
-                  </td>
-                  <td>{e.car}</td>
-                  <td>{e.category}</td>
-                  <td>{e.description}</td>
-                  <td className="text-right font-semibold">{e.amount} zł</td>
-                  <td className="py-2 text-right flex justify-end space-x-2">
-                    <button
-                      onClick={() => handleEdit(e)}
-                      title="Edytuj"
-                      className="p-1 hover:bg-blue-100 rounded transition"
-                    >
-                      <Edit2 className="w-5 h-5 text-blue-600" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(e.id, e.carId)}
-                      title="Usuń"
-                      className="p-1 hover:bg-red-100 rounded transition"
-                    >
-                      <Trash2 className="w-5 h-5 text-red-600" />
-                    </button>
-                  </td>
+          <div className="h-[70vh] md:h-[250px] overflow-y-auto hide-y-scrollbar">
+            <table className="min-w-[720px] w-full text-left border-collapse">
+              <thead className="bg-gray-50 sticky top-0 z-10">
+                <tr className="text-xs uppercase tracking-wider text-gray-600">
+                  <th className="py-3 px-4">Data</th>
+                  <th className="px-4">Pojazd</th>
+                  <th className="px-4">Kategoria</th>
+                  <th className="px-4">Opis</th>
+                  <th className="px-4 text-right">Kwota</th>
+                  <th className="px-4 text-right">Akcje</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody className="divide-y divide-gray-100 text-sm">
+                {filtered.map((e, idx) => (
+                  <tr
+                    key={e.id}
+                    className={
+                      idx % 2 ? "bg-gray-50/50" : "bg-white hover:bg-gray-50"
+                    }
+                  >
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      {new Date(e.date).toLocaleDateString("pl-PL")}
+                    </td>
+                    <td className="px-4 whitespace-nowrap">{e.car}</td>
+                    <td className="px-4 whitespace-nowrap">{e.category}</td>
+                    <td className="px-4 truncate max-w-xs">{e.description}</td>
+                    <td className="px-4 whitespace-nowrap text-right font-semibold">
+                      {e.amount} zł
+                    </td>
+                    <td className="px-4 whitespace-nowrap">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => handleEdit(e)}
+                          className="p-1 rounded hover:bg-blue-100"
+                          title="Edytuj"
+                        >
+                          <Edit2 className="w-5 h-5 text-blue-600" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(e.id, e.carId)}
+                          className="p-1 rounded hover:bg-red-100"
+                          title="Usuń"
+                        >
+                          <Trash2 className="w-5 h-5 text-red-600" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
