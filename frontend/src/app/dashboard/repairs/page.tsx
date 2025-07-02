@@ -471,7 +471,7 @@ export default function RepairsPage() {
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-medium">Pojazd</label>
                     <select
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4"
                       value={newVehicleId}
                       onChange={(e) => setNewVehicleId(e.target.value)}
                     >
@@ -488,7 +488,7 @@ export default function RepairsPage() {
                     <DatePicker
                       selected={newDate}
                       onChange={(d) => setNewDate(d)}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4"
                       dateFormat="yyyy-MM-dd"
                     />
                   </div>
@@ -496,7 +496,7 @@ export default function RepairsPage() {
                   <div className="flex flex-col gap-1">
                     <label className="text-sm font-medium">Typ naprawy</label>
                     <select
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4"
                       value={newType}
                       onChange={(e) => setNewType(e.target.value)}
                     >
@@ -512,7 +512,7 @@ export default function RepairsPage() {
                     <label className="text-sm font-medium">Warsztat</label>
                     <input
                       type="text"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                       value={newWorkshop}
                       onChange={(e) => setNewWorkshop(e.target.value)}
                     />
@@ -522,7 +522,7 @@ export default function RepairsPage() {
                     <label className="text-sm font-medium">Przebieg (km)</label>
                     <input
                       type="number"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                       placeholder="np. 120000"
                       value={newKilometers}
                       onChange={(e) =>
@@ -539,7 +539,7 @@ export default function RepairsPage() {
                     </label>
                     <input
                       type="number"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                       placeholder="np. 650"
                       value={newCost}
                       onChange={(e) => setNewCost(parseFloat(e.target.value))}
@@ -550,7 +550,7 @@ export default function RepairsPage() {
                     <label className="text-sm font-medium">Opis naprawy</label>
                     <input
                       type="text"
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                       placeholder="Co zostało zrobione?"
                       value={newDesc}
                       onChange={(e) => setNewDesc(e.target.value)}
@@ -562,7 +562,7 @@ export default function RepairsPage() {
                       Dodatkowe notatki
                     </label>
                     <textarea
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all hover:px-5 focus:px-5"
                       rows={3}
                       placeholder="Uwagi dodatkowe..."
                       value={newNotes}

@@ -11,7 +11,16 @@ export const createCar = async (
   next: NextFunction
 ) => {
   try {
-    const ownerId = req.user!.id; // masz dzięki authenticate
+    const ownerId = req.user!.id;
+
+    if (!req.user!.premium) {
+      const cnt = await prisma.car.count({ where: { ownerId } });
+      if (cnt >= 3) {
+        res.status(409).json({ code: "CAR_LIMIT", message: "Limit 3 aut" });
+        return;
+      }
+    }
+
     const {
       vin,
       make,
