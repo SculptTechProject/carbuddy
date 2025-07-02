@@ -30,6 +30,8 @@ model User {
   tokens UserToken[]
 
   cars Car[]
+
+  PushSubscription PushSubscription[]
 }
 
 model Admin {
@@ -125,4 +127,15 @@ model FluidCheckPlan {
   updatedAt   DateTime @updatedAt
 
   car Car @relation(fields: [carId], references: [id])
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  endpoint  String   @unique
+  auth      String
+  p256dh    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

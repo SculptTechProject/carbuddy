@@ -10,11 +10,16 @@ import authAdmin from "./routes/admin/auth.admin.routes";
 import authUser from "./routes/auth/auth.user.routes";
 import getUserData from "./routes/user/user.routes";
 import carRoutes from "./routes/car/car.routes";
+import pushRoutes from "./routes/push/push.routes";
 /* 
   ^^^^^^^^^^^ Routes imports ^^^^^^^^^^^
 */
 
 dotenv.config();
+
+// Cron jobs
+import "./cron/fluid.reminder";
+
 const app = express();
 app.use(
   cors({
@@ -33,6 +38,10 @@ app.get("/", (req: Request, res: Response) => {
 
 /*
  ^ USER 
+ ! PUSH NOTIFICATIONS
+ */
+app.use("/api/v1/push", pushRoutes);
+/*
  & START ROUTES
 */
 // Auth user

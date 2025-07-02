@@ -522,6 +522,25 @@ export default function ExpensesPage() {
       <div className="bg-white p-6 rounded-2xl shadow space-y-6">
         {/* ── Filtry ── */}
         <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+          <DatePicker
+            selected={filterStartDate}
+            onChange={setFilterStartDate}
+            placeholderText="Od"
+            dateFormat="dd.MM.yyyy"
+            wrapperClassName="relative"
+            popperClassName="!z-[60]"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 transition-all"
+          />
+
+          <DatePicker
+            selected={filterEndDate}
+            onChange={setFilterEndDate}
+            placeholderText="Do"
+            dateFormat="dd.MM.yyyy"
+            wrapperClassName="relative"
+            popperClassName="!z-[60]"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 transition-all"
+          />
           <input
             type="text"
             placeholder="Szukaj wydatków..."
@@ -546,7 +565,7 @@ export default function ExpensesPage() {
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
+            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 transition-all"
           >
             <option value="">Wszystkie kategorie</option>
             {categories.map((c) => (
@@ -555,22 +574,6 @@ export default function ExpensesPage() {
               </option>
             ))}
           </select>
-
-          <DatePicker
-            selected={filterStartDate}
-            onChange={setFilterStartDate}
-            placeholderText="Od"
-            dateFormat="dd.MM.yyyy"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
-          />
-
-          <DatePicker
-            selected={filterEndDate}
-            onChange={setFilterEndDate}
-            placeholderText="Do"
-            dateFormat="dd.MM.yyyy"
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500"
-          />
         </div>
 
         {/* ── Mobile cards ── */}
