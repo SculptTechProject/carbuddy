@@ -463,7 +463,8 @@ export const patchRepairById = async (
   next: NextFunction
 ) => {
   const { repairId } = req.params;
-  const { date, type, description, cost, workshop, notes } = req.body;
+  const { date, type, description, cost, workshop, notes, kilometers } =
+    req.body;
   try {
     const updated = await prisma.repair.update({
       where: { id: repairId },
@@ -474,6 +475,7 @@ export const patchRepairById = async (
         cost,
         workshop,
         notes,
+        kilometers: Number(kilometers),
       },
     });
     res.json(updated);

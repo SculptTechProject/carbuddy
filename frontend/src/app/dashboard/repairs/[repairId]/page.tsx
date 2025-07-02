@@ -169,10 +169,10 @@ export default function RepairDetailsPage() {
 
       {/* Wróć */}
       {/* Akcje */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 text-gray-600 ">
         <button
           onClick={() => router.back()}
-          className="inline-flex items-center px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm"
+          className="inline-flex items-center px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 text-sm font-semibold transition-all cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 mr-1" /> Wróć do historii napraw
         </button>
