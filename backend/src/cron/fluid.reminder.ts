@@ -11,7 +11,7 @@ webpush.setVapidDetails(
 );
 
 // ⏰ 07:30 UTC codziennie
-cron.schedule("* * * * *", async () => {
+cron.schedule("30 7 * * *", async () => {
   const due = await prisma.fluidCheckPlan.findMany({
     where: { nextCheck: { lte: new Date() }, enabled: true },
     include: { car: { select: { make: true, model: true, ownerId: true } } },

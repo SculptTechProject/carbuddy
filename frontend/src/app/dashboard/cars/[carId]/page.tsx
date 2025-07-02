@@ -14,7 +14,8 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import clsx from "clsx";
 import HashLoader from "react-spinners/HashLoader";
-import { useMe } from "@/hooks/useMe"; // <-- nowy hook
+import { useMe } from "@/hooks/useMe";
+import Link from "next/link";
 
 import { Droplet as FluidIcon, Pencil, CircleX } from "lucide-react";
 
@@ -435,7 +436,7 @@ function FluidCheckModal({
   return (
     <Transition appear show={open} as={Fragment}>
       <Dialog onClose={onClose} className="relative z-50">
-        {/* backdrop */}
+        {/* ===== Backdrop ===== */}
         <Transition.Child
           enter="ease-out duration-200"
           enterFrom="opacity-0 backdrop-blur-none"
@@ -448,15 +449,15 @@ function FluidCheckModal({
           <div className="fixed inset-0 bg-black/40" />
         </Transition.Child>
 
-        {/* modal */}
+        {/* ===== Modal ===== */}
         <Transition.Child
-          as={Fragment}
           enter="ease-out duration-200"
           enterFrom="opacity-0 scale-95"
           enterTo="opacity-100 scale-100"
           leave="ease-in duration-150"
           leaveFrom="opacity-100 scale-100"
           leaveTo="opacity-0 scale-95"
+          as={Fragment}
         >
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <Dialog.Panel className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl space-y-6">
@@ -465,6 +466,9 @@ function FluidCheckModal({
                 Kontrola płynów
               </Dialog.Title>
 
+              {/* ================================ */}
+              {/* 1) NIE-Premium                  */}
+              {/* ================================ */}
               {!isPremium && (
                 <div className="text-center space-y-4">
                   <CircleX className="w-10 h-10 text-red-500 mx-auto" />
@@ -480,80 +484,112 @@ function FluidCheckModal({
                 </div>
               )}
 
-              {isPremium && loading && (
-                <div className="flex justify-center py-8">
-                  <HashLoader size={40} />
+              {/* ================================ */}
+              {/* 2) Premium ALE brak zgody Push   */}
+              {/* ================================ */}
+              {isPremium && Notification.permission !== "granted" && (
+                <div className="space-y-4 text-center">
+                  <CircleX className="w-10 h-10 text-red-500 mx-auto" />
+                  <p className="text-gray-700">
+                    Aby ustawić przypomnienia, włącz powiadomienia w&nbsp;
+                    <Link
+                      href="/dashboard/settings"
+                      className="text-emerald-600 underline"
+                      onClick={onClose} /* zamknij modal */
+                    >
+                      ustawieniach
+                    </Link>
+                    .
+                  </p>
+                  <button
+                    onClick={onClose}
+                    className="mx-auto px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+                  >
+                    Zamknij
+                  </button>
                 </div>
               )}
 
-              {isPremium && !loading && (
+              {/* ================================ */}
+              {/* 3) Premium + zgoda Push          */}
+              {/* ================================ */}
+              {isPremium && Notification.permission === "granted" && (
                 <>
-                  {/* plan ISTNIEJE ------------------------------------------------ */}
-                  {plan ? (
-                    <>
-                      <div className="space-y-2 text-sm">
-                        <p>
-                          <b>Interwał:</b> co {plan.intervalDay} dni
-                        </p>
-                        <p>
-                          <b>Ostatnio sprawdzone:</b>{" "}
-                          {new Date(plan.lastCheck).toLocaleDateString()}
-                        </p>
-                        <p>
-                          <b>Następne przypomnienie:</b>{" "}
-                          {new Date(plan.nextCheck).toLocaleDateString()}
-                        </p>
-                      </div>
-
-                      <div className="flex justify-end gap-3 pt-4">
-                        <button
-                          onClick={handleDisable}
-                          className="px-4 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
-                        >
-                          Wyłącz
-                        </button>
-                        <button
-                          onClick={handleConfirm}
-                          disabled={saving}
-                          className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
-                        >
-                          {saving ? "Zapisywanie…" : "Potwierdź: sprawdzone"}
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    /* plan NIE istnieje --------------------------------------- */
-                    <>
-                      <label className="block text-sm mb-1">
-                        Co ile dni przypominać?
-                      </label>
-                      <input
-                        type="number"
-                        min={1}
-                        value={interval}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setInterval(Number(e.target.value))
-                        }
-                        className="w-full border rounded px-3 py-2"
-                      />
-
-                      <div className="flex justify-end gap-3 pt-4">
-                        <button
-                          onClick={onClose}
-                          className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
-                        >
-                          Anuluj
-                        </button>
-                        <button
-                          onClick={handleSave}
-                          disabled={saving}
-                          className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
-                        >
-                          {saving ? "Zapisywanie…" : "Zapisz plan"}
-                        </button>
-                      </div>
-                    </>
+                  {/* ---- Loader ---- */}
+                  {loading && (
+                    <div className="flex justify-center py-8">
+                      <HashLoader size={40} />
+                    </div>
                   )}
+
+                  {/* ---- Właściwy formularz ---- */}
+                  {!loading &&
+                    (plan ? (
+                      /* ─── plan już istnieje ─── */
+                      <>
+                        <div className="space-y-2 text-sm">
+                          <p>
+                            <b>Interwał:</b> co {plan.intervalDay} dni
+                          </p>
+                          <p>
+                            <b>Ostatnio sprawdzone:</b>{" "}
+                            {new Date(plan.lastCheck).toLocaleDateString()}
+                          </p>
+                          <p>
+                            <b>Następne przypomnienie:</b>{" "}
+                            {new Date(plan.nextCheck).toLocaleDateString()}
+                          </p>
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-4">
+                          <button
+                            onClick={handleDisable}
+                            className="px-4 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
+                          >
+                            Wyłącz
+                          </button>
+                          <button
+                            onClick={handleConfirm}
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
+                          >
+                            {saving ? "Zapisywanie…" : "Potwierdź: sprawdzone"}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      /* ─── plan nie istnieje ─── */
+                      <>
+                        <label className="block text-sm mb-1">
+                          Co ile dni przypominać?
+                        </label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={interval}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            setInterval(Number(e.target.value))
+                          }
+                          className="w-full border rounded px-3 py-2"
+                        />
+
+                        <div className="flex justify-end gap-3 pt-4">
+                          <button
+                            onClick={onClose}
+                            className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+                          >
+                            Anuluj
+                          </button>
+                          <button
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 disabled:opacity-60"
+                          >
+                            {saving ? "Zapisywanie…" : "Zapisz plan"}
+                          </button>
+                        </div>
+                      </>
+                    ))}
                 </>
               )}
             </Dialog.Panel>

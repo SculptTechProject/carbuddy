@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
-import { CreditCard, TrendingUp, Activity } from "lucide-react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -16,146 +12,22 @@ import {
   Bar,
   Cell,
 } from "recharts";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { HashLoader } from "react-spinners";
+import { CreditCard, TrendingUp, Activity } from "lucide-react";
 import clsx from "clsx";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+import { useDashboardData } from "@/hooks/useDashboardData";
 
-/* ──────── TYPES ────────────────── */
-interface Expense {
-  id: string;
-  amount: number;
-  date: string;
-  category: string;
-}
-interface Repair {
-  id: string;
-  type: "Naprawa" | "Serwis";
-  title: string;
-  date: string;
-  cost: number;
-}
-interface Planned {
-  id: string;
-  type: string;
-  date: string;
-}
-interface Car {
-  id: string;
-  make: string;
-  model: string;
-  kilometers?: number;
-  upcomingServices?: Planned[];
-  recentRepairs?: Repair[];
-  expenses?: Expense[];
-}
-interface MeResponse {
-  id: string;
-  firstName: string;
-  cars: Car[];
-}
-
-/* ──────── HELPERS ──────────────── */
-const monthsBack = (n = 12) => {
-  const out: string[] = [];
-  const d = new Date();
-  d.setDate(1);
-  for (let i = 0; i < n; i++) {
-    out.unshift(
-      d.toLocaleString("default", { month: "short", year: "numeric" })
-    );
-    d.setMonth(d.getMonth() - 1);
-  }
-  return out;
-};
-const daysDiff = (iso: string) =>
-  Math.ceil(
-    (new Date(iso).getTime() - new Date().setHours(0, 0, 0, 0)) / 86_400_000
-  );
-
-/* ──────── PAGE ─────────────────── */
+/* -------------------------------------------------------------------------- */
+/* PAGE                                                                        */
+/* -------------------------------------------------------------------------- */
 export default function DashboardPage() {
-  const router = useRouter();
-  const [me, setMe] = useState<MeResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  /* 1. pobierz podstawowe info o użytkowniku */
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return router.replace("/login");
-
-    (async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get<{ user: MeResponse }>(
-          `${API_URL}/api/v1/user/me`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setMe(data.user);
-      } catch {
-        localStorage.removeItem("token");
-        router.replace("/login");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  /* 2. dociągnij szczegóły każdego auta */
-  useEffect(() => {
-    if (!me?.cars?.length) return;
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    (async () => {
-      try {
-        const ext: Record<
-          string,
-          { expenses: Expense[]; repairs: Repair[]; planned: Planned[] }
-        > = {};
-
-        await Promise.all(
-          me.cars.map(async (car) => {
-            const [exp, rep, plan] = await Promise.all([
-              axios.get(`${API_URL}/api/v1/cars/${car.id}/expenses`, {
-                headers: { Authorization: `Bearer ${token}` },
-              }),
-              axios.get(`${API_URL}/api/v1/cars/${car.id}/repairs`, {
-                headers: { Authorization: `Bearer ${token}` },
-              }),
-              axios.get(`${API_URL}/api/v1/cars/${car.id}/planned-repairs`, {
-                headers: { Authorization: `Bearer ${token}` },
-              }),
-            ]);
-            ext[car.id] = {
-              expenses: exp.data,
-              repairs: rep.data,
-              planned: plan.data,
-            };
-          })
-        );
-
-        setMe((prev) =>
-          !prev
-            ? prev
-            : {
-                ...prev,
-                cars: prev.cars.map((c) => ({
-                  ...c,
-                  expenses: ext[c.id]?.expenses ?? c.expenses,
-                  recentRepairs: ext[c.id]?.repairs ?? c.recentRepairs,
-                  upcomingServices: ext[c.id]?.planned ?? c.upcomingServices,
-                })),
-              }
-        );
-      } catch (err) {
-        console.error(err);
-      }
-    })();
-  }, [me?.cars]);
-
-  /* 3. agregaty */
+  /* główny hook z danymi oraz flagą ładowania */
   const {
+    me,
+    loading,
     healthScore,
     monthlyCost,
     barCostKm,
@@ -164,158 +36,44 @@ export default function DashboardPage() {
     kpiMonth,
     kpiYear,
     costPerKm,
-  } = useMemo(() => {
-    if (!me || !me.cars?.length)
-      return {
-        healthScore: 0,
-        monthlyCost: monthsBack().map((m) => ({ month: m, cost: 0 })),
-        barCostKm: [],
-        upcoming: [],
-        timeline: [],
-        kpiMonth: 0,
-        kpiYear: 0,
-        costPerKm: 0,
-      };
+  } = useDashboardData();
 
-    /* --- pomocnicze zmienne --- */
-    type TL = {
-      date: string;
-      label: string;
-      type: "repair" | "service" | "expense" | "planned";
-      carLabel: string;
-    };
-    const events: TL[] = [];
+  const router = useRouter();
 
-    const monthKeys = monthsBack();
-    const monthCost: Record<string, number> = Object.fromEntries(
-      monthKeys.map((k) => [k, 0])
-    );
+  /* prosty redirect, gdy zniknie token (wylogowanie w innej karcie itp.) */
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      router.replace("/login");
+    }
+  }, [router]);
 
-    const now = new Date();
-    const yearNow = now.getFullYear();
-    const monthNow = now.getMonth();
-
-    let sumMonth = 0;
-    let sumYear = 0;
-    let overdue = 0;
-    let upcnt = 0;
-
-    const costCar: Record<string, { label: string; cost: number; km: number }> =
-      {};
-
-    /* --- pętla po autach --- */
-    me.cars.forEach((car) => {
-      const labelCar = `${car.make} ${car.model}`;
-
-      /* expenses */
-      (car.expenses ?? []).forEach((e) => {
-        const d = new Date(e.date);
-        const mk = d.toLocaleString("default", {
-          month: "short",
-          year: "numeric",
-        });
-        if (mk in monthCost) monthCost[mk] += e.amount;
-        if (d.getFullYear() === yearNow) sumYear += e.amount;
-        if (d.getFullYear() === yearNow && d.getMonth() === monthNow)
-          sumMonth += e.amount;
-
-        costCar[car.id] ??= {
-          label: labelCar,
-          cost: 0,
-          km: car.kilometers || 1,
-        };
-        costCar[car.id].cost += e.amount;
-
-        events.push({
-          date: e.date,
-          label: `Wydatek • ${e.category}`,
-          type: "expense",
-          carLabel: labelCar,
-        });
-      });
-
-      /* repairs */
-      (car.recentRepairs ?? []).forEach((r) => {
-        events.push({
-          date: r.date,
-          label: r.type,
-          type: r.type === "Serwis" ? "service" : "repair",
-          carLabel: labelCar,
-        });
-      });
-
-      /* planned — z endpointu + przyszłe repairs */
-      const plans = [
-        ...(car.upcomingServices ?? []),
-        ...(car.recentRepairs ?? []).filter((r) => new Date(r.date) > now),
-      ];
-
-      plans.forEach((p) => {
-        const diff = daysDiff(p.date);
-        if (diff < 0) overdue += 1;
-        else upcnt += 1;
-
-        events.push({
-          date: p.date,
-          label: `Plan • ${"type" in p ? p.type : (p as Repair).type}`,
-          type: "planned",
-          carLabel: labelCar,
-        });
-      });
-    });
-
-    /* health */
-    const health =
-      overdue === 0 && upcnt === 0
-        ? 100
-        : Math.max(0, 100 - overdue * 20 - upcnt * 5);
-
-    /* koszt/km per car */
-    const barArr = Object.values(costCar).map((v) => ({
-      ...v,
-      costKm: v.cost / v.km,
-    }));
-
-    const dtFmt = new Intl.DateTimeFormat("pl-PL");
-
-    return {
-      healthScore: health,
-      monthlyCost: monthKeys.map((m) => ({ month: m, cost: monthCost[m] })),
-      barCostKm: barArr,
-      upcoming: events
-        .filter((e) => e.type === "planned" && daysDiff(e.date) >= -1)
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .slice(0, 5)
-        .map((e, idx) => ({
-          id: e.date + idx,
-          type: e.label.replace("Plan • ", ""),
-          date: e.date,
-          dateFmt: dtFmt.format(new Date(e.date)),
-          carLabel: e.carLabel,
-        })),
-      timeline: events
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, 10),
-      kpiMonth: sumMonth,
-      kpiYear: sumYear,
-      costPerKm:
-        barArr.reduce((s, v) => s + v.cost, 0) /
-        barArr.reduce((s, v) => s + v.km, 1),
-    };
-  }, [me]);
-
-  /* ładowanie */
-  if (loading || !me)
+  /* ---------------------------------------------------------------------- */
+  /* UI ładowania / błędu                                                   */
+  /* ---------------------------------------------------------------------- */
+  if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <HashLoader size={60} />
       </div>
     );
+  }
 
-  /* ─────── UI ───────── */
+  if (!me) {
+    return (
+      <div className="p-6 text-center">
+        <p className="text-red-600 font-medium">
+          Nie udało się pobrać danych użytkownika.
+        </p>
+      </div>
+    );
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* NORMALNY WIDOK DASHBOARDU                                              */
+  /* ---------------------------------------------------------------------- */
   return (
     <div className="w-full p-6 space-y-8">
-      {/* KPI */}
+      {/* KPI ---------------------------------------------------------------- */}
       <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow flex flex-col items-center justify-center p-6">
           <Radial value={healthScore} />
@@ -338,13 +96,13 @@ export default function DashboardPage() {
         />
       </section>
 
-      {/* Charts */}
+      {/* Wykresy ------------------------------------------------------------ */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ChartLine data={monthlyCost} />
         <ChartBar data={barCostKm} />
       </section>
 
-      {/* Lists */}
+      {/* Listy -------------------------------------------------------------- */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <UpcomingList list={upcoming} />
         <Timeline list={timeline} />
@@ -353,7 +111,11 @@ export default function DashboardPage() {
   );
 }
 
-/* ─────── UI pod-komponenty ─────── */
+/* -------------------------------------------------------------------------- */
+/* POD-KOMPONENTY                                                             */
+/* -------------------------------------------------------------------------- */
+
+/* ---------- KPI box ---------- */
 function Kpi({
   icon,
   label,
@@ -368,6 +130,7 @@ function Kpi({
     currency: "PLN",
     maximumFractionDigits: 0,
   }).format(value);
+
   return (
     <div className="bg-white rounded-lg shadow p-6 flex flex-col min-h-[110px]">
       <div className="flex justify-between text-gray-500 mb-1">
@@ -379,6 +142,7 @@ function Kpi({
   );
 }
 
+/* ---------- Radial ---------- */
 function Radial({ value }: { value: number }) {
   const pct = Math.min(100, Math.max(0, value));
   const r = 40;
@@ -390,6 +154,7 @@ function Radial({ value }: { value: number }) {
       : pct > 50
       ? "stroke-yellow-500"
       : "stroke-red-500";
+
   return (
     <svg width="120" height="120" className="-rotate-90">
       <circle
@@ -424,7 +189,7 @@ function Radial({ value }: { value: number }) {
   );
 }
 
-/* Charts */
+/* ---------- Wykres – linia ---------- */
 function ChartLine({ data }: { data: { month: string; cost: number }[] }) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -448,6 +213,7 @@ function ChartLine({ data }: { data: { month: string; cost: number }[] }) {
   );
 }
 
+/* ---------- Wykres – słupki ---------- */
 function ChartBar({ data }: { data: { label: string; costKm: number }[] }) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
@@ -468,18 +234,21 @@ function ChartBar({ data }: { data: { label: string; costKm: number }[] }) {
   );
 }
 
-/* Upcoming */
-function UpcomingList({
-  list,
-}: {
-  list: {
-    id: string;
-    type: string;
-    date: string;
-    dateFmt: string;
-    carLabel: string;
-  }[];
-}) {
+/* ---------- Upcoming list ---------- */
+type UpcomingItem = {
+  id: string;
+  type: string;
+  date: string;
+  dateFmt: string;
+  carLabel: string;
+};
+
+const daysDiff = (iso: string) =>
+  Math.ceil(
+    (new Date(iso).getTime() - new Date().setHours(0, 0, 0, 0)) / 86_400_000
+  );
+
+function UpcomingList({ list }: { list: UpcomingItem[] }) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h3 className="font-semibold mb-4">Najbliższe terminy</h3>
@@ -492,10 +261,8 @@ function UpcomingList({
             {list.map((u) => {
               const diff = daysDiff(u.date) - 1;
 
-              /* -------------- badge ---------------- */
-              let badgeTxt: string;
-              let badgeCls: string;
-
+              let badgeTxt = "";
+              let badgeCls = "";
               if (diff === 0) {
                 badgeTxt = "Dzisiaj";
                 badgeCls = "bg-yellow-100 text-yellow-700";
@@ -506,7 +273,7 @@ function UpcomingList({
                 badgeTxt = `Za ${diff} dni`;
                 badgeCls = "bg-gray-100 text-gray-700";
               } else {
-                return null;
+                return null; // starsze niż wczoraj
               }
 
               return (
@@ -538,24 +305,24 @@ function UpcomingList({
   );
 }
 
-/* Timeline */
-function Timeline({
-  list,
-}: {
-  list: {
-    date: string;
-    label: string;
-    type: "repair" | "service" | "expense" | "planned";
-    carLabel: string;
-  }[];
-}) {
+/* ---------- Timeline ---------- */
+type TimelineItem = {
+  date: string;
+  label: string;
+  type: "repair" | "service" | "expense" | "planned";
+  carLabel: string;
+};
+
+function Timeline({ list }: { list: TimelineItem[] }) {
   const dot = (t: string) =>
-    ({
-      repair: "bg-rose-500",
-      service: "bg-sky-500",
-      expense: "bg-amber-500",
-      planned: "bg-emerald-500",
-    }[t] ?? "bg-gray-400");
+    ((
+      {
+        repair: "bg-rose-500",
+        service: "bg-sky-500",
+        expense: "bg-amber-500",
+        planned: "bg-emerald-500",
+      } as const
+    )[t] ?? "bg-gray-400");
 
   return (
     <div className="bg-white rounded-lg shadow p-6">

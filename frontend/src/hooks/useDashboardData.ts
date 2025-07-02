@@ -1,126 +1,281 @@
-// src/hooks/useDashboardData.ts
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
-/* ---------- typy takie jak w dashboardzie ---------- */
-export interface Expense {
+/* ---------------- typy ---------------- */
+interface Expense {
   id: string;
   amount: number;
   date: string;
   category: string;
 }
-export interface Repair {
+interface Repair {
   id: string;
   type: "Naprawa" | "Serwis";
-  title: string;
   date: string;
   cost: number;
 }
-export interface Planned {
+interface Planned {
   id: string;
   type: string;
   date: string;
 }
-export interface Car {
+interface Car {
   id: string;
   make: string;
   model: string;
   kilometers?: number;
-  expenses?: Expense[]; // ← dociągane później
+  expenses?: Expense[];
   recentRepairs?: Repair[];
   upcomingServices?: Planned[];
 }
 export interface MeResponse {
   id: string;
   firstName: string;
-  premium: boolean;
   cars: Car[];
 }
 
-/* ---------- hook ---------- */
-export function useDashboardData() {
-  const router = useRouter();
-  const [me, setMe] = useState<MeResponse | null>(null);
-  const [loading, setLoad] = useState(true);
+/* ------------- helpers ------------- */
+const monthsBack = (n = 12) => {
+  const out: string[] = [];
+  const d = new Date();
+  d.setDate(1);
+  for (let i = 0; i < n; i++) {
+    out.unshift(
+      d.toLocaleString("default", { month: "short", year: "numeric" })
+    );
+    d.setMonth(d.getMonth() - 1);
+  }
+  return out;
+};
+const daysDiff = (iso: string) =>
+  Math.ceil(
+    (new Date(iso).getTime() - new Date().setHours(0, 0, 0, 0)) / 86_400_000
+  );
 
+/* ======================================================================= */
+/*  HOOK                                                                   */
+/* ======================================================================= */
+export function useDashboardData() {
+  const [me, setMe] = useState<MeResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  /* 1. pobranie pełnych danych użytkownika + szczegółów aut --------------- */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.replace("/login");
+      setLoading(false);
       return;
     }
 
-    const headers = { Authorization: `Bearer ${token}` };
-    const ac = new AbortController(); // żeby anulować przy un-mount
-
     (async () => {
       try {
-        /* 1. bazowe „/user/me” ------------------------------------ */
-        const { data } = await axios.get<{ user: MeResponse }>(
+        /* me  */
+        const { data: meRes } = await axios.get<{ user: MeResponse }>(
           `${API_URL}/api/v1/user/me`,
-          { headers, signal: ac.signal }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        const base = data.user;
+        const base = meRes.user;
 
-        /* 2. jeśli są auta → pobierz szczegóły równolegle ---------- */
-        if (base.cars.length) {
-          const ext: Record<
-            string,
-            {
-              expenses: Expense[];
-              repairs: Repair[];
-              planned: Planned[];
-            }
-          > = {};
+        /* szczegóły każdego auta równolegle */
+        const carsFull: Car[] = await Promise.all(
+          base.cars.map(async (c) => {
+            const [exp, rep, plan] = await Promise.all([
+              axios.get<Expense[]>(`${API_URL}/api/v1/cars/${c.id}/expenses`, {
+                headers: { Authorization: `Bearer ${token}` },
+              }),
+              axios.get<Repair[]>(`${API_URL}/api/v1/cars/${c.id}/repairs`, {
+                headers: { Authorization: `Bearer ${token}` },
+              }),
+              axios.get<Planned[]>(
+                `${API_URL}/api/v1/cars/${c.id}/planned-repairs`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+              ),
+            ]);
+            return {
+              ...c,
+              expenses: exp.data,
+              recentRepairs: rep.data,
+              upcomingServices: plan.data,
+            };
+          })
+        );
 
-          await Promise.all(
-            base.cars.map(async (car) => {
-              const [exp, rep, plan] = await Promise.all([
-                axios.get(`${API_URL}/api/v1/cars/${car.id}/expenses`, {
-                  headers,
-                }),
-                axios.get(`${API_URL}/api/v1/cars/${car.id}/repairs`, {
-                  headers,
-                }),
-                axios.get(`${API_URL}/api/v1/cars/${car.id}/planned-repairs`, {
-                  headers,
-                }),
-              ]);
-              ext[car.id] = {
-                expenses: exp.data,
-                repairs: rep.data,
-                planned: plan.data,
-              };
-            })
-          );
-
-          /* 3. scal bazę + rozszerzenia --------------------------- */
-          base.cars = base.cars.map((c) => ({
-            ...c,
-            expenses: ext[c.id]?.expenses ?? c.expenses,
-            recentRepairs: ext[c.id]?.repairs ?? c.recentRepairs,
-            upcomingServices: ext[c.id]?.planned ?? c.upcomingServices,
-          }));
-        }
-
-        setMe(base);
+        setMe({ ...base, cars: carsFull });
       } catch (err) {
-        if (!axios.isCancel(err)) {
-          localStorage.removeItem("token");
-          router.replace("/login");
-        }
+        console.error(err);
+        setMe(null);
       } finally {
-        setLoad(false);
+        setLoading(false);
       }
     })();
+  }, []);
 
-    return () => ac.abort();
-  }, [router]);
+  /* 2. wyliczenia KPI / list --------------------------------------------- */
+  const {
+    healthScore,
+    monthlyCost,
+    barCostKm,
+    upcoming,
+    timeline,
+    kpiMonth,
+    kpiYear,
+    costPerKm,
+  } = useMemo(() => {
+    if (!me || !me.cars?.length) {
+      return {
+        healthScore: 0,
+        monthlyCost: monthsBack().map((m) => ({ month: m, cost: 0 })),
+        barCostKm: [],
+        upcoming: [],
+        timeline: [],
+        kpiMonth: 0,
+        kpiYear: 0,
+        costPerKm: 0,
+      };
+    }
 
-  return { me, loading };
+    /* ---- zmienne robocze ---- */
+    const events: {
+      date: string;
+      label: string;
+      type: "repair" | "service" | "expense" | "planned";
+      carLabel: string;
+    }[] = [];
+
+    const monthKeys = monthsBack();
+    const monthCost: Record<string, number> = Object.fromEntries(
+      monthKeys.map((k) => [k, 0])
+    );
+
+    const now = new Date();
+    const yearNow = now.getFullYear();
+    const monthNow = now.getMonth();
+
+    let sumMonth = 0;
+    let sumYear = 0;
+    let overdue = 0;
+    let upcnt = 0;
+
+    const costCar: Record<string, { label: string; cost: number; km: number }> =
+      {};
+
+    /* ---- pętla po autach ---- */
+    me.cars.forEach((car) => {
+      const labelCar = `${car.make} ${car.model}`;
+
+      /* expenses */
+      (car.expenses ?? []).forEach((e) => {
+        const d = new Date(e.date);
+        const mk = d.toLocaleString("default", {
+          month: "short",
+          year: "numeric",
+        });
+        if (mk in monthCost) monthCost[mk] += e.amount;
+        if (d.getFullYear() === yearNow) sumYear += e.amount;
+        if (d.getFullYear() === yearNow && d.getMonth() === monthNow)
+          sumMonth += e.amount;
+
+        costCar[car.id] ??= {
+          label: labelCar,
+          cost: 0,
+          km: car.kilometers || 1,
+        };
+        costCar[car.id].cost += e.amount;
+
+        events.push({
+          date: e.date,
+          label: `Wydatek • ${e.category}`,
+          type: "expense",
+          carLabel: labelCar,
+        });
+      });
+
+      /* repairs */
+      (car.recentRepairs ?? []).forEach((r) => {
+        events.push({
+          date: r.date,
+          label: r.type,
+          type: r.type === "Serwis" ? "service" : "repair",
+          carLabel: labelCar,
+        });
+      });
+
+      /* planned */
+      const plans = [
+        ...(car.upcomingServices ?? []),
+        ...(car.recentRepairs ?? []).filter((r) => new Date(r.date) > now),
+      ];
+
+      plans.forEach((p) => {
+        const diff = daysDiff(p.date);
+        if (diff < 0) overdue += 1;
+        else upcnt += 1;
+
+        events.push({
+          date: p.date,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          label: `Plan • ${"type" in p ? p.type : (p as any).type}`,
+          type: "planned",
+          carLabel: labelCar,
+        });
+      });
+    });
+
+    /* health score */
+    const health =
+      overdue === 0 && upcnt === 0
+        ? 100
+        : Math.max(0, 100 - overdue * 20 - upcnt * 5);
+
+    /* koszt/km per car */
+    const barArr = Object.values(costCar).map((v) => ({
+      ...v,
+      costKm: v.cost / v.km,
+    }));
+
+    const dtFmt = new Intl.DateTimeFormat("pl-PL");
+
+    return {
+      healthScore: health,
+      monthlyCost: monthKeys.map((m) => ({ month: m, cost: monthCost[m] })),
+      barCostKm: barArr,
+      upcoming: events
+        .filter((e) => e.type === "planned" && daysDiff(e.date) >= -1)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(0, 5)
+        .map((e, idx) => ({
+          id: e.date + idx,
+          type: e.label.replace("Plan • ", ""),
+          date: e.date,
+          dateFmt: dtFmt.format(new Date(e.date)),
+          carLabel: e.carLabel,
+        })),
+      timeline: events
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 10),
+      kpiMonth: sumMonth,
+      kpiYear: sumYear,
+      costPerKm:
+        barArr.reduce((s, v) => s + v.cost, 0) /
+        barArr.reduce((s, v) => s + v.km, 1),
+    };
+  }, [me]);
+
+  /* 3. zwracamy WSZYSTKO co potrzebuje strona ----------------------------- */
+  return {
+    me,
+    loading,
+    healthScore,
+    monthlyCost,
+    barCostKm,
+    upcoming,
+    timeline,
+    kpiMonth,
+    kpiYear,
+    costPerKm,
+  };
 }
