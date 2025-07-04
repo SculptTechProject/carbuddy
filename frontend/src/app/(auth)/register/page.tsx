@@ -1,375 +1,236 @@
 "use client";
 
-import React, { useState, FormEvent, ChangeEvent } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import { Car } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { CarFront, Loader2, CheckCircle, Car } from "lucide-react";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 type Plan = "free" | "pro";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
-interface FormState {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  plan: Plan;
-  acceptedTerms: boolean;
-}
-
-export default function RegisterPage() {
+export default function Register() {
   const router = useRouter();
-  const [form, setForm] = useState<FormState>({
+
+  /* ---------------------- state ---------------------- */
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [plan, setPlan] = useState<Plan>("free");
+  const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    plan: "free",
-    acceptedTerms: false,
+    confirm: "",
+    accept: false,
   });
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const onChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setForm({
+      ...form,
+      [e.target.name]:
+        e.target.type === "checkbox" ? e.target.checked : e.target.value,
+    });
 
-  const handleSubmit = async (e: FormEvent) => {
+  /* --------------------- submit ---------------------- */
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError(null);
+    setErr(null);
 
-    if (form.password !== form.confirmPassword) {
-      setError("Hasła nie są zgodne");
-      return;
+    if (form.password !== form.confirm) {
+      return setErr("Hasła nie są zgodne");
     }
-    if (!form.acceptedTerms) {
-      setError("Musisz zaakceptować regulamin");
-      return;
+    if (!form.accept) {
+      return setErr("Musisz zaakceptować regulamin");
     }
 
     setLoading(true);
     try {
-      await axios.post(
-        `${API_URL}/api/v1/user/register`,
-        { ...form /*, phoneNumber jeśli kiedyś dodasz*/ },
-        { headers: { "Content-Type": "application/json" } }
-      );
-      window.location.href = "/login";
+      await axios.post(`${API_URL}/api/v1/user/register`, {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        password: form.password,
+        plan,
+      });
+      router.push("/login?welcome=1");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      const message =
-        err.response?.data?.error || err.message || "Coś poszło nie tak";
-      setError(message);
+    } catch (e: any) {
+      setErr(e.response?.data?.error || "Ups, spróbuj ponownie.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
+  /* ----------------------- UI ------------------------ */
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-gray-50 p-4">
-      <div
-        className="flex-grow flex items-center justify-center"
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <main
+        className="flex-grow flex items-center justify-center px-4"
         data-aos="fade-out"
       >
-        <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-8">
-          {/* header */}
-          <div className="text-center mb-8">
-            <Car
-              onClick={() => {
-                router.push("/");
-              }}
-              className="mx-auto mb-2 w-8 h-8 text-emerald-500 cursor-pointer"
-            />
-            <h1 className="text-2xl font-semibold text-gray-700">
-              Utwórz nowe konto
-            </h1>
-            <p className="text-sm text-gray-600">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-[560px] bg-white rounded-2xl shadow-xl p-8 space-y-8"
+        >
+          {/* brand ------------------------------------------------------- */}
+          <header className="text-center space-y-2">
+            <CarFront className="mx-auto text-emerald-500" size={32} />
+            <h1 className="text-2xl font-semibold">Utwórz konto</h1>
+            <p className="text-sm text-gray-500">
               Masz już konto?{" "}
               <Link href="/login" className="text-emerald-600 hover:underline">
                 Zaloguj się
               </Link>
             </p>
-          </div>
+          </header>
 
-          {error && <p className="text-red-500 mb-4 text-center" data-aos="slide-down">{error}</p>}
+          {/* kroki zegara ----------------------------------------------- */}
+          <Stepper step={step} />
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* dwie kolumny na md+ */}
-            <div className="md:flex md:space-x-8">
-              {/* lewa kolumna – pola */}
-              <div className="md:w-1/2 space-y-6">
-                {/* Imię i nazwisko */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="firstName"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Imię
-                    </label>
-                    <input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      required
-                      placeholder="Jan"
-                      value={form.firstName}
-                      onChange={handleChange}
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 transition-all hover:py-3"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Nazwisko
-                    </label>
-                    <input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      required
-                      placeholder="Kowalski"
-                      value={form.lastName}
-                      onChange={handleChange}
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 transition-all hover:py-3"
-                    />
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Adres email
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="twoj@email.com"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 transition-all hover:py-3"
-                  />
-                </div>
-
-                {/* Hasła */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Hasło
-                    </label>
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      required
-                      placeholder="●●●●●●●"
-                      minLength={6}
-                      value={form.password}
-                      onChange={handleChange}
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 transition-all hover:py-3"
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="confirmPassword"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Potwierdź hasło
-                    </label>
-                    <input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      required
-                      placeholder="●●●●●●●"
-                      minLength={6}
-                      value={form.confirmPassword}
-                      onChange={handleChange}
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 transition-all hover:py-3"
-                    />
-                  </div>
-                </div>
+          {/* Step 0 – dane osobowe -------------------------------------- */}
+          {step === 0 && (
+            <section className="grid gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field
+                  label="Imię"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={onChange}
+                  required
+                />
+                <Field
+                  label="Nazwisko"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={onChange}
+                  required
+                />
               </div>
-
-              {/* prawa kolumna – plany */}
-              <div className="md:w-1/2 space-y-4 mt-6 md:mt-0">
-                <p className="text-sm font-medium text-gray-700">
-                  Wybierz plan
-                </p>
-                <div className="grid grid-cols-2 gap-4">
-                  {(["free", "pro"] as Plan[]).map((p) => (
-                    <label
-                      key={p}
-                      className={`border rounded-md p-4 cursor-pointer hover:bg-gray-50 transition-all ${
-                        form.plan === p
-                          ? "border-emerald-500"
-                          : "border-gray-300"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="plan"
-                        value={p}
-                        checked={form.plan === p}
-                        onChange={handleChange}
-                        className="hidden"
-                      />
-                      <div className="flex justify-between items-center font-semibold">
-                        <span>
-                          {p === "free" ? "Free" : "Pro"}{" "}
-                          {p === "free" ? "0 zł" : "19,99 zł/mies"}
-                        </span>
-                        {p === "pro" && (
-                          <span className="text-sm text-white bg-emerald-500 rounded-full px-2 py-0.5">
-                            Polecany
-                          </span>
-                        )}
-                      </div>
-                      <ul className="mt-2 text-sm text-gray-600 list-disc list-inside">
-                        {(p === "free"
-                          ? [
-                              "Zarządzanie 1 pojazdem",
-                              "Podstawowe przypomnienia",
-                              "Historia napraw",
-                            ]
-                          : [
-                              "Nieograniczona liczba pojazdów",
-                              "Zaawansowane przypomnienia",
-                              "Szczegółowa historia napraw",
-                              "Priorytetowe wsparcie",
-                            ]
-                        ).map((item) => (
-                          <li key={item}>{item}</li>
-                        ))}
-                      </ul>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* regulamin */}
-            <div className="flex items-center">
-              <input
-                id="acceptedTerms"
-                name="acceptedTerms"
-                type="checkbox"
-                checked={form.acceptedTerms}
-                onChange={handleChange}
-                className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+              <Field
+                label="Email"
+                name="email"
+                type="email"
+                value={form.email}
+                onChange={onChange}
+                required
               />
-              <label
-                htmlFor="acceptedTerms"
-                className="ml-2 block text-sm text-gray-900"
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                disabled={!form.firstName || !form.lastName || !form.email}
+                className="px-5 py-3 border border-transparent text-gray-50 cursor-pointer transition-all rounded-xl bg-gray-600 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-600"
               >
-                Akceptuję{" "}
-                <Link
-                  href="/terms"
-                  className="text-emerald-600 hover:underline"
-                >
-                  regulamin
-                </Link>{" "}
-                oraz{" "}
-                <Link
-                  href="/privacy"
-                  className="text-emerald-600 hover:underline"
-                >
-                  politykę prywatności
-                </Link>
-              </label>
-            </div>
+                Dalej
+              </button>
+            </section>
+          )}
 
-            {/* przycisk */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-            >
-              {loading ? "Proszę czekać..." : "Utwórz konto"}
-            </button>
-          </form>
-
-          {/* OAuth */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+          {/* Step 1 – wybór planu --------------------------------------- */}
+          {step === 1 && (
+            <section className="space-y-6" data-aos="flip-left">
+              <PlanSelect plan={plan} setPlan={setPlan} />
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(0)}
+                  className="btn-secondary"
+                >
+                  Wstecz
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(2)}
+                  className="btn-primary"
+                >
+                  Dalej
+                </button>
               </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Lub kontynuuj z
+            </section>
+          )}
+
+          {/* Step 2 – hasło i akcept ------------------------------------ */}
+          {step === 2 && (
+            <section className="space-y-6" data-aos="flip-right">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field
+                  type="password"
+                  label="Hasło"
+                  name="password"
+                  value={form.password}
+                  onChange={onChange}
+                  required
+                />
+                <Field
+                  type="password"
+                  label="Potwierdź hasło"
+                  name="confirm"
+                  value={form.confirm}
+                  onChange={onChange}
+                  required
+                />
+              </div>
+
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="accept"
+                  checked={form.accept}
+                  onChange={onChange}
+                  className="h-4 w-4 text-emerald-600"
+                />
+                <span>
+                  Akceptuję&nbsp;
+                  <Link href="/terms" className="link">
+                    regulamin
+                  </Link>{" "}
+                  i&nbsp;
+                  <Link href="/privacy" className="link">
+                    politykę prywatności
+                  </Link>
                 </span>
-              </div>
-            </div>
-            <div className="mt-4 flex justify-center space-x-6">
-              <button
-                type="button"
-                className="
-                  flex items-center justify-center
-                  w-12 h-12
-                  rounded-full
-                  border border-gray-300
-                  shadow-sm
-                  hover:bg-gray-50
-                  focus:outline-none focus:ring-2 focus:ring-emerald-500
-                "
-              >
-                <FcGoogle className="w-8 h-8" />
-              </button>
-              <button
-                type="button"
-                className="
-                  flex items-center justify-center
-                  w-12 h-12
-                  rounded-full
-                  border border-gray-300
-                  shadow-sm
-                  hover:bg-gray-50
-                  focus:outline-none focus:ring-2 focus:ring-emerald-500
-                "
-              >
-                <FaFacebook className="w-8 h-8 text-blue-600" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+              </label>
 
-      {/* Footer */}
-      <footer className="w-full bg-white border-t border-gray-200 py-4 px-4 md:px-36">
-        <div className="max-w-screen-md mx-auto grid grid-cols-1 md:grid-cols-3 items-center">
+              {err && <p className="text-red-500 text-sm text-center">{err}</p>}
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="btn-secondary"
+                >
+                  Wstecz
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn-primary flex items-center justify-center gap-2"
+                >
+                  {loading && <Loader2 className="animate-spin" size={18} />}
+                  Utwórz konto
+                </button>
+              </div>
+            </section>
+          )}
+        </form>
+      </main>
+      <footer className="w-full bg-white border-t border-gray-200 pt-4 sm:px-8 lg:px-36">
+        <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-gray-600 text-sm">
           {/* Lewa kolumna */}
-          <div className="flex justify-center md:justify-start items-center space-x-2 mb-2 md:mb-0 text-gray-600">
+          <div className="flex items-center justify-center md:justify-start gap-2">
             <Car className="w-5 h-5 text-emerald-500" />
             <span className="font-semibold">CarBuddy</span>
           </div>
 
           {/* Środek */}
-          <div className="text-center text-gray-500 text-sm">
+          <div className="text-center">
             © {new Date().getFullYear()} CarBuddy. Wszelkie prawa zastrzeżone.
           </div>
 
           {/* Prawa kolumna */}
-          <div className="flex justify-center md:justify-end items-center space-x-4 mt-2 md:mt-0 text-gray-600 text-sm">
+          <div className="flex items-center justify-center md:justify-end gap-4">
             <Link href="/privacy" className="hover:underline">
               Polityka prywatności
             </Link>
@@ -379,6 +240,129 @@ export default function RegisterPage() {
           </div>
         </div>
       </footer>
+      ;
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------------- */
+/*  Szablony / pomocnicze                                                */
+/* --------------------------------------------------------------------- */
+
+function Field(props: React.ComponentProps<"input"> & { label: string }) {
+  const { label, ...rest } = props;
+  return (
+    <label className="text-sm space-y-1">
+      <span className="font-medium text-gray-700">{label}</span>
+      <input
+        {...rest}
+        className="w-full rounded-md border-gray-300 px-3 py-2 shadow-sm
+          focus:border-emerald-500 focus:ring-emerald-500"
+      />
+    </label>
+  );
+}
+
+function Stepper({ step }: { step: 0 | 1 | 2 }) {
+  const labels = ["Dane", "Plan", "Hasło"];
+  return (
+    <div className="flex justify-center gap-4">
+      {labels.map((l, i) => {
+        const active = i <= step;
+        return (
+          <div key={l} className="flex items-center gap-1 text-sm">
+            <div
+              className={`
+              w-5 h-5 rounded-full flex items-center justify-center
+              ${
+                active
+                  ? "bg-emerald-500 text-white"
+                  : "bg-gray-200 text-gray-500"
+              }
+            `}
+            >
+              {active ? <CheckCircle size={14} /> : i + 1}
+            </div>
+            <span className={active ? "text-gray-800" : "text-gray-400"}>
+              {l}
+            </span>
+            {i < 2 && <div className="w-8 h-px bg-gray-300" />}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function PlanSelect({
+  plan,
+  setPlan,
+}: {
+  plan: Plan;
+  setPlan: (p: Plan) => void;
+}) {
+  const Card = ({
+    id,
+    title,
+    price,
+    perks,
+  }: {
+    id: Plan;
+    title: string;
+    price: string;
+    perks: string[];
+  }) => (
+    <button
+      type="button"
+      onClick={() => setPlan(id)}
+      className={`
+        border rounded-lg p-4 text-left w-full
+        ${plan === id ? "border-emerald-500 shadow-sm" : "border-gray-300"}
+      `}
+    >
+      <div className="flex justify-between items-center mb-2">
+        <span className="font-semibold">
+          {title} <span className="text-sm text-gray-500">{price}</span>
+        </span>
+        {id === "pro" && (
+          <span className="text-xs bg-emerald-500 text-white rounded-full px-2">
+            Polecany
+          </span>
+        )}
+      </div>
+      <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+        {perks.map((p) => (
+          <li key={p}>{p}</li>
+        ))}
+      </ul>
+    </button>
+  );
+
+  return (
+    <div className="grid sm:grid-cols-2 gap-4">
+      <Card
+        id="free"
+        title="Free"
+        price="0 zł / mies."
+        perks={[
+          "Do 3 pojazdów",
+          "Historia napraw 12 mies.",
+          "Podstawowe analizy",
+          "CSV eksport lokalny",
+        ]}
+      />
+      <Card
+        id="pro"
+        title="Pro"
+        price="19,99 zł / mies."
+        perks={[
+          "Brak limitu pojazdów",
+          "Zaawansowane przypomnienia",
+          "Pełna historia",
+          "PDF / Excel",
+          "Chmura & wsparcie",
+        ]}
+      />
     </div>
   );
 }

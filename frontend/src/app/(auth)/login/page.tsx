@@ -42,7 +42,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-gray-50 p-4">
+    <div className="min-h-screen flex flex-col justify-between bg-gray-50">
       {/* Main content */}
       <div
         className="flex-grow flex items-center justify-center"
@@ -92,7 +92,7 @@ export default function LoginPage() {
                   setEmail(e.target.value)
                 }
                 placeholder="twoj@email.com"
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 hover:py-3 transition-all"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 hover:py-3 transition-all focus:py-3"
               />
             </div>
 
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setPassword(e.target.value)
                 }
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 hover:py-3 transition-all"
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500 py-2 px-3 hover:py-3 transition-all focus:py-3"
               />
             </div>
 
@@ -202,21 +202,21 @@ export default function LoginPage() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full bg-white border-t border-gray-200 py-4 px-4 md:px-36">
-        <div className="max-w-screen-md mx-auto grid grid-cols-1 md:grid-cols-3 items-center">
+      <footer className="w-full bg-white border-t border-gray-200 pt-4 sm:px-8 lg:px-36 py-6">
+        <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-gray-600 text-sm">
           {/* Lewa kolumna */}
-          <div className="flex justify-center md:justify-start items-center space-x-2 mb-2 md:mb-0 text-gray-600">
+          <div className="flex items-center justify-center md:justify-start gap-2">
             <Car className="w-5 h-5 text-emerald-500" />
             <span className="font-semibold">CarBuddy</span>
           </div>
 
           {/* Środek */}
-          <div className="text-center text-gray-500 text-sm">
+          <div className="text-center">
             © {new Date().getFullYear()} CarBuddy. Wszelkie prawa zastrzeżone.
           </div>
 
           {/* Prawa kolumna */}
-          <div className="flex justify-center md:justify-end items-center space-x-4 mt-2 md:mt-0 text-gray-600 text-sm">
+          <div className="flex items-center justify-center md:justify-end gap-4">
             <Link href="/privacy" className="hover:underline">
               Polityka prywatności
             </Link>
