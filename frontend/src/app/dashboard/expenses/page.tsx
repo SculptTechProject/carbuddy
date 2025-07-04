@@ -323,6 +323,8 @@ export default function ExpensesPage() {
                   <DatePicker
                     selected={newDate}
                     onChange={(d) => setNewDate(d)}
+                    wrapperClassName="relative w-full sm:w-1/3"
+                    popperClassName="!z-[60]"
                     className="border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
                     dateFormat="yyyy-MM-dd"
                   />

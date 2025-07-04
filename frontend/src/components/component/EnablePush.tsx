@@ -114,7 +114,7 @@ export default function EnablePush() {
     );
 
   return (
-    <button onClick={enable} className={baseCls + " bg-emerald-600 text-white"}>
+    <button onClick={enable} className={baseCls + " bg-emerald-600 text-gray-50 cursor-pointer hover:bg-emerald-500 hover=text=gray-100"}>
       <Bell className="w-4 h-4" />
       {state === "denied" ? "Spróbuj ponownie" : "Włącz powiadomienia"}
     </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   List,
@@ -19,6 +19,7 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import axios from "axios";
 import { HashLoader } from "react-spinners";
+import { Menu, Transition } from "@headlessui/react";
 
 interface Props {
   children: ReactNode;
@@ -34,6 +35,18 @@ export default function DashboardLayout({ children }: Props) {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<MeResponse | null>(null);
   const [open, setOpen] = useState(false);
+
+  const pageTitles: Record<string, string> = {
+    "/dashboard": "Dashboard",
+    "/dashboard/cars": "Moje pojazdy",
+    "/dashboard/timetable": "Terminarz",
+    "/dashboard/repairs": "Historia napraw",
+    "/dashboard/expenses": "Wydatki",
+    "/dashboard/analitycs": "Analityka",
+    "/dashboard/workshops": "Warsztaty",
+    "/dashboard/prediction": "Predykcja",
+  };
+  const currentTitle = pageTitles[pathname] || "";
 
   // fetch user on mount
   useEffect(() => {
@@ -210,14 +223,27 @@ export default function DashboardLayout({ children }: Props) {
             <span className="font-bold text-lg text-gray-700">CarBuddy</span>
           </div>
           <button onClick={() => setOpen(false)} className="p-2">
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-6 h-6 text-gray-600 cursor-pointer hover:text-gray-400 transition-all" />
           </button>
         </div>
         <div className="text-center pt-4">
-          <div className="mx-6 my-2 py-2 rounded-xl border-2 border-yellow-600 bg-yellow-50">
+          <div
+            className={`
+              mx-6 my-2 py-2 rounded-xl border-2 text-center
+              ${
+                user.premium
+                  ? "border-yellow-600 bg-yellow-50"
+                  : "border-gray-300 bg-gray-100"
+              }
+            `}
+          >
             Plan:{" "}
             <span
-              className={user.premium ? "text-yellow-700" : "text-gray-500"}
+              className={
+                user.premium
+                  ? "text-yellow-700 font-semibold"
+                  : "text-gray-500 font-semibold"
+              }
             >
               {user.premium ? "Premium" : "Darmowy"}
             </span>
@@ -294,12 +320,88 @@ export default function DashboardLayout({ children }: Props) {
 
       {/* main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="flex-none flex items-center justify-between bg-white px-4 md:px-6 py-3 border-b">
-          <div className="flex items-center space-x-4 pt-4">
-            <button className="md:hidden p-2" onClick={() => setOpen(true)}>
+        <header className="flex-none flex items-center justify-between bg-white px-6 py-4 border-b shadow-sm">
+          {/* Lewa część */}
+          <div className="flex items-center space-x-4">
+            <button
+              className="md:hidden p-2 hover:bg-gray-100 rounded"
+              onClick={() => setOpen(true)}
+            >
               <List className="w-6 h-6 text-gray-600" />
             </button>
-            <Bell className="w-6 h-6 text-gray-600" />
+            <Link
+              href="/dashboard"
+              className="hidden md:flex items-center space-x-2"
+            >
+              <CarIcon className="w-6 h-6 text-emerald-500" />
+              <span className="font-semibold text-lg text-gray-800">
+                CarBuddy
+              </span>
+            </Link>
+            <h1 className="text-xl font-semibold text-gray-700">
+              {currentTitle}
+            </h1>
+          </div>
+
+          {/* Prawa część */}
+          <div className="flex items-center space-x-6">
+            {/* Dzwonek z badge */}
+            <div className="relative">
+              <Bell className="w-6 h-6 text-gray-600 cursor-pointer" />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                3
+              </span>
+            </div>
+
+            {/* Avatar + dropdown */}
+            <Menu as="div" className="relative">
+              <Menu.Button className="flex items-center space-x-2 focus:outline-none">
+                <img
+                  src="/avatar.png"
+                  alt="Avatar"
+                  className="w-8 h-8 rounded-full"
+                />
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded shadow-lg z-50 focus:outline-none">
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        href="/dashboard/settings"
+                        className={`block px-4 py-2 text-sm ${
+                          active ? "bg-gray-100" : ""
+                        }`}
+                      >
+                        Ustawienia
+                      </Link>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => {
+                          localStorage.removeItem("token");
+                          router.replace("/login");
+                        }}
+                        className={`w-full text-left block px-4 py-2 text-sm text-red-600 ${
+                          active ? "bg-gray-100" : ""
+                        }`}
+                      >
+                        Wyloguj
+                      </button>
+                    )}
+                  </Menu.Item>
+                </Menu.Items>
+              </Transition>
+            </Menu>
           </div>
         </header>
         <main className="flex-1 overflow-auto p-6">{children}</main>
