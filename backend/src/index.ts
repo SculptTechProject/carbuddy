@@ -20,10 +20,14 @@ dotenv.config();
 // Cron jobs
 import "./cron/fluid.reminder";
 
+const allowed = (process.env.CLIENT_URL ?? "http://localhost:3000")
+  .split(",")
+  .map((url) => url.trim());
+
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: allowed,
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -62,7 +66,5 @@ app.use("/api/v1", authAdmin);
  & END ROUTES
 */
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-);
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`🚀 Server running on ${PORT}`));
