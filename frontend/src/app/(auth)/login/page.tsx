@@ -133,7 +133,7 @@ export default function LoginPage() {
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setRemember(e.target.checked)
                 }
-                className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded"
+                className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 rounded cursor-pointer"
               />
               <label
                 htmlFor="remember"
@@ -146,7 +146,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all hover:py-4"
+              className="w-full border border-transparent py-3 rounded-md text-gray-50 bg-emerald-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all hover:py-4 cursor-pointer hover:text-gray-600 hover:border-gray-600"
             >
               {loading ? "Proszę czekać..." : "Zaloguj się"}
             </button>

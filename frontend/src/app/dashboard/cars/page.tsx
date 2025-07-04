@@ -329,8 +329,13 @@ export default function MyCarsPage() {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-8">
+            <div className="fixed inset-0 flex items-start sm:items-center justify-center py-8 px-2 overflow-y-auto">
+              <Dialog.Panel
+                className="bg-white rounded-2xl shadow-xl
+                  w-full max-w-lg p-8
+                  mt-10 sm:mt-0
+                  max-h-[80vh] overflow-y-auto"
+              >
                 <div className="flex justify-between items-start mb-6">
                   <Dialog.Title className="text-2xl font-semibold">
                     Nowy pojazd
@@ -359,9 +364,10 @@ export default function MyCarsPage() {
                     </label>
                     <input
                       required
+                      placeholder="Toyota"
                       value={newMake}
                       onChange={(e) => setNewMake(e.target.value)}
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -371,9 +377,10 @@ export default function MyCarsPage() {
                     </label>
                     <input
                       required
+                      placeholder="Corolla"
                       value={newModel}
                       onChange={(e) => setNewModel(e.target.value)}
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -386,7 +393,7 @@ export default function MyCarsPage() {
                       type="number"
                       value={newYear}
                       onChange={(e) => setNewYear(+e.target.value)}
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -399,7 +406,7 @@ export default function MyCarsPage() {
                       value={newEngine}
                       onChange={(e) => setNewEngine(e.target.value)}
                       placeholder="1.6 16V"
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -412,7 +419,7 @@ export default function MyCarsPage() {
                       type="number"
                       value={newPower}
                       onChange={(e) => setNewPower(+e.target.value)}
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -425,7 +432,7 @@ export default function MyCarsPage() {
                       type="number"
                       value={newKm}
                       onChange={(e) => setNewKm(+e.target.value)}
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -439,7 +446,7 @@ export default function MyCarsPage() {
                       value={newVin}
                       onChange={(e) => setNewVin(e.target.value)}
                       placeholder="1HGCM82633A004352"
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -451,7 +458,7 @@ export default function MyCarsPage() {
                     <input
                       value={newReg}
                       onChange={(e) => setNewReg(e.target.value)}
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
                     />
                   </div>
 
@@ -464,13 +471,13 @@ export default function MyCarsPage() {
                       selected={newPurchaseDate}
                       onChange={setNewPurchaseDate}
                       dateFormat="yyyy-MM-dd"
-                      className="h-10 px-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-4 focus:px-5"
+                      className="h-10 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all hover:px-5 focus:px-6"
                       placeholderText="——"
                     />
                   </div>
 
                   {/* przyciski */}
-                  <div className="sm:col-span-2 flex justify-end gap-3 pt-4">
+                  <div className="sm:col-span-2 flex justify-end gap-3">
                     <button
                       type="button"
                       onClick={() => setShowAddModal(false)}

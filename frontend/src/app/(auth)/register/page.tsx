@@ -9,6 +9,13 @@ import { CarFront, Loader2, CheckCircle, Car } from "lucide-react";
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 type Plan = "free" | "pro";
 
+type FieldProps = React.ComponentProps<"input"> & {
+  label: string;
+  wrapperClassName?: string;
+  labelClassName?: string;
+  inputClassName?: string;
+};
+
 export default function Register() {
   const router = useRouter();
 
@@ -76,7 +83,13 @@ export default function Register() {
         >
           {/* brand ------------------------------------------------------- */}
           <header className="text-center space-y-2">
-            <CarFront className="mx-auto text-emerald-500" size={32} />
+            <CarFront
+              onClick={() => {
+                router.push("/");
+              }}
+              className="mx-auto text-emerald-500"
+              size={32}
+            />
             <h1 className="text-2xl font-semibold">Utwórz konto</h1>
             <p className="text-sm text-gray-500">
               Masz już konto?{" "}
@@ -120,7 +133,7 @@ export default function Register() {
                 type="button"
                 onClick={() => setStep(1)}
                 disabled={!form.firstName || !form.lastName || !form.email}
-                className="px-5 py-3 border border-transparent text-gray-50 cursor-pointer transition-all rounded-xl bg-gray-600 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-600"
+                className="px-5 py-3 border border-transparent text-gray-50 cursor-pointer transition-all rounded-xl bg-emerald-500 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-600"
               >
                 Dalej
               </button>
@@ -135,14 +148,14 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setStep(0)}
-                  className="btn-secondary"
+                  className="px-5 py-3 border border-border-gray-600 text-gray-600 cursor-pointer transition-all rounded-xl bg-gray-50 hover:bg-yellow-500 hover:text-gray-50 hover:border-transparent"
                 >
                   Wstecz
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="btn-primary"
+                  className="px-15 py-3 border border-transparent text-gray-50 cursor-pointer transition-all rounded-xl bg-emerald-500 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-600"
                 >
                   Dalej
                 </button>
@@ -161,6 +174,7 @@ export default function Register() {
                   value={form.password}
                   onChange={onChange}
                   required
+                  placeholder="●●●●●●●"
                 />
                 <Field
                   type="password"
@@ -169,6 +183,7 @@ export default function Register() {
                   value={form.confirm}
                   onChange={onChange}
                   required
+                  placeholder="●●●●●●●"
                 />
               </div>
 
@@ -178,7 +193,7 @@ export default function Register() {
                   name="accept"
                   checked={form.accept}
                   onChange={onChange}
-                  className="h-4 w-4 text-emerald-600"
+                  className="h-4 w-4 text-emerald-600 cursor-pointer"
                 />
                 <span>
                   Akceptuję&nbsp;
@@ -198,7 +213,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="btn-secondary"
+                  className="px-5 py-3 border border-border-gray-600 text-gray-600 cursor-pointer transition-all rounded-xl bg-gray-50 hover:bg-yellow-500 hover:text-gray-50 hover:border-transparent"
                 >
                   Wstecz
                 </button>
@@ -206,7 +221,7 @@ export default function Register() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary flex items-center justify-center gap-2"
+                  className="px-15 py-3 border border-transparent text-gray-50 cursor-pointer transition-all rounded-xl bg-emerald-500 hover:bg-gray-50 hover:text-gray-600 hover:border-gray-600 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="animate-spin" size={18} />}
                   Utwórz konto
@@ -216,7 +231,7 @@ export default function Register() {
           )}
         </form>
       </main>
-      <footer className="w-full bg-white border-t border-gray-200 pt-4 sm:px-8 lg:px-36">
+      <footer className="w-full bg-white border-t border-gray-200 pt-4 sm:px-8 lg:px-36 py-6">
         <div className="max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-gray-600 text-sm">
           {/* Lewa kolumna */}
           <div className="flex items-center justify-center md:justify-start gap-2">
@@ -240,7 +255,6 @@ export default function Register() {
           </div>
         </div>
       </footer>
-      ;
     </div>
   );
 }
@@ -249,17 +263,29 @@ export default function Register() {
 /*  Szablony / pomocnicze                                                */
 /* --------------------------------------------------------------------- */
 
-function Field(props: React.ComponentProps<"input"> & { label: string }) {
-  const { label, ...rest } = props;
+function Field({
+  label,
+  wrapperClassName = "",
+  labelClassName = "",
+  inputClassName = "",
+  ...rest
+}: FieldProps) {
   return (
-    <label className="text-sm space-y-1">
-      <span className="font-medium text-gray-700">{label}</span>
+    <div className={`space-y-1 ${wrapperClassName}`}>
+      <span
+        className={`block text-sm font-medium text-gray-700 ${labelClassName}`}
+      >
+        {label}
+      </span>
       <input
         {...rest}
-        className="w-full rounded-md border-gray-300 px-3 py-2 shadow-sm
-          focus:border-emerald-500 focus:ring-emerald-500"
+        className={`
+          w-full border border-emerald-400 rounded-md px-3 py-2 shadow-sm
+          focus:ring-emerald-500 hover:border-emerald-500 hover:shadow-lg hover:mx-1 focus:mx-1 focus:shadow-xl transition-all
+          ${inputClassName}
+        `}
       />
-    </label>
+    </div>
   );
 }
 
@@ -273,7 +299,7 @@ function Stepper({ step }: { step: 0 | 1 | 2 }) {
           <div key={l} className="flex items-center gap-1 text-sm">
             <div
               className={`
-              w-5 h-5 rounded-full flex items-center justify-center
+              w-5 h-5 rounded-full flex items-center justify-center transition-all
               ${
                 active
                   ? "bg-emerald-500 text-white"
@@ -311,32 +337,46 @@ function PlanSelect({
     title: string;
     price: string;
     perks: string[];
-  }) => (
-    <button
-      type="button"
-      onClick={() => setPlan(id)}
-      className={`
-        border rounded-lg p-4 text-left w-full
-        ${plan === id ? "border-emerald-500 shadow-sm" : "border-gray-300"}
-      `}
-    >
-      <div className="flex justify-between items-center mb-2">
-        <span className="font-semibold">
-          {title} <span className="text-sm text-gray-500">{price}</span>
-        </span>
-        {id === "pro" && (
-          <span className="text-xs bg-emerald-500 text-white rounded-full px-2">
-            Polecany
+  }) => {
+    const isDisabled = id === "pro";
+
+    return (
+      <button
+        type="button"
+        onClick={() => !isDisabled && setPlan(id)}
+        disabled={isDisabled}
+        className={`
+          border rounded-lg p-4 transition-all text-left w-full
+          ${
+            isDisabled
+              ? "opacity-50 cursor-not-allowed border-gray-300"
+              : "cursor-pointer hover:mx-1 hover:p-6"
+          }
+          ${plan === id ? "border-emerald-500 shadow-sm" : "border-gray-300"}
+        `}
+      >
+        <div className="flex justify-between items-center mb-2">
+          <span className="font-semibold">
+            {title} <span className="text-sm text-gray-500">{price}</span>
           </span>
-        )}
-      </div>
-      <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
-        {perks.map((p) => (
-          <li key={p}>{p}</li>
-        ))}
-      </ul>
-    </button>
-  );
+          {id === "pro" ? (
+            <span className="text-xs bg-yellow-400 text-white rounded-full px-2">
+              W budowie
+            </span>
+          ) : (
+            <span className="text-xs bg-emerald-500 text-white rounded-full px-2">
+              Polecany
+            </span>
+          )}
+        </div>
+        <ul className="list-disc list-inside text-xs text-gray-600 space-y-1">
+          {perks.map((p) => (
+            <li key={p}>{p}</li>
+          ))}
+        </ul>
+      </button>
+    );
+  };
 
   return (
     <div className="grid sm:grid-cols-2 gap-4">

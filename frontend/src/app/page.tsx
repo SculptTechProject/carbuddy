@@ -64,7 +64,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 bg-gray-100 shadow-xl z-50 transition-all">
+      <header className="sticky top-0 z-50 bg-white/30 backdrop-blur-xl shadow-xl transition-all">
         <div className="container mx-auto flex items-center justify-between h-16 px-4 ">
           <Link href="/" className="flex items-center gap-2 font-semibold">
             <Car className="w-6 h-6 text-emerald-500" />
