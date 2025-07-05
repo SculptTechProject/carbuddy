@@ -44,17 +44,16 @@ Dzięki CarBuddy zapomnisz o papierologii i zyskasz pewność pełnej kontroli n
 ## MVP
 
 1. **Profil auta**
-
     * Wprowadzenie marki, modelu, VIN.
     * Automatycznie generowany harmonogram serwisów.
+
 2. **Powiadomienia**
-
     * Push / e-mail o zbliżających się przeglądach, wymianach oleju, opon oraz wygaśnięciu ubezpieczenia.
+
 3. **Historia napraw**
-
     * Rejestracja napraw z kwotami i możliwością dołączenia zdjęć faktur.
-4. **Dashboard wydatków**
 
+4. **Dashboard wydatków**
     * Miesięczne i roczne podsumowania kosztów utrzymania pojazdu.
 
 ## Technologie
@@ -110,7 +109,7 @@ Dzięki CarBuddy zapomnisz o papierologii i zyskasz pewność pełnej kontroli n
 
 ## Użytkowanie
 
-* Otwórz przeglądarkę i przejdź na `http://localhost:3000`.
+* Otwórz przeglądarkę i przejdź na `[carbuddy.pl](https://carbuddy-nine.vercel.app)`.
 * Zarejestruj konto i dodaj swój pojazd.
 * Skonfiguruj powiadomienia i ciesz się spokojem ducha!
 
