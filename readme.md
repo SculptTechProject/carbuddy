@@ -2,7 +2,7 @@
 
 CarBuddy to cyfrowy asystent i towarzysz każdego kierowcy, który pilnuje wszystkich terminów serwisowych, gromadzi
 historię napraw oraz pomaga znaleźć najlepsze warsztaty. Projekt został stworzony, aby dać kierowcom pełną kontrolę nad
-kosztami i stanem technicznym pojazdu — bez zbędnej biurokracji i stresu!
+kosztami i stanem technicznym pojazdu!
 
 ## Spis treści
 
