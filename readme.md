@@ -1,4 +1,4 @@
-<img width="1696" height="976" alt="image" src="https://github.com/user-attachments/assets/85b69d99-1497-478f-9c72-6259205313fa" /><img width="1630" height="644" alt="image" src="https://github.com/user-attachments/assets/a06f778d-368a-41c6-9db7-5845ba8e1a0c" />
+<img width="1630" height="644" alt="image" src="https://github.com/user-attachments/assets/a06f778d-368a-41c6-9db7-5845ba8e1a0c" />
 
 # CarBuddy 
 
