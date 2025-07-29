@@ -1,3 +1,5 @@
+<img width="1696" height="976" alt="image" src="https://github.com/user-attachments/assets/85b69d99-1497-478f-9c72-6259205313fa" /><img width="1630" height="644" alt="image" src="https://github.com/user-attachments/assets/a06f778d-368a-41c6-9db7-5845ba8e1a0c" />
+
 # CarBuddy 
 
 CarBuddy to cyfrowy asystent i towarzysz każdego kierowcy, który pilnuje wszystkich terminów serwisowych, gromadzi
@@ -110,8 +112,13 @@ Dzięki CarBuddy zapomnisz o papierologii i zyskasz pewność pełnej kontroli n
 ## Użytkowanie
 
 * Otwórz przeglądarkę i przejdź na `[carbuddy.pl](https://carbuddy-nine.vercel.app)`.
-* Zarejestruj konto i dodaj swój pojazd.
-* Skonfiguruj powiadomienia i ciesz się spokojem ducha!
+* Zarejestruj konto. <img width="1697" height="981" alt="image" src="https://github.com/user-attachments/assets/f7178912-d1c2-49fe-bad9-1b59ec914565" />
+* Zobacz dashboard! <img width="1701" height="981" alt="image" src="https://github.com/user-attachments/assets/9c2f972b-62f8-43f9-ba99-7e5e43d159a4" />
+* Dodaj swój pojazd! <img width="912" height="762" alt="image" src="https://github.com/user-attachments/assets/d41b1e14-22e3-4c8d-bd09-9e14607a9598" />
+* Skonfiguruj powiadomienia i ciesz się spokojem ducha! <img width="590" height="269" alt="image" src="https://github.com/user-attachments/assets/1098c9c7-424b-49d8-8b8a-9205bc11b52d" />
+ <img width="1696" height="976" alt="image" src="https://github.com/user-attachments/assets/4cfa8619-62bd-4789-884d-464577a23372" />
+* Ciesz się kompletnym terminarzem! <img width="1317" height="763" alt="image" src="https://github.com/user-attachments/assets/d48f6f69-8a9c-4469-bb6e-257e2c93205f" />
+* Zobacz i weryfikuj swoje koszty! <img width="1392" height="944" alt="image" src="https://github.com/user-attachments/assets/3901397f-cee8-4b4f-a931-a8b25ecfaf9f" />
 
 ## Wkład
 
