@@ -126,4 +126,4 @@ Chętnie przyjmiemy Twoje uwagi i poprawki. Zgłaszaj pull requesty na GitHubie 
 
 ## Licencja
 
-MIT © CarBuddy Team
+MIT © Dalke.dev
